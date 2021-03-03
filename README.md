@@ -1,7 +1,7 @@
 ## How we'd like to recieve the soluion?
 
-1. Clone this repository
-2. Create a new branch in your cloned repository
+1. Clone this repository and upload it as a new repository in your github account
+2. Create a new branch in your repository
 3. Create a pull request with the requested functionality to unchanged master branch in your repository
 4. Share link to the PR with us 
 
