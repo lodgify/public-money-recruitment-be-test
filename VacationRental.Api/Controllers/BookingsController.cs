@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
@@ -22,51 +23,69 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        public ActionResult<BookingViewModel> Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
+            try
+            {
+                if (!_bookings.ContainsKey(bookingId))
+                    return NotFound("Booking not found");
+                //throw new ApplicationException();
 
-            return _bookings[bookingId];
+                return _bookings[bookingId];
+            }
+            catch (Exception)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
+        public ActionResult<ResourceIdViewModel> Post(BookingBindingModel model)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
-
-            for (var i = 0; i < model.Nights; i++)
+            try
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
+                if (model.Nights <= 0)
+                    return BadRequest("Nigts must be positive");
+                //throw new ApplicationException();
+                if (!_rentals.ContainsKey(model.RentalId))
+                    return NotFound("Rental not found");
+                //throw new ApplicationException();
+
+                for (var i = 0; i < model.Nights; i++)
                 {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
+                    var count = 0;
+                    foreach (var booking in _bookings.Values)
                     {
-                        count++;
+                        if (booking.RentalId == model.RentalId
+                            && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
+                            || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
+                            || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
+                        {
+                            count++;
+                        }
                     }
+                    if (count >= _rentals[model.RentalId].Units)
+                        return Ok("Not available");
+                    //throw new ApplicationException();
                 }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+
+
+                var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
+
+                _bookings.Add(key.Id, new BookingViewModel
+                {
+                    Id = key.Id,
+                    Nights = model.Nights,
+                    RentalId = model.RentalId,
+                    Start = model.Start.Date
+                });
+
+                return key;
             }
-
-
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
+            catch (Exception)
             {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
-
-            return key;
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }
