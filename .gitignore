@@ -253,3 +253,6 @@ WebConfigTransform/git2consul/git2consul.config.local.json
 tools/*
 !tools/packages.config
 Lodgify.IdentityServer/appsettings.Development.json
+
+#Serilog files
+VacationRental.Api/Logs/*
