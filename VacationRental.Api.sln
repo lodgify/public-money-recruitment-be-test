@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationalRental.Domain", "VacationalRental.Domain\VacationalRental.Domain.csproj", "{8FAA048F-82B3-4AC6-9586-20502710A4A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationalRental.Infraestructure", "VacationalRental.Infraestructure\VacationalRental.Infraestructure.csproj", "{D0468B3B-BD5E-4B22-A452-AF6302D0533C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationalRental.Infrastructure", "VacationalRental.Infraestructure\VacationalRental.Infrastructure.csproj", "{D0468B3B-BD5E-4B22-A452-AF6302D0533C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{35E25D4A-C8D0-4A2E-9C0B-DEC2A33BF088}"
 EndProject
