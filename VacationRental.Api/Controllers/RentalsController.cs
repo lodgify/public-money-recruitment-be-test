@@ -40,6 +40,9 @@ namespace VacationRental.Api.Controllers
         {
             try
             {
+                if (model == null || !ModelState.IsValid)
+                    return BadRequest(ModelState);
+
                 var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
 
                 _rentals.Add(key.Id, new RentalViewModel
