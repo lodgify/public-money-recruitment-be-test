@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VacationalRental.Domain.Entities;
+using VacationalRental.Domain.Enums;
 
-namespace VacationalRental.Domain.Interfaces.Repositories
+namespace VacationalRental.Domain.Interfaces.Services
 {
-    public interface IRentalsRepository
+    public interface IRentalService
     {
-        Task<int> GetRentalUnits(int rentalID);
-
         Task<int> InsertNewRentalObtainRentalId(RentalEntity rentalEntity);
 
         Task<RentalEntity> GetRentalById(int rentalId);

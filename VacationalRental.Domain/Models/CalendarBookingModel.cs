@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VacationalRental.Domain.Interfaces.Repositories
+namespace VacationalRental.Domain.Models
 {
-    public interface ICalendarRepository
+    public class CalendarBookingModel
     {
+        public int Id { get; set; }
     }
 }

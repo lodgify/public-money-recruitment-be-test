@@ -5,7 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using VacationalRental.Domain.Business;
+using VacationalRental.Domain.Interfaces.Repositories;
+using VacationalRental.Domain.Interfaces.Services;
+using VacationalRental.Domain.Services;
 using VacationalRental.Infrastructure.DbContexts;
+using VacationalRental.Infrastructure.Repositories;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api
@@ -33,14 +38,21 @@ namespace VacationRental.Api
 
             //services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new Info { Title = "Vacation rental information", Version = "v1" }));
 
-            services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
-            services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+            services.AddScoped<IBookingsRepository, BookingsRepository>();
+            services.AddScoped<IRentalsRepository, RentalsRepository>();
+
+            services.AddTransient<IBookingService, BookingService>();
+            services.AddTransient<ICalendarService, CalendarService>();
+            services.AddTransient<IRentalService, RentalService>();
+
+            //services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
+            //services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.EnvironmentName == "Development")
             {
                 app.UseDeveloperExceptionPage();
             }
