@@ -14,19 +14,13 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
-        //private readonly IDictionary<int, RentalViewModel> _rentals;
-        //private readonly IDictionary<int, BookingViewModel> _bookings;
         private readonly IBookingService _bookingService;
         private readonly IRentalsRepository _rentalsRepository;
 
         public BookingsController(
-            //IDictionary<int, RentalViewModel> rentals,
-            //IDictionary<int, BookingViewModel> bookings,
             IBookingService bookingService,
             IRentalsRepository rentalsRepository)
         {
-            //_rentals = rentals;
-            //_bookings = bookings;
             _bookingService = bookingService;
             _rentalsRepository = rentalsRepository;
         }
@@ -39,7 +33,6 @@ namespace VacationRental.Api.Controllers
             {
                 if (!await _bookingService.BookingExists(bookingId))
                     return NotFound("Booking not found");
-                //throw new ApplicationException();
 
                 var bookingEntity = await _bookingService.GetBookingById(bookingId);
 
@@ -65,15 +58,8 @@ namespace VacationRental.Api.Controllers
                 if (model == null || !ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                //if (model.Nights <= 0)
-                //    return BadRequest("Nigts must be positive");
-                //throw new ApplicationException();
-
                 if (!await _rentalsRepository.RentalExists(model.RentalId))
                     return NotFound("Rental not found");
-                //if (!_rentals.ContainsKey(model.RentalId))
-                //    return NotFound("Rental not found");
-                //throw new ApplicationException();
 
                 var bookingInfo = await _bookingService.InsertNewBooking(
                     new VacationalRental.Domain.Entities.BookingEntity
@@ -90,37 +76,6 @@ namespace VacationRental.Api.Controllers
                     InsertNewBookingStatus.OK => Ok(new { id = bookingInfo.Item2 }),
                     _ => throw new InvalidOperationException($"{nameof(InsertNewBookingStatus)}: Not expected or implemented"),
                 };
-
-                //for (var i = 0; i < model.Nights; i++)
-                //{
-                //    var count = 0;
-                //    foreach (var booking in _bookings.Values)
-                //    {
-                //        if (booking.RentalId == model.RentalId
-                //            && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                //            || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                //            || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                //        {
-                //            count++;
-                //        }
-                //    }
-                //    if (count >= _rentals[model.RentalId].Units)
-                //        return Ok("Not available");
-                //    //throw new ApplicationException();
-                //}
-
-
-                //var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-                //_bookings.Add(key.Id, new BookingViewModel
-                //{
-                //    Id = key.Id,
-                //    Nights = model.Nights,
-                //    RentalId = model.RentalId,
-                //    Start = model.Start.Date
-                //});
-
-                //return key;
             }
             catch (Exception)
             {

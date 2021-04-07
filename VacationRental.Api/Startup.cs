@@ -4,14 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
 using VacationalRental.Domain.Business;
 using VacationalRental.Domain.Interfaces.Repositories;
 using VacationalRental.Domain.Interfaces.Services;
 using VacationalRental.Domain.Services;
 using VacationalRental.Infrastructure.DbContexts;
 using VacationalRental.Infrastructure.Repositories;
-using VacationRental.Api.Models;
 
 namespace VacationRental.Api
 {

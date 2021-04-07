@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using VacationalRental.Domain.Entities;
 using VacationalRental.Domain.Enums;
@@ -26,9 +24,6 @@ namespace VacationalRental.Domain.Business
 
         public async Task<(InsertUpdateNewRentalStatus, int)> InsertNewRentalObtainRentalId(RentalEntity rentalEntity)
         {
-            //if (rentalEntity.PreprationTimeInDays > rentalEntity.Units)
-            //    return (InsertNewRentalStatus.PreparationDaysHigherThanUnits, 0);
-
             var rentalId = await _rentalsRepository.InsertNewRentalObtainRentalId(rentalEntity);
 
             if (rentalId <= 0)

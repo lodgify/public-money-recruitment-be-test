@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using VacationalRental.Domain.Entities;
 using VacationalRental.Domain.Enums;
 using VacationalRental.Domain.Interfaces.Repositories;
 using VacationalRental.Domain.Interfaces.Services;
-using VacationalRental.Domain.Models;
 
 namespace VacationalRental.Domain.Services
 {
@@ -45,8 +40,6 @@ namespace VacationalRental.Domain.Services
 
                 if (count >= rentalUnits)
                     return (InsertNewBookingStatus.NotAvailable, 0);
-                //if (count >= _rentals[bookingEntity.RentalId].Units)
-                //    return Ok("Not available");
             }
 
             var lastUnit = await _bookingsRepository.GetLastUnit(bookingEntity.RentalId);
