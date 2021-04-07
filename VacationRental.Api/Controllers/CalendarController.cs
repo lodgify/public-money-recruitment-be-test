@@ -35,7 +35,10 @@ namespace VacationRental.Api.Controllers
         {
             try
             {
-                if (nights < 0)
+                if (rentalId <= 0)
+                    return BadRequest("Rental can't be with id 0");
+
+                if (nights <= 0)
                     return BadRequest("Nights must be positive");
 
                 if (!await _rentalsRepository.RentalExists(rentalId))
