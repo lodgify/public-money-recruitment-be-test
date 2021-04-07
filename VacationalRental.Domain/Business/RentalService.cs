@@ -19,9 +19,22 @@ namespace VacationalRental.Domain.Business
             _rentalsRepository = rentalsRepository;
         }
 
-        public async Task<int> InsertNewRentalObtainRentalId(RentalEntity rentalEntity)
+        public async Task<(InsertNewRentalStatus, int)> InsertNewRentalObtainRentalId(RentalEntity rentalEntity)
         {
-            return await _rentalsRepository.InsertNewRentalObtainRentalId(rentalEntity);
+            //if (rentalEntity.PreprationTimeInDays > rentalEntity.Units)
+            //    return (InsertNewRentalStatus.PreparationDaysHigherThanUnits, 0);
+
+            var rentalId = await _rentalsRepository.InsertNewRentalObtainRentalId(rentalEntity);
+
+            if (rentalId <= 0)
+                return (InsertNewRentalStatus.InsertDbNoRowsAffected, rentalId);
+
+            return (InsertNewRentalStatus.OK, rentalId);
+        }
+
+        public async Task<int> GetRentalPreparationTimeInDays(int rentalId)
+        {
+            return await _rentalsRepository.GetRentalPreparationTimeInDays(rentalId);
         }
 
         public async Task<RentalEntity> GetRentalById(int rentalId)

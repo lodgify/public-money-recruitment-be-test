@@ -11,6 +11,8 @@ namespace VacationalRental.Domain.Interfaces.Repositories
     {
         Task<int> GetRentalUnits(int rentalID);
 
+        Task<int> GetRentalPreparationTimeInDays(int rentalID);
+
         Task<int> InsertNewRentalObtainRentalId(RentalEntity rentalEntity);
 
         Task<RentalEntity> GetRentalById(int rentalId);

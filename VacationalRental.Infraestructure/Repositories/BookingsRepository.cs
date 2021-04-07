@@ -24,6 +24,11 @@ namespace VacationalRental.Infrastructure.Repositories
             return await _vacationalRentalDbContext.BookingEntities.ToListAsync();
         }
 
+        public async Task<IEnumerable<BookingEntity>> GetBookinByRentalId(int rentalId)
+        {
+            return await _vacationalRentalDbContext.BookingEntities.Where(a => a.RentalId == rentalId).Select(b => b).ToListAsync();
+        }
+
         public async Task<BookingEntity> GetBookingById(int bookingId)
         {
             return await _vacationalRentalDbContext.BookingEntities.FindAsync(bookingId);
@@ -41,6 +46,18 @@ namespace VacationalRental.Infrastructure.Repositories
         public async Task<bool> BookingExists(int bookingId)
         {
             return await _vacationalRentalDbContext.BookingEntities.AnyAsync(a => a.Id == bookingId);
+        }
+
+        public async Task<int> GetLastUnit(int rentalId)
+        {
+            var bookingEntities = await _vacationalRentalDbContext.BookingEntities.Where(a => a.RentalId == rentalId).ToListAsync();
+
+            if (!bookingEntities.Any())
+                return 0;
+
+            var maxUnit = bookingEntities.Max(a => a.Unit);
+
+            return maxUnit;
         }
     }
 }

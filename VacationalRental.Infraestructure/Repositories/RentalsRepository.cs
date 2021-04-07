@@ -26,6 +26,13 @@ namespace VacationalRental.Infrastructure.Repositories
             return rentalUnits.Single();
         }
 
+        public async Task<int> GetRentalPreparationTimeInDays(int rentalID)
+        {
+            var preparationTimeInDays = await _vacationalRentalDbContext.RentalEntities.Where(a => a.Id == rentalID).Select(a => a.PreprationTimeInDays).ToListAsync();
+
+            return preparationTimeInDays.Single();
+        }
+
         public async Task<int> InsertNewRentalObtainRentalId(RentalEntity rentalEntity)
         {
             await _vacationalRentalDbContext.RentalEntities.AddAsync(rentalEntity);

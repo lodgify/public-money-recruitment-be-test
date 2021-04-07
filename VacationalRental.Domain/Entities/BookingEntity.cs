@@ -15,6 +15,9 @@ namespace VacationalRental.Domain.Entities
         public DateTime Start { get; set; }
         public int Nights { get; set; }
 
+        public int Unit { get; set; }
+
+        //Only works for database provider not in memory mode
         public byte[] RowVersion { get; set; }
     }
 }

@@ -10,7 +10,9 @@ namespace VacationalRental.Domain.Interfaces.Services
 {
     public interface IRentalService
     {
-        Task<int> InsertNewRentalObtainRentalId(RentalEntity rentalEntity);
+        Task<(InsertNewRentalStatus, int)> InsertNewRentalObtainRentalId(RentalEntity rentalEntity);
+
+        Task<int> GetRentalPreparationTimeInDays(int rentalId);
 
         Task<RentalEntity> GetRentalById(int rentalId);
 

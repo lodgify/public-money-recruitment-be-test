@@ -12,9 +12,13 @@ namespace VacationalRental.Domain.Business
     public class CalendarService : ICalendarService
     {
         private readonly IBookingsRepository _bookingRepository;
-        public CalendarService(IBookingsRepository bookingRepository)
+        private readonly IRentalsRepository _rentalsRepository;
+        public CalendarService(
+            IBookingsRepository bookingRepository,
+            IRentalsRepository rentalsRepository)
         {
             _bookingRepository = bookingRepository;
+            _rentalsRepository = rentalsRepository;
         }
 
         public async Task<CalendarModel> GetRentalCalendarByNights(int rentalId, DateTime start, int nights)
@@ -25,20 +29,30 @@ namespace VacationalRental.Domain.Business
                 Dates = new List<CalendarDateModel>()
             };
 
-            for (var i = 0; i < nights; i++)
+            var bookings = _bookingRepository.GetBookinByRentalId(rentalId);
+            var rentalPreparationTimeInDays = _rentalsRepository.GetRentalPreparationTimeInDays(rentalId);
+
+            for (var night = 0; night < nights; night++)
             {
                 var date = new CalendarDateModel
                 {
-                    Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingModel>()
+                    Date = start.Date.AddDays(night),
+                    Bookings = new List<CalendarBookingModel>(),
+                    PreparationTimes = new List<PreparationTimesModel>()
                 };
 
-                foreach (var booking in await _bookingRepository.GetBookings())
+                foreach (var booking in await bookings)
                 {
-                    if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
+                    if (booking.Start <= date.Date && 
+                        booking.Start.AddDays(booking.Nights) > date.Date)
                     {
-                        date.Bookings.Add(new CalendarBookingModel { Id = booking.Id });
+                        date.Bookings.Add(new CalendarBookingModel { Id = booking.Id, Unit = booking.Unit });
+                    }
+                    else if (booking.Start <= date.Date &&
+                             booking.Start.AddDays(booking.Nights + await rentalPreparationTimeInDays) > date.Date)
+                    {
+                        date.Date = booking.Start.AddDays(night);
+                        date.PreparationTimes.Add(new PreparationTimesModel { Unit = booking.Unit });
                     }
                 }
 

@@ -27,7 +27,7 @@ namespace VacationalRental.Domain.Services
         public async Task<(InsertNewBookingStatus, int)> InsertNewBooking(BookingEntity bookingEntity)
         {
             var rentalUnits = await _rentalsRepository.GetRentalUnits(bookingEntity.RentalId);
-            var bookings = await _bookingsRepository.GetBookings();
+            var bookings = await _bookingsRepository.GetBookinByRentalId(bookingEntity.RentalId);
 
             for (var i = 0; i < bookingEntity.Nights; i++)
             {
@@ -48,6 +48,10 @@ namespace VacationalRental.Domain.Services
                 //if (count >= _rentals[bookingEntity.RentalId].Units)
                 //    return Ok("Not available");
             }
+
+            var lastUnit = await _bookingsRepository.GetLastUnit(bookingEntity.RentalId);
+            lastUnit++;
+            bookingEntity.Unit = lastUnit;
 
             var bookingId = await _bookingsRepository.InsertBooking(bookingEntity);
             if (bookingId <= 0)

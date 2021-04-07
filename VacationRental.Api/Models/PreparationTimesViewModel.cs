@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace VacationalRental.Domain.Models
+namespace VacationRental.Api.Models
 {
-    public class CalendarBookingModel
+    public class PreparationTimesViewModel
     {
-        public int Id { get; set; }
         public int Unit { get; set; }
     }
 }

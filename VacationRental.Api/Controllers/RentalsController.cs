@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationalRental.Domain.Business;
 using VacationalRental.Domain.Entities;
+using VacationalRental.Domain.Enums;
 using VacationalRental.Domain.Interfaces.Repositories;
 using VacationalRental.Domain.Interfaces.Services;
 using VacationRental.Api.Models;
@@ -16,16 +17,15 @@ namespace VacationRental.Api.Controllers
     public class RentalsController : ControllerBase
     {
         //private readonly IDictionary<int, RentalViewModel> _rentals;
-        //We call the repository and not a service because we don't have any business logic in the process
-        //in this case we get a single object instantiated and not two of them
-        private readonly IRentalsRepository _rentalsRepository;
+        
+        private readonly IRentalService _rentalsService;
 
         public RentalsController(
             //IDictionary<int, RentalViewModel> rentals,
-            IRentalsRepository rentalsRepository)
+            IRentalService rentalsService)
         {
             //_rentals = rentals;
-            _rentalsRepository = rentalsRepository;
+            _rentalsService = rentalsService;
         }
 
         [HttpGet]
@@ -34,11 +34,11 @@ namespace VacationRental.Api.Controllers
         {
             try
             {
-                if (!await _rentalsRepository.RentalExists(rentalId))
+                if (!await _rentalsService.RentalExists(rentalId))
                     return NotFound("Rental not found");
                 //throw new ApplicationException("Rental not found");
 
-                var rental = await _rentalsRepository.GetRentalById(rentalId);
+                var rental = await _rentalsService.GetRentalById(rentalId);
 
                 return new RentalViewModel
                 {
@@ -70,16 +70,25 @@ namespace VacationRental.Api.Controllers
 
                 //return key;
 
-                var rentalId = await _rentalsRepository.InsertNewRentalObtainRentalId(
+                var rentalInfo = await _rentalsService.InsertNewRentalObtainRentalId(
                     new RentalEntity
                     {
-                        Units = model.Units
+                        Units = model.Units,
+                        PreprationTimeInDays = model.PreparationTimeInDays
                     });
 
-                if (rentalId <= 0)
-                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                //if (rentalId.Item1 == InsertNewRentalStatus.PreparationDaysHigherThanUnits)
+                //    return BadRequest($"{nameof(RentalBindingModel.PreparationTimeInDays)} can´t be higher than {nameof(RentalBindingModel.Units)}");
 
-                return rentalId;
+                switch (rentalInfo.Item1)
+                {
+                    case InsertNewRentalStatus.InsertDbNoRowsAffected:
+                        return Ok("Booking not added, try again, if persist contact technical support");
+                    case InsertNewRentalStatus.OK:
+                        return Ok(rentalInfo.Item2);
+                    default:
+                        throw new InvalidOperationException($"{nameof(InsertNewRentalStatus)}: Not expected or implemented");
+                }
             }
             catch (Exception)
             {

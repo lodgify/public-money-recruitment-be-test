@@ -48,8 +48,14 @@ namespace VacationRental.Api.Controllers
 
                 return new CalendarViewModel
                 {
-                    Dates = calendarModel.Dates.Select(a => new CalendarDateViewModel { Bookings = a.Bookings.Select(b => new CalendarBookingViewModel { Id = b.Id }).ToList(), Date = a.Date }).ToList(),
-                    RentalId = calendarModel.RentalId
+                    RentalId = calendarModel.RentalId,
+                    Dates = calendarModel.Dates.Select(a => 
+                    new CalendarDateViewModel 
+                    { 
+                        Bookings = a.Bookings.Select(b => new CalendarBookingViewModel { Id = b.Id, Unit = b.Unit }).ToList(),
+                        Date = a.Date,
+                        PreparationTime = a.PreparationTimes.Select(b => new PreparationTimesViewModel { Unit = b.Unit }).ToList()
+                    }).ToList(),
                 };
 
                 //var result = new CalendarViewModel

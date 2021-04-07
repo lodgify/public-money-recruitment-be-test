@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace VacationalRental.Domain.Models
 {
-    public class CalendarBookingModel
+    public class PreparationTimesModel
     {
-        public int Id { get; set; }
         public int Unit { get; set; }
     }
 }

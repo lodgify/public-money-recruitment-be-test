@@ -65,8 +65,8 @@ namespace VacationRental.Api.Controllers
                 if (model == null || !ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (model.Nights <= 0)
-                    return BadRequest("Nigts must be positive");
+                //if (model.Nights <= 0)
+                //    return BadRequest("Nigts must be positive");
                 //throw new ApplicationException();
 
                 if (!await _rentalsRepository.RentalExists(model.RentalId))

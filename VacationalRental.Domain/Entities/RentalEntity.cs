@@ -13,6 +13,9 @@ namespace VacationalRental.Domain.Entities
         public int Id { get; set; }
         public int Units { get; set; }
 
+        public int PreprationTimeInDays { get; set; }
+
+        //Only works for database provider not in memory mode
         public byte[] RowVersion { get; set; }
     }
 }
