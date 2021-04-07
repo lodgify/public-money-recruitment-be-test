@@ -18,5 +18,7 @@ namespace VacationalRental.Domain.Interfaces.Repositories
         Task<RentalEntity> GetRentalById(int rentalId);
 
         Task<bool> RentalExists(int rentalId);
+
+        Task<int> UpdateRental(RentalEntity rentalEntity);
     }
 }

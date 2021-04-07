@@ -52,7 +52,7 @@ namespace VacationRental.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.EnvironmentName == "Development")
+            if (env.EnvironmentName == Configuration["ASPNETCORE_ENVIRONMENT"])
             {
                 app.UseDeveloperExceptionPage();
             }

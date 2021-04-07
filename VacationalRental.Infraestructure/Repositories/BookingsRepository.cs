@@ -40,6 +40,8 @@ namespace VacationalRental.Infrastructure.Repositories
 
             await _vacationalRentalDbContext.SaveChangesAsync();
 
+            _vacationalRentalDbContext.Entry(bookingEntity).State = EntityState.Detached;
+
             return bookingEntity.Id;
         }
 

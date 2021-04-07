@@ -39,17 +39,33 @@ namespace VacationalRental.Infrastructure.Repositories
 
             await _vacationalRentalDbContext.SaveChangesAsync();
 
+            _vacationalRentalDbContext.Entry(rentalEntity).State = EntityState.Detached;
+
             return rentalEntity.Id;
         }
 
         public async Task<RentalEntity> GetRentalById(int rentalId)
         {
-            return await _vacationalRentalDbContext.RentalEntities.FindAsync(rentalId);
+            var rentalEntity = await _vacationalRentalDbContext.RentalEntities.FindAsync(rentalId);
+
+            _vacationalRentalDbContext.Entry(rentalEntity).State = EntityState.Detached;
+
+            return rentalEntity;
         }
 
         public async Task<bool> RentalExists(int rentalId)
         {
             return await _vacationalRentalDbContext.RentalEntities.AnyAsync(a => a.Id == rentalId);
+        }
+
+        public async Task<int> UpdateRental(RentalEntity rentalEntity)
+        {
+            _vacationalRentalDbContext.Update(rentalEntity);
+            var rowsAffected = await _vacationalRentalDbContext.SaveChangesAsync();
+
+            _vacationalRentalDbContext.Entry(rentalEntity).State = EntityState.Detached;
+
+            return rowsAffected;
         }
     }
 }

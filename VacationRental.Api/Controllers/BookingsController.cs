@@ -58,7 +58,7 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post(BookingBindingModel model)
+        public async Task<ActionResult<int>> Post([FromBody] BookingBindingModel model)
         {
             try
             {
@@ -83,17 +83,13 @@ namespace VacationRental.Api.Controllers
                         Start = model.Start
                 });
 
-                switch (bookingInfo.Item1)
+                return bookingInfo.Item1 switch
                 {
-                    case InsertNewBookingStatus.NotAvailable:
-                        return Ok("Not available");
-                    case InsertNewBookingStatus.InsertDbNoRowsAffected:
-                        return Ok("Booking not added, try again, if persist contact technical support");
-                    case InsertNewBookingStatus.OK:
-                        return Ok(bookingInfo.Item2);
-                    default:
-                        throw new InvalidOperationException($"{nameof(InsertNewBookingStatus)}: Not expected or implemented");
-                }
+                    InsertNewBookingStatus.NotAvailable => BadRequest("Not available"),
+                    InsertNewBookingStatus.InsertDbNoRowsAffected => BadRequest("Booking not added, try again, if persist contact technical support"),
+                    InsertNewBookingStatus.OK => Ok(new { id = bookingInfo.Item2 }),
+                    _ => throw new InvalidOperationException($"{nameof(InsertNewBookingStatus)}: Not expected or implemented"),
+                };
 
                 //for (var i = 0; i < model.Nights; i++)
                 //{

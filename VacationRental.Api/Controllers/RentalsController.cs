@@ -53,7 +53,7 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post(RentalBindingModel model)
+        public async Task<ActionResult<int>> Post([FromBody] RentalBindingModel model)
         {
             try
             {
@@ -80,15 +80,12 @@ namespace VacationRental.Api.Controllers
                 //if (rentalId.Item1 == InsertNewRentalStatus.PreparationDaysHigherThanUnits)
                 //    return BadRequest($"{nameof(RentalBindingModel.PreparationTimeInDays)} can´t be higher than {nameof(RentalBindingModel.Units)}");
 
-                switch (rentalInfo.Item1)
+                return rentalInfo.Item1 switch
                 {
-                    case InsertNewRentalStatus.InsertDbNoRowsAffected:
-                        return Ok("Booking not added, try again, if persist contact technical support");
-                    case InsertNewRentalStatus.OK:
-                        return Ok(rentalInfo.Item2);
-                    default:
-                        throw new InvalidOperationException($"{nameof(InsertNewRentalStatus)}: Not expected or implemented");
-                }
+                    InsertUpdateNewRentalStatus.InsertUpdateDbNoRowsAffected => BadRequest("Booking not added, try again, if persist contact technical support"),
+                    InsertUpdateNewRentalStatus.OK => Ok(new { id = rentalInfo.Item2 }),
+                    _ => throw new InvalidOperationException($"{nameof(InsertUpdateNewRentalStatus)}: Not expected or implemented"),
+                };
             }
             catch (Exception)
             {
