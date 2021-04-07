@@ -34,17 +34,12 @@ namespace VacationRental.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vacation rental information", Version = "v1" });
             });
 
-            //services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new Info { Title = "Vacation rental information", Version = "v1" }));
-
             services.AddScoped<IBookingsRepository, BookingsRepository>();
             services.AddScoped<IRentalsRepository, RentalsRepository>();
 
             services.AddTransient<IBookingService, BookingService>();
             services.AddTransient<ICalendarService, CalendarService>();
             services.AddTransient<IRentalService, RentalService>();
-
-            //services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
-            //services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
