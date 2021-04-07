@@ -50,26 +50,60 @@ namespace VacationalRental.Domain.Business
         public async Task<(InsertUpdateNewRentalStatus, VacationalRentalModel)> UpdateRental(VacationalRentalModel vacationalRentalModel)
         {
             if (!await RentalExists(vacationalRentalModel.RentalId))
-                return (InsertUpdateNewRentalStatus.RentalNotExists, null); 
+                return (InsertUpdateNewRentalStatus.RentalNotExists, null);
 
             var bookings = await _bookingRepository.GetBookinByRentalId(vacationalRentalModel.RentalId);
             var rentalEntity = await _rentalsRepository.GetRentalById(vacationalRentalModel.RentalId);
 
-            var currentUnitsBooked = 0;
-            foreach (var booking in bookings)
-            {
-                var lastDateTimeBooking = booking.Start.AddDays(booking.Nights + rentalEntity.PreprationTimeInDays);
-
-                if (lastDateTimeBooking >= DateTime.Now.Date)
-                    currentUnitsBooked++;
-            }
-
-            if (currentUnitsBooked > vacationalRentalModel.Units)
+            if (CheckUnitsQuantityBookedAlready(bookings, rentalEntity, vacationalRentalModel.Units, out int currentUnitsBooked))
                 return (InsertUpdateNewRentalStatus.UnitsQuantityBookedAlready, new VacationalRentalModel
                 {
                     UnitsBooked = currentUnitsBooked
                 });
 
+            if (CheckBookingDatesOverlap(bookings, rentalEntity))
+                return (InsertUpdateNewRentalStatus.DatesOverlapping, null);
+
+            var rowsAffected = await _rentalsRepository.UpdateRental(
+                new RentalEntity
+                {
+                    Id = vacationalRentalModel.RentalId,
+                    PreprationTimeInDays = vacationalRentalModel.PreparationTimeInDays,
+                    Units = vacationalRentalModel.Units
+                });
+
+            if (rowsAffected <= 0)
+                return (InsertUpdateNewRentalStatus.InsertUpdateDbNoRowsAffected, null);
+
+            var rentalEntityResult = await GetRentalById(vacationalRentalModel.RentalId);
+            var vacationRentalModelResult = new VacationalRentalModel
+            {
+                PreparationTimeInDays = rentalEntityResult.PreprationTimeInDays,
+                RentalId = rentalEntityResult.Id,
+                Units = rentalEntityResult.Units
+            };
+
+            return (InsertUpdateNewRentalStatus.OK, vacationRentalModelResult);
+        }
+
+        private bool CheckUnitsQuantityBookedAlready(IEnumerable<BookingEntity> bookings, RentalEntity rentalEntity, int newUnitsToUpdate, out int currentUnitsBooked)
+        {
+            var currentUnitsBookedResult = 0;
+            foreach (var booking in bookings)
+            {
+                var lastDateTimeBooking = booking.Start.AddDays(booking.Nights + rentalEntity.PreprationTimeInDays);
+
+                if (lastDateTimeBooking >= DateTime.Now.Date)
+                    currentUnitsBookedResult++;
+            }
+
+            currentUnitsBooked = currentUnitsBookedResult;
+
+            return currentUnitsBooked > newUnitsToUpdate;
+        }
+
+        private bool CheckBookingDatesOverlap(IEnumerable<BookingEntity> bookings, RentalEntity rentalEntity)
+        {
             var listDates = new List<BookingDateStartEndModel>();
             foreach (var booking in bookings)
             {
@@ -96,29 +130,7 @@ namespace VacationalRental.Domain.Business
                 }
             }
 
-            if (datesOverlapping)
-                return (InsertUpdateNewRentalStatus.DatesOverlapping, null);
-
-            var rowsAffected = await _rentalsRepository.UpdateRental(
-                new RentalEntity
-                {
-                    Id = vacationalRentalModel.RentalId,
-                    PreprationTimeInDays = vacationalRentalModel.PreparationTimeInDays,
-                    Units = vacationalRentalModel.Units
-                });
-
-            var rentalEntityResult = await GetRentalById(vacationalRentalModel.RentalId);
-            var vacationRentalModelResult = new VacationalRentalModel
-            {
-                PreparationTimeInDays = rentalEntityResult.PreprationTimeInDays,
-                RentalId = rentalEntityResult.Id,
-                Units = rentalEntityResult.Units
-            };
-
-            if (rowsAffected <= 0)
-                return (InsertUpdateNewRentalStatus.InsertUpdateDbNoRowsAffected, vacationRentalModelResult);
-
-            return (InsertUpdateNewRentalStatus.OK, vacationRentalModelResult);
+            return datesOverlapping;
         }
     }
 }
