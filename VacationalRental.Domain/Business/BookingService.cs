@@ -71,9 +71,6 @@ namespace VacationalRental.Domain.Services
             if (bookingEntity.RentalId == 0)
                 throw new InvalidOperationException($"{nameof(bookingEntity.RentalId)} can't be 0");
 
-            if (bookingEntity.Unit == 0)
-                throw new InvalidOperationException($"{nameof(bookingEntity.Unit)} can't be 0");
-
             if (bookingEntity.Start == DateTime.MinValue)
                 throw new InvalidOperationException($"{nameof(bookingEntity.Start)} can't be {DateTime.MinValue}");
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using VacationalRental.Domain.Entities;
@@ -13,16 +14,15 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        //private readonly IDictionary<int, RentalViewModel> _rentals;
-        
         private readonly IRentalService _rentalsService;
+        private readonly ILogger<RentalsController> _logger;
 
         public RentalsController(
-            //IDictionary<int, RentalViewModel> rentals,
-            IRentalService rentalsService)
+            IRentalService rentalsService,
+            ILogger<RentalsController> logger)
         {
-            //_rentals = rentals;
             _rentalsService = rentalsService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -33,7 +33,6 @@ namespace VacationRental.Api.Controllers
             {
                 if (!await _rentalsService.RentalExists(rentalId))
                     return NotFound("Rental not found");
-                //throw new ApplicationException("Rental not found");
 
                 var rental = await _rentalsService.GetRentalById(rentalId);
 
@@ -43,8 +42,10 @@ namespace VacationRental.Api.Controllers
                     Units = rental.Units
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, nameof(Get));
+
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -71,8 +72,9 @@ namespace VacationRental.Api.Controllers
                     _ => throw new InvalidOperationException($"{nameof(InsertUpdateNewRentalStatus)}: Not expected or implemented"),
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, nameof(Post));
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

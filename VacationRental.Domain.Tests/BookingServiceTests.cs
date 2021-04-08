@@ -165,20 +165,6 @@ namespace VacationRental.Domain.Tests
         }
 
         [Fact]
-        public async Task InsertNewBooking_InvalidOperationException_UnitZero()
-        {
-            var rentalRepositoryMock = new Mock<IRentalsRepository>();
-            var bookingRepositoryMock = new Mock<IBookingsRepository>();
-
-            var bookingService = new BookingService(bookingRepositoryMock.Object, rentalRepositoryMock.Object);
-
-            var exception = await Record.ExceptionAsync(async () => await bookingService.InsertNewBooking(new BookingEntity { RentalId = 1, Unit = 0 }));
-
-            Assert.NotNull(exception);
-            Assert.IsType<InvalidOperationException>(exception);
-        }
-
-        [Fact]
         public async Task InsertNewBooking_InvalidOperationException_DateTimeStartMinimumValue()
         {
             var rentalRepositoryMock = new Mock<IRentalsRepository>();

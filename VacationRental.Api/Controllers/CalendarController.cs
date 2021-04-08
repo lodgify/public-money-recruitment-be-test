@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,21 +14,18 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class CalendarController : ControllerBase
     {
-        //private readonly IDictionary<int, RentalViewModel> _rentals;
-        //private readonly IDictionary<int, BookingViewModel> _bookings;
         private readonly IRentalsRepository _rentalsRepository;
         private readonly ICalendarService _calendarService;
+        private readonly ILogger<CalendarController> _logger;
 
         public CalendarController(
-            //IDictionary<int, RentalViewModel> rentals,
-            //IDictionary<int, BookingViewModel> bookings,
             IRentalsRepository rentalsRepository,
-            ICalendarService calendarService)
+            ICalendarService calendarService,
+            ILogger<CalendarController> logger)
         {
-            //_rentals = rentals;
-            //_bookings = bookings;
             _rentalsRepository = rentalsRepository;
             _calendarService = calendarService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -60,6 +58,8 @@ namespace VacationRental.Api.Controllers
             }
             catch (Exception ex) 
             {
+                _logger.LogError(ex, nameof(Get));
+
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

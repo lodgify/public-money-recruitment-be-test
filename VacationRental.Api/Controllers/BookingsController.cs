@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using VacationalRental.Domain.Enums;
 using VacationalRental.Domain.Interfaces.Repositories;
 using VacationalRental.Domain.Interfaces.Services;
@@ -16,13 +17,16 @@ namespace VacationRental.Api.Controllers
     {
         private readonly IBookingService _bookingService;
         private readonly IRentalsRepository _rentalsRepository;
+        private readonly ILogger<BookingsController> _logger;
 
         public BookingsController(
             IBookingService bookingService,
-            IRentalsRepository rentalsRepository)
+            IRentalsRepository rentalsRepository,
+            ILogger<BookingsController> logger)
         {
             _bookingService = bookingService;
             _rentalsRepository = rentalsRepository;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -44,8 +48,9 @@ namespace VacationRental.Api.Controllers
                     Start = bookingEntity.Start
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, nameof(Get));
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -77,8 +82,10 @@ namespace VacationRental.Api.Controllers
                     _ => throw new InvalidOperationException($"{nameof(InsertNewBookingStatus)}: Not expected or implemented"),
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, nameof(Post));
+
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
