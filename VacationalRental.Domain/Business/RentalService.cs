@@ -111,12 +111,15 @@ namespace VacationalRental.Domain.Business
                 {
                     Start = booking.Start,
                     End = booking.Start.AddDays(booking.Nights + rentalEntity.PreprationTimeInDays)
-                }); ;
+                });
             }
 
             var datesOverlapping = false;
             for (int date = 0; date < listDates.Count; date++)
             {
+                if (datesOverlapping)
+                    break;
+                
                 for (int dateToCheck = 0; dateToCheck < listDates.Count; dateToCheck++)
                 {
                     if (date == dateToCheck)

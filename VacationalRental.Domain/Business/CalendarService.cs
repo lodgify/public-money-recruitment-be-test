@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VacationalRental.Domain.Interfaces.Repositories;
@@ -21,6 +22,8 @@ namespace VacationalRental.Domain.Business
 
         public async Task<CalendarModel> GetRentalCalendarByNights(int rentalId, DateTime start, int nights)
         {
+            GetRentalCalendarByNightsValidations(rentalId, start, nights);
+
             var result = new CalendarModel
             {
                 RentalId = rentalId,
@@ -41,15 +44,21 @@ namespace VacationalRental.Domain.Business
 
                 foreach (var booking in await bookings)
                 {
-                    if (booking.Start <= date.Date && 
-                        booking.Start.AddDays(booking.Nights) > date.Date)
+                    var minValueDate = booking.Start;
+                    var maxValueDate = booking.Start.AddDays(booking.Nights - 1);
+                    var maxValueDateWithPrepDays = booking.Start.AddDays(booking.Nights + await rentalPreparationTimeInDays);
+
+                    if (minValueDate <= date.Date &&
+                        maxValueDate >= date.Date)
                     {
                         date.Bookings.Add(new CalendarBookingModel { Id = booking.Id, Unit = booking.Unit });
                     }
-                    else if (booking.Start <= date.Date &&
-                             booking.Start.AddDays(booking.Nights + await rentalPreparationTimeInDays) > date.Date)
+                    else if (maxValueDate < date.Date && maxValueDate < maxValueDateWithPrepDays && date.Date < maxValueDateWithPrepDays)
                     {
-                        date.Date = booking.Start.AddDays(night);
+                        var bookingsResult = await bookings;
+                        var minDate = bookingsResult.Min(a => a.Start)/*.AddDays(night)*/;
+
+                        date.Date = minDate.AddDays(night);
                         date.PreparationTimes.Add(new PreparationTimesModel { Unit = booking.Unit });
                     }
                 }
@@ -58,6 +67,18 @@ namespace VacationalRental.Domain.Business
             }
 
             return result;
+        }
+
+        private void GetRentalCalendarByNightsValidations(int rentalId, DateTime start, int nights)
+        {
+            if (rentalId == 0)
+                throw new InvalidOperationException($"{nameof(rentalId)} can't be 0");
+
+            if (start == DateTime.MinValue)
+                throw new InvalidOperationException($"{nameof(start)} can't be {DateTime.MinValue}");
+
+            if (nights == 0)
+                throw new InvalidOperationException($"{nameof(nights)} can't be 0");
         }
     }
 }

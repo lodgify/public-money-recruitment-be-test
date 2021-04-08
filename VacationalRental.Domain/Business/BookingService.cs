@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using VacationalRental.Domain.Entities;
 using VacationalRental.Domain.Enums;
 using VacationalRental.Domain.Interfaces.Repositories;
@@ -21,6 +22,8 @@ namespace VacationalRental.Domain.Services
 
         public async Task<(InsertNewBookingStatus, int)> InsertNewBooking(BookingEntity bookingEntity)
         {
+            InsertNewBookingValidations(bookingEntity);
+
             var rentalUnits = await _rentalsRepository.GetRentalUnits(bookingEntity.RentalId);
             var bookings = await _bookingsRepository.GetBookinByRentalId(bookingEntity.RentalId);
 
@@ -61,6 +64,18 @@ namespace VacationalRental.Domain.Services
         public async Task<bool> BookingExists(int bookingId)
         {
             return await _bookingsRepository.BookingExists(bookingId);
+        }
+
+        private void InsertNewBookingValidations(BookingEntity bookingEntity)
+        {
+            if (bookingEntity.RentalId == 0)
+                throw new InvalidOperationException($"{nameof(bookingEntity.RentalId)} can't be 0");
+
+            if (bookingEntity.Unit == 0)
+                throw new InvalidOperationException($"{nameof(bookingEntity.Unit)} can't be 0");
+
+            if (bookingEntity.Start == DateTime.MinValue)
+                throw new InvalidOperationException($"{nameof(bookingEntity.Start)} can't be {DateTime.MinValue}");
         }
     }
 }
