@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using VacationRental.Api.Filters.Common;
+using VacationRental.Api.Filters.Rentals;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Controllers
@@ -21,13 +23,10 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpGet]
+        [ZeroFilter("nights", "rentalId")]
+        [RentalNotFountFilter("rentalId")]
         public CalendarViewModel Get(int rentalId, DateTime start, int nights)
         {
-            if (nights < 0)
-                throw new ApplicationException("Nights must be positive");
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
             var result = new CalendarViewModel 
             {
                 RentalId = rentalId,

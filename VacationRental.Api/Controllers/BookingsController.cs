@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using VacationRental.Api.Filters.Common;
+using VacationRental.Api.Filters.Booking;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Controllers
@@ -22,22 +24,16 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{bookingId:int}")]
+        [BookingNotFountFilter("bookingId")]
         public BookingViewModel Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
-
             return _bookings[bookingId];
         }
 
         [HttpPost]
+        [BookingBindingModelFilter]
         public ResourceIdViewModel Post(BookingBindingModel model)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
-
             for (var i = 0; i < model.Nights; i++)
             {
                 var count = 0;
@@ -46,7 +42,8 @@ namespace VacationRental.Api.Controllers
                     if (booking.RentalId == model.RentalId
                         && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
                         || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
+                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights))
+                        )
                     {
                         count++;
                     }

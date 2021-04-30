@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using VacationRental.Api.Filters.Common;
+using VacationRental.Api.Filters.Rentals;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Controllers
@@ -18,11 +20,10 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{rentalId:int}")]
+        [ZeroFilter("rentalId")]
+        [RentalNotFountFilter("rentalId")]
         public RentalViewModel Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
             return _rentals[rentalId];
         }
 
