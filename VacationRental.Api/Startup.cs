@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using VacationRental.Api.Models;
+using VacationRental.Api.Models.Common;
 
 namespace VacationRental.Api
 {
@@ -36,7 +40,34 @@ namespace VacationRental.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseExceptionHandler(errorApp => 
+            {
+                //TODO pass it all to class
+                errorApp.Run(async context => 
+                {
+                    ExceptionViewModel exceptionModel;
+                    var exception = context.Features.Get<IExceptionHandlerFeature>();
+                    Type exceptionType = exception.Error.GetType();
+                    context.Response.ContentType = "application/json";
+#if DEBUG
+                    string infoLink = $"{context.Request.Scheme}://{context.Request.Host.Host}:{context.Request.Host.Port}/swagger/index.html";
+#else
+                    string infoLink = $"https://github.com/lodgify/public-money-recruitment-be-test"
+#endif
 
+                    if (exceptionType.Name == "ApplicationException")
+                    {
+                        context.Response.StatusCode = 422;
+                        exceptionModel = new ExceptionViewModel(exception.Error.Message, infoLink);
+                    }
+                    else 
+                    {
+                        context.Response.StatusCode = 500;
+                        exceptionModel = new ExceptionViewModel("Ooops. Something went wrong.", infoLink);
+                    }
+                    await context.Response.WriteAsync(exceptionModel.ConvertToJson(), System.Text.Encoding.UTF8);
+                });
+            });
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(opts => opts.SwaggerEndpoint("/swagger/v1/swagger.json", "VacationRental v1"));
