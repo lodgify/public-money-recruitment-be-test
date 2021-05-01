@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
 using VacationRental.Api.Models;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace VacationRental.Api.Filters.Rentals
 {
@@ -19,13 +17,12 @@ namespace VacationRental.Api.Filters.Rentals
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var rentals = context.HttpContext.RequestServices.GetService<IDictionary<int, RentalViewModel>>();
             int rentalId = (int)context.ActionArguments[_key];
+            var rentals = context.HttpContext.RequestServices.GetService<IDictionary<int, RentalViewModel>>();
 
             if(!rentals.ContainsKey(rentalId))
                 throw new ApplicationException("Rental not found");

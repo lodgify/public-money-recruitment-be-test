@@ -7,6 +7,12 @@ using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Controllers
 {
+    /* 
+        Since we don't have api/v1/~VACATIONRENTAL~/rentals endpoint and 
+        modifying the API routes wasn't allowed I'll modify `api/v1/rentals`
+     */
+
+
     [Route("api/v1/rentals")]
     [ApiController]
     public class RentalsController : ControllerBase
@@ -18,16 +24,8 @@ namespace VacationRental.Api.Controllers
             _rentals = rentals;
         }
 
-        [HttpGet]
-        [Route("{rentalId:int}")]
-        [ZeroFilter("rentalId")]
-        [RentalNotFountFilter("rentalId")]
-        public RentalViewModel Get(int rentalId)
-        {
-            return _rentals[rentalId];
-        }
-
         [HttpPost]
+        [RentalBindingModelFilter]
         public ResourceIdViewModel Post(RentalBindingModel model)
         {
             var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
@@ -35,10 +33,35 @@ namespace VacationRental.Api.Controllers
             _rentals.Add(key.Id, new RentalViewModel
             {
                 Id = key.Id,
-                Units = model.Units
+                Units = model.Units,
+                PreparationTimeInDays = model.PreparationTimeInDays
             });
 
             return key;
+        }
+
+
+        [HttpGet("{rentalId:int}")]
+        [ZeroFilter("rentalId")] 
+        [RentalNotFountFilter("rentalId")]
+        public RentalViewModel Get(int rentalId)
+        {
+            return _rentals[rentalId];
+        }
+
+        [HttpPut("{rentalId:int}")]
+        [ZeroFilter("rentalId"), RentalNotFountFilter("rentalId")]
+        [RentalBindingModelFilter]
+        public RentalViewModel Put(int rentalId, [FromBody] RentalBindingModel model) 
+        {
+            int id = _rentals[rentalId].Id;
+            _rentals[rentalId] = new RentalViewModel 
+            {
+                Id = id,
+                Units = model.Units, 
+                PreparationTimeInDays = model.PreparationTimeInDays
+            };
+            return _rentals[rentalId];
         }
     }
 }

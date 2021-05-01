@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Filters.Common;
@@ -25,6 +26,7 @@ namespace VacationRental.Api.Controllers
         [HttpGet]
         [Route("{bookingId:int}")]
         [BookingNotFountFilter("bookingId")]
+        [ZeroFilter("bookingId")]
         public BookingViewModel Get(int bookingId)
         {
             return _bookings[bookingId];
@@ -34,25 +36,6 @@ namespace VacationRental.Api.Controllers
         [BookingBindingModelFilter]
         public ResourceIdViewModel Post(BookingBindingModel model)
         {
-            for (var i = 0; i < model.Nights; i++)
-            {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights))
-                        )
-                    {
-                        count++;
-                    }
-                }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
-            }
-
-
             var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
 
             _bookings.Add(key.Id, new BookingViewModel

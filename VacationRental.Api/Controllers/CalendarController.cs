@@ -23,8 +23,7 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpGet]
-        [ZeroFilter("nights", "rentalId")]
-        [RentalNotFountFilter("rentalId")]
+        [ZeroFilter("nights", "rentalId"), RentalNotFountFilter("rentalId")]
         public CalendarViewModel Get(int rentalId, DateTime start, int nights)
         {
             var result = new CalendarViewModel 

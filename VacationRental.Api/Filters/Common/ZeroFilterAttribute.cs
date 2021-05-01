@@ -21,9 +21,11 @@ namespace VacationRental.Api.Filters.Common
         {
             foreach (string key in _keys) 
             {
-                int rentalId = (int)context.ActionArguments[key];
+                int? rentalId = (int?)context.ActionArguments[key];
+                if(rentalId == null)
+                    throw new ApplicationException($"{key} couldn't be NULL");
                 if (rentalId <= 0)
-                    throw new ApplicationException($"{key} couldn't be equal or less zero");
+                    throw new ApplicationException($"{key} couldn't be zero or less");
             }
         }
     }

@@ -42,7 +42,7 @@ namespace VacationRental.Api
             }
             app.UseExceptionHandler(errorApp => 
             {
-                //TODO pass it all to class
+                //TODO pass it all into devided class
                 errorApp.Run(async context => 
                 {
                     ExceptionViewModel exceptionModel;
@@ -54,7 +54,6 @@ namespace VacationRental.Api
 #else
                     string infoLink = $"https://github.com/lodgify/public-money-recruitment-be-test"
 #endif
-
                     if (exceptionType.Name == "ApplicationException")
                     {
                         context.Response.StatusCode = 422;
