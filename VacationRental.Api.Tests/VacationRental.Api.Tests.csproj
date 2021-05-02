@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\VacationRental.Api.ApplicationErrors\VacationRental.Api.ApplicationErrors.csproj" />
     <ProjectReference Include="..\VacationRental.Api\VacationRental.Api.csproj" />
   </ItemGroup>
 

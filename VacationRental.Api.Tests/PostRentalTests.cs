@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
 using VacationRental.Api.Models.Common;
+using VacationRental.Api.Tests.Helpers;
+using Code = VacationRental.Api.Tests.Helpers.Common;
 using Error = VacationRental.Api.ApplicationErrors.ErrorMessages;
 
 
@@ -21,67 +23,37 @@ namespace VacationRental.Api.Tests
         }
 
         [Fact]
-        public async Task GivenCompleteRequest_WhenPostRental_ThenAGetReturnsTheCreatedRental()
+        public async Task RegisterRental_CompareRequest_To_Responce_Parameters_AwaitSuccess()
         {
             var request = new RentalBindingModel
             {
-                Units = 25
+                Units = 25, 
+                PreparationTimeInDays = 10
             };
 
-            ResourceIdViewModel postResult;
-            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-            {
-                Assert.True(postResponse.IsSuccessStatusCode);
-                postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
-            }
-
-            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
-            {
-                Assert.True(getResponse.IsSuccessStatusCode);
-
-                var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(request.Units, getResult.Units);
-            }
+            var postRental = await HttpClientHelper.Post<ResourceIdViewModel>("/api/v1/rentals", request, _client, Code.OK );
+            var getRental = await HttpClientHelper.Get<RentalViewModel>($"/api/v1/rentals/{postRental.Id}", _client, Code.OK );
+            
+            Assert.Equal(request.Units, getRental.Units);
+            Assert.Equal(request.PreparationTimeInDays, getRental.PreparationTimeInDays);
         }
 
         [Fact]
         public async Task AttemptCreateRental_WithZeroUnits_AwaitFail() 
         {
-            var request = new RentalBindingModel
-            {
-                Units = 0
-            };
-            using (var response = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-            {
-                Assert.False(response.IsSuccessStatusCode);
-                Assert.True(response.StatusCode == HttpStatusCode.UnprocessableEntity);
+            var request = new RentalBindingModel {  Units = 0 };
 
-                string respMessage = await response.Content.ReadAsStringAsync();
-                Assert.NotEmpty(respMessage);
-
-                var errorModel = JsonConvert.DeserializeObject<ExceptionViewModel>(respMessage);
-                Assert.True(errorModel.Message == Error.RentalUnitsZero);
-            }
+            var postRental = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/rentals", request, _client, Code.Unprocessable);
+            Assert.True(postRental.Message == Error.RentalUnitsZero);
         }
 
         [Fact]
         public async Task AttemptCreateRental_LessZeroUnits_AwaitFail()
         {
-            var request = new RentalBindingModel
-            {
-                Units = -10
-            };
-            using (var response = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-            {
-                Assert.False(response.IsSuccessStatusCode);
-                Assert.True(response.StatusCode == HttpStatusCode.UnprocessableEntity);
+            var request = new RentalBindingModel { Units = -10 };
 
-                string respMessage = await response.Content.ReadAsStringAsync();
-                Assert.NotEmpty(respMessage);
-
-                var errorModel = JsonConvert.DeserializeObject<ExceptionViewModel>(respMessage);
-                Assert.True(errorModel.Message == Error.RentalUnitsZero);
-            }
+            var postRental = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/rentals", request, _client, Code.Unprocessable);
+            Assert.True(postRental.Message == Error.RentalUnitsZero);
         }
 
         [Fact]
@@ -92,17 +64,8 @@ namespace VacationRental.Api.Tests
                 Units = 10, 
                 PreparationTimeInDays = -1
             };
-            using (var response = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-            {
-                Assert.False(response.IsSuccessStatusCode);
-                Assert.True(response.StatusCode == HttpStatusCode.UnprocessableEntity);
-
-                string respMessage = await response.Content.ReadAsStringAsync();
-                Assert.NotEmpty(respMessage);
-
-                var errorModel = JsonConvert.DeserializeObject<ExceptionViewModel>(respMessage);
-                Assert.True(errorModel.Message == Error.PreparationTimeLessZero);
-            }
+            var postRental = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/rentals", request, _client, Code.Unprocessable);
+            Assert.True(postRental.Message == Error.PreparationTimeLessZero);
         }
     }
 }
