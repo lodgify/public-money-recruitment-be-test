@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Filters.Common;
@@ -8,8 +9,8 @@ using VacationRental.Api.Models;
 namespace VacationRental.Api.Controllers
 {
     /* 
-        Since we don't have api/v1/~VACATIONRENTAL~/rentals endpoint and 
-        modifying the API routes wasn't allowed I'll modify `api/v1/rentals`
+        Since we don't have api/v1/~VACATIONRENTAL~/rentals endpoint and I should EXTEND something
+        I'll modify `api/v1/rentals`
      */
 
 
@@ -18,10 +19,14 @@ namespace VacationRental.Api.Controllers
     public class RentalsController : ControllerBase
     {
         private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IDictionary<int, BookingViewModel> _bookings;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(
+            IDictionary<int, RentalViewModel> rentals, 
+            IDictionary<int, BookingViewModel> bookings)
         {
             _rentals = rentals;
+            _bookings = bookings;
         }
 
         [HttpPost]
@@ -52,15 +57,19 @@ namespace VacationRental.Api.Controllers
         [HttpPut("{rentalId:int}")]
         [ZeroFilter("rentalId"), RentalNotFountFilter("rentalId")]
         [RentalBindingModelFilter]
+        [RentalPropertyChangedFilter("rentalId")]
         public RentalViewModel Put(int rentalId, [FromBody] RentalBindingModel model) 
         {
-            int id = _rentals[rentalId].Id;
-            _rentals[rentalId] = new RentalViewModel 
+            var rental = _rentals[rentalId];
+            rental.PreparationTimeInDays = model.PreparationTimeInDays;
+            rental.Units = model.Units;
+
+            var bookings = _bookings.Where(x => x.Value.RentalId == rental.Id).ToList();
+            bookings.ForEach(booking => 
             {
-                Id = id,
-                Units = model.Units, 
-                PreparationTimeInDays = model.PreparationTimeInDays
-            };
+                booking.Value.PreparationTimeInDays = model.PreparationTimeInDays;
+            });
+
             return _rentals[rentalId];
         }
     }

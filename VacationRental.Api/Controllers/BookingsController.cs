@@ -43,7 +43,8 @@ namespace VacationRental.Api.Controllers
                 Id = key.Id,
                 Nights = model.Nights,
                 RentalId = model.RentalId,
-                Start = model.Start.Date
+                Start = model.Start.Date, 
+                PreparationTimeInDays = _rentals[model.RentalId].PreparationTimeInDays
             });
 
             return key;

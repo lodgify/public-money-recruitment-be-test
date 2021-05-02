@@ -29,44 +29,38 @@ namespace VacationRental.Api.Filters.Booking
             if (!rentals.ContainsKey(request.RentalId))
                 throw new ApplicationException("Rental not found");
 
-            var bookings = context.HttpContext.RequestServices.GetService<IDictionary<int, BookingViewModel>>();
-            var currentRentalBookings = bookings
-                .Where(x => x.Value.RentalId == request.RentalId)
-                .ToList();
+            int rentalUnits = rentals[request.RentalId].Units;
+            int preparationTimeInDays = rentals[request.RentalId].PreparationTimeInDays;
             
-            int allRentalUnitsCount = rentals[request.RentalId].Units;
-            int allRentalBookingsCount = currentRentalBookings.Count();
-            int freeRental = allRentalUnitsCount - allRentalBookingsCount;
+            var bookings = context.HttpContext.RequestServices.GetService<IDictionary<int, BookingViewModel>>();
+            var rentalBookings = bookings.Where(x => x.Value.RentalId == request.RentalId).ToList();
+            
+            if (rentalUnits > rentalBookings.Count())
+                return;
 
             int occupiedRentalUnitsCount = 0;
-            if (freeRental == 0) 
+            foreach (var booking in rentalBookings)
             {
-                foreach (var booking in currentRentalBookings)
-                {
-                    bool avaliable = false;
-                    DateTime bookingStart = booking.Value.Start;
-                    DateTime bookingEnd = booking.Value.Start.AddDays(booking.Value.Nights);
-                    DateTime requestedStart = request.Start;
-                    DateTime requestedEnd = request.Start.AddDays(request.Nights);
+                DateTime requestedStart = request.Start;
+                DateTime requestedEnd = request.Start.AddDays(request.Nights);
+                DateTime bookingStart = booking.Value.Start;
+                DateTime bookingEnd = booking.Value.Start
+                    .AddDays(booking.Value.Nights)
+                    .AddDays(preparationTimeInDays);
 
-                    if ( bookingEnd < requestedStart || bookingStart > requestedEnd)
-                    {
-                        avaliable = true;
-                    }
-
-                    if (avaliable)
-                        break;
-                    else 
-                    {
-                        occupiedRentalUnitsCount += 1;
-                    }
-                }
-                if (occupiedRentalUnitsCount == allRentalUnitsCount)
+                if  (
+                    !(requestedStart > bookingEnd && requestedEnd > bookingEnd) &&
+                    !(requestedStart < bookingStart && requestedEnd < bookingStart)
+                    )
                 {
-                    string startDate = request.Start.ToString("dd MMMM yyyy");
-                    string unitFreeDate = request.Start.AddDays(request.Nights).ToString("dd MMMM yyyy");
-                    throw new ApplicationException($"No Vacancy since {startDate} till {unitFreeDate}");
+                    occupiedRentalUnitsCount += 1;
                 }
+            }
+            if (occupiedRentalUnitsCount >= rentalUnits)
+            {
+                string startDate = request.Start.ToString("dd MMMM yyyy");
+                string unitFreeDate = request.Start.AddDays(request.Nights).AddDays(preparationTimeInDays).ToString("dd MMMM yyyy");
+                throw new ApplicationException($"No Vacancy since {startDate} till {unitFreeDate}");
             }
         }
     }
