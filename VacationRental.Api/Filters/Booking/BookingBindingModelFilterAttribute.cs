@@ -4,6 +4,7 @@ using VacationRental.Api.Models;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Error = VacationRental.Api.ApplicationErrors.ErrorMessages;
 
 
 namespace VacationRental.Api.Filters.Booking
@@ -19,15 +20,15 @@ namespace VacationRental.Api.Filters.Booking
         {
             var request = context.ActionArguments["model"] as BookingBindingModel;
             if(request.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
+                throw new ApplicationException(Error.BookingNightsZero);
             if(request.RentalId <= 0)
-                throw new ApplicationException("RentalId must be positive");
+                throw new ApplicationException(Error.RentalIdLessOrZero);
             if(request.Start < DateTime.Now.AddDays(-1))
-                throw new ApplicationException($"{request.Start.ToString("dd MMMM yyyy")} already passed. Please choose another date.");
+                throw new ApplicationException(Error.DateAlreadyPassed);
 
             var rentals = context.HttpContext.RequestServices.GetService<IDictionary<int, RentalViewModel>>();
             if (!rentals.ContainsKey(request.RentalId))
-                throw new ApplicationException("Rental not found");
+                throw new ApplicationException(Error.RentalNotFound);
 
             int rentalUnits = rentals[request.RentalId].Units;
             int preparationTimeInDays = rentals[request.RentalId].PreparationTimeInDays;
@@ -57,11 +58,7 @@ namespace VacationRental.Api.Filters.Booking
                 }
             }
             if (occupiedRentalUnitsCount >= rentalUnits)
-            {
-                string startDate = request.Start.ToString("dd MMMM yyyy");
-                string unitFreeDate = request.Start.AddDays(request.Nights).AddDays(preparationTimeInDays).ToString("dd MMMM yyyy");
-                throw new ApplicationException($"No Vacancy since {startDate} till {unitFreeDate}");
-            }
+                throw new ApplicationException(Error.NoVacancy);
         }
     }
 }

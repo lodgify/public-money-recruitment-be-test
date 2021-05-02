@@ -3,6 +3,7 @@ using VacationRental.Api.Models;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Error = VacationRental.Api.ApplicationErrors.ErrorMessages;
 
 namespace VacationRental.Api.Filters.Rentals
 {
@@ -25,7 +26,7 @@ namespace VacationRental.Api.Filters.Rentals
             var rentals = context.HttpContext.RequestServices.GetService<IDictionary<int, RentalViewModel>>();
 
             if(!rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
+                throw new ApplicationException(Error.RentalNotFound);
         }
     }
 }

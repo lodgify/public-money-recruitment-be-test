@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using System;
-
+using Error = VacationRental.Api.ApplicationErrors.ErrorMessages;
 
 namespace VacationRental.Api.Filters.Common
 {
@@ -23,9 +23,9 @@ namespace VacationRental.Api.Filters.Common
             {
                 int? rentalId = (int?)context.ActionArguments[key];
                 if(rentalId == null)
-                    throw new ApplicationException($"{key} couldn't be NULL");
+                    throw new ApplicationException(Error.ValueCannotBeNull);
                 if (rentalId <= 0)
-                    throw new ApplicationException($"{key} couldn't be zero or less");
+                    throw new ApplicationException(Error.ValueCannotBeNull);
             }
         }
     }

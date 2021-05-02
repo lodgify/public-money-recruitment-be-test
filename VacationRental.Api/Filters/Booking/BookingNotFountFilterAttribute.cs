@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections.Generic;
 using VacationRental.Api.Models;
 using System;
+using Error = VacationRental.Api.ApplicationErrors.ErrorMessages;
 
 
 namespace VacationRental.Api.Filters.Booking
@@ -23,7 +24,7 @@ namespace VacationRental.Api.Filters.Booking
             int bookingId = (int)context.ActionArguments[_key];
             var bookings = context.HttpContext.RequestServices.GetService<IDictionary<int, BookingViewModel>>();
             if (!bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
+                throw new ApplicationException(Error.BookingNotFound);
         }
     }
 }
