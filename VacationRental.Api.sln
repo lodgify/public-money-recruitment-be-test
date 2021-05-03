@@ -11,7 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Api.Applicat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Api.Contracts", "VacationRental.Api.Contracts\VacationRental.Api.Contracts.csproj", "{743D0B6E-7AFF-4627-8436-EB1A0E169FDF}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Logger", "Logger\Logger.shproj", "{B95297C1-1DAA-497D-865D-4DC700DEA96E}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Logger\Logger.projitems*{478c6cbf-6f84-4604-8e31-dedfdfe10dbc}*SharedItemsImports = 5
+		Logger\Logger.projitems*{b95297c1-1daa-497d-865d-4dc700dea96e}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

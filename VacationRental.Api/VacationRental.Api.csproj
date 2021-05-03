@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="NLog" Version="4.7.9" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
   </ItemGroup>
@@ -21,5 +22,7 @@
     <ProjectReference Include="..\VacationRental.Api.ApplicationErrors\VacationRental.Api.ApplicationErrors.csproj" />
     <ProjectReference Include="..\VacationRental.Api.Contracts\VacationRental.Api.Contracts.csproj" />
   </ItemGroup>
+
+  <Import Project="..\Logger\Logger.projitems" Label="Shared" />
 
 </Project>

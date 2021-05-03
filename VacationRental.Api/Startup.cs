@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -36,17 +37,19 @@ namespace VacationRental.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            LogHelper.logger.Info("Service is starting up");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             app.UseExceptionHandler(errorApp => 
             {
-                //TODO pass it all into devided class
                 errorApp.Run(async context => 
                 {
                     ExceptionViewModel exceptionModel;
                     var exception = context.Features.Get<IExceptionHandlerFeature>();
+                    LogHelper.logger.Error(exception.Error);
+
                     Type exceptionType = exception.Error.GetType();
                     context.Response.ContentType = "application/json";
 #if DEBUG
@@ -70,6 +73,8 @@ namespace VacationRental.Api
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(opts => opts.SwaggerEndpoint("/swagger/v1/swagger.json", "VacationRental v1"));
+
+            LogHelper.logger.Info("Service has started successfully");
         }
     }
 }
