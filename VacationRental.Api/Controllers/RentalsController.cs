@@ -54,6 +54,7 @@ namespace VacationRental.Api.Controllers
             return _rentals[rentalId];
         }
 
+
         [HttpPut("{rentalId:int}")]
         [ZeroFilter("rentalId"), RentalNotFountFilter("rentalId")]
         [RentalBindingModelFilter]

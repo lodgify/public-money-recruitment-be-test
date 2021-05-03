@@ -32,6 +32,7 @@ namespace VacationRental.Api.Controllers
             return _bookings[bookingId];
         }
 
+
         [HttpPost]
         [BookingBindingModelFilter]
         public ResourceIdViewModel Post(BookingBindingModel model)
