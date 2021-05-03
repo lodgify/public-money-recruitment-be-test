@@ -13,9 +13,9 @@
 - `Nights` property has been added to each element of the `booking` array. `nights` shows the duration of the booking
 
 # Restrictions
--Unable to book a past date
--Unable to register rentals if its Units 0 or less
--It is impossible to register a booking if all rooms for the current period are occupied
+- Unable to book a past date
+- Unable to register rentals if its Units 0 or less
+- It is impossible to register a booking if all rooms for the current period are occupied
 
 # Refactoring
 - Contract models have been moved to a separate assembly
