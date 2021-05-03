@@ -6,7 +6,6 @@ using Xunit;
 
 namespace VacationRental.Api.Tests
 {
-    [CollectionDefinition("Integration")]
     public sealed class IntegrationFixture : IDisposable, ICollectionFixture<IntegrationFixture>
     {
         private readonly TestServer _server;
@@ -16,7 +15,6 @@ namespace VacationRental.Api.Tests
         public IntegrationFixture()
         {
             _server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
-
             Client = _server.CreateClient();
         }
 

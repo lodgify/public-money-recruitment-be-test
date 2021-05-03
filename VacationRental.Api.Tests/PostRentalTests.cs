@@ -12,14 +12,13 @@ using Error = VacationRental.Api.ApplicationErrors.ErrorMessages;
 
 namespace VacationRental.Api.Tests
 {
-    [Collection("Integration")]
     public class PostRentalTests
     {
-        private readonly HttpClient _client;
+        private readonly HttpClientHelper client;
 
-        public PostRentalTests(IntegrationFixture fixture)
+        public PostRentalTests()
         {
-            _client = fixture.Client;
+            client = new HttpClientHelper(new IntegrationFixture().Client);
         }
 
         [Fact]
@@ -27,23 +26,23 @@ namespace VacationRental.Api.Tests
         {
             var request = new RentalBindingModel
             {
-                Units = 25, 
+                Units = 25,
                 PreparationTimeInDays = 10
             };
 
-            var postRental = await HttpClientHelper.Post<ResourceIdViewModel>("/api/v1/rentals", request, _client, Code.OK );
-            var getRental = await HttpClientHelper.Get<RentalViewModel>($"/api/v1/rentals/{postRental.Id}", _client, Code.OK );
-            
+            var postRental = await client.PostAsync<ResourceIdViewModel>("/api/v1/rentals", request, Code.OK);
+            var getRental = await client.GetAsync<RentalViewModel>($"/api/v1/rentals/{postRental.Id}", Code.OK);
+
             Assert.Equal(request.Units, getRental.Units);
             Assert.Equal(request.PreparationTimeInDays, getRental.PreparationTimeInDays);
         }
 
         [Fact]
-        public async Task AttemptCreateRental_WithZeroUnits_AwaitFail() 
+        public async Task AttemptCreateRental_WithZeroUnits_AwaitFail()
         {
-            var request = new RentalBindingModel {  Units = 0 };
+            var request = new RentalBindingModel { Units = 0 };
 
-            var postRental = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/rentals", request, _client, Code.Unprocessable);
+            var postRental = await client.PostAsync<ExceptionViewModel>("/api/v1/rentals", request, Code.Unprocessable);
             Assert.True(postRental.Message == Error.RentalUnitsZero);
         }
 
@@ -52,7 +51,7 @@ namespace VacationRental.Api.Tests
         {
             var request = new RentalBindingModel { Units = -10 };
 
-            var postRental = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/rentals", request, _client, Code.Unprocessable);
+            var postRental = await client.PostAsync<ExceptionViewModel>("/api/v1/rentals", request, Code.Unprocessable);
             Assert.True(postRental.Message == Error.RentalUnitsZero);
         }
 
@@ -61,10 +60,10 @@ namespace VacationRental.Api.Tests
         {
             var request = new RentalBindingModel
             {
-                Units = 10, 
+                Units = 10,
                 PreparationTimeInDays = -1
             };
-            var postRental = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/rentals", request, _client, Code.Unprocessable);
+            var postRental = await client.PostAsync<ExceptionViewModel>("/api/v1/rentals", request, Code.Unprocessable);
             Assert.True(postRental.Message == Error.PreparationTimeLessZero);
         }
     }

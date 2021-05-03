@@ -11,14 +11,13 @@ using Error = VacationRental.Api.ApplicationErrors.ErrorMessages;
 
 namespace VacationRental.Api.Tests
 {
-    [Collection("Integration")]
     public class PostBookingTests
     {
-        private readonly HttpClient _client;
+        private readonly HttpClientHelper client;
 
-        public PostBookingTests(IntegrationFixture fixture)
+        public PostBookingTests()
         {
-            _client = fixture.Client;
+            client = new HttpClientHelper(new IntegrationFixture().Client);
         }
 
         [Fact]
@@ -30,7 +29,7 @@ namespace VacationRental.Api.Tests
                 Nights = 3,
                 Start = DateTime.Now.AddYears(10)
             };
-            var postBooking = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/bookings", booking, _client, Code.Unprocessable);
+            var postBooking = await client.PostAsync<ExceptionViewModel>("/api/v1/bookings", booking, Code.Unprocessable);
             Assert.Equal(postBooking.Message, Error.RentalNotFound);
         }
 
@@ -43,10 +42,10 @@ namespace VacationRental.Api.Tests
                 Nights = 3,
                 Start = DateTime.Now.AddYears(10)
             };
-            var postBooking = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/bookings", booking, _client, Code.Unprocessable);
+            var postBooking = await client.PostAsync<ExceptionViewModel>("/api/v1/bookings", booking, Code.Unprocessable);
             Assert.Equal(postBooking.Message, Error.RentalIdLessOrZero);
         }
-        
+
         [Fact]
         public async Task RegisterBooking_LessZeroRentalId_AwaitFail()
         {
@@ -56,7 +55,7 @@ namespace VacationRental.Api.Tests
                 Nights = 3,
                 Start = DateTime.Now.AddYears(10)
             };
-            var postBooking = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/bookings", booking, _client, Code.Unprocessable);
+            var postBooking = await client.PostAsync<ExceptionViewModel>("/api/v1/bookings", booking, Code.Unprocessable);
             Assert.Equal(postBooking.Message, Error.RentalIdLessOrZero);
         }
 
@@ -64,7 +63,7 @@ namespace VacationRental.Api.Tests
         public async Task RegisterOneUnitRental_RegisterOneBooking_AwaitSuccess()
         {
             var rental = new RentalBindingModel { Units = 4 };
-            var postRental = await HttpClientHelper.Post<ResourceIdViewModel>("/api/v1/rentals", rental, _client, Code.OK);
+            var postRental = await client.PostAsync<ResourceIdViewModel>("/api/v1/rentals", rental, Code.OK);
             var booking = new BookingBindingModel
             {
                 RentalId = postRental.Id,
@@ -72,8 +71,8 @@ namespace VacationRental.Api.Tests
                 Start = DateTime.Now.AddYears(10)
             };
 
-            var postBooking = await HttpClientHelper.Post<ResourceIdViewModel>("/api/v1/bookings", booking, _client, Code.OK);
-            var getBookingResult = await HttpClientHelper.Get<BookingViewModel>($"/api/v1/bookings/{postBooking.Id}", _client, Code.OK);
+            var postBooking = await client.PostAsync<ResourceIdViewModel>("/api/v1/bookings", booking,  Code.OK);
+            var getBookingResult = await client.GetAsync<BookingViewModel>($"/api/v1/bookings/{postBooking.Id}", Code.OK);
 
             Assert.Equal(booking.RentalId, getBookingResult.RentalId);
             Assert.Equal(booking.Nights, getBookingResult.Nights);
@@ -81,10 +80,75 @@ namespace VacationRental.Api.Tests
         }
 
         [Fact]
+        public async Task RegisterBooking_ZeroNights_AwaitFail()
+        {
+            var rental = new RentalBindingModel { Units = 4 };
+            var postRental = await client.PostAsync<ResourceIdViewModel>("/api/v1/rentals", rental, Code.OK);
+
+            var booking = new BookingBindingModel
+            {
+                RentalId = postRental.Id,
+                Nights = 0,
+                Start = DateTime.Now.AddYears(10)
+            };
+            var postBooking = await client.PostAsync<ExceptionViewModel>("/api/v1/bookings", booking, Code.Unprocessable);
+            Assert.Equal(postBooking.Message, Error.BookingNightsZero);
+        }
+
+        [Fact]
+        public async Task RegisterBooking_PassedDate_AwaitFail()
+        {
+            var rental = new RentalBindingModel { Units = 4 };
+            var postRental = await client.PostAsync<ResourceIdViewModel>("/api/v1/rentals", rental, Code.OK);
+            var booking = new BookingBindingModel
+            {
+                RentalId = postRental.Id,
+                Nights = 10,
+                Start = DateTime.Now.AddDays(-10)
+            };
+            var postBooking = await client.PostAsync<ExceptionViewModel>("/api/v1/bookings", booking, Code.Unprocessable);
+            Assert.Equal(postBooking.Message, Error.DateAlreadyPassed);
+        }
+
+        [Fact]
+        public async Task RegisterBooking_Yesterday_AwaitFail()
+        {
+            var rental = new RentalBindingModel { Units = 4 };
+            var postRental = await client.PostAsync<ResourceIdViewModel>("/api/v1/rentals", rental, Code.OK);
+            var booking = new BookingBindingModel
+            {
+                RentalId = postRental.Id,
+                Nights = 10,
+                Start = DateTime.Now.AddDays(-1)
+            };
+            var postBooking = await client.PostAsync<ExceptionViewModel>("/api/v1/bookings", booking, Code.Unprocessable);
+            Assert.Equal(postBooking.Message, Error.DateAlreadyPassed);
+        }
+
+        [Fact]
+        public async Task RegisterBooking_Today_AwaitSuccess()
+        {
+            var rental = new RentalBindingModel { Units = 4 };
+            var postRental = await client.PostAsync<ResourceIdViewModel>("/api/v1/rentals", rental, Code.OK);
+            var booking = new BookingBindingModel
+            {
+                RentalId = postRental.Id,
+                Nights = 10,
+                Start = DateTime.Now
+            };
+            var postBooking = await client.PostAsync<ResourceIdViewModel>("/api/v1/bookings", booking, Code.OK);
+            var getBookingResult = await client.GetAsync<BookingViewModel>($"/api/v1/bookings/{postBooking.Id}", Code.OK);
+
+            Assert.Equal(getBookingResult.Nights, booking.Nights);
+            Assert.Equal(getBookingResult.RentalId, booking.RentalId);
+            Assert.Equal(getBookingResult.Start, booking.Start);
+        }
+
+        [Fact]
         public async Task RegisterTwoBookingInSameTim_OneUnit_AwaitFail()
         {
             var rental = new RentalBindingModel { Units = 1 };
-            var postRental = await HttpClientHelper.Post<ResourceIdViewModel>("/api/v1/rentals", rental, _client);
+            var postRental = await client.PostAsync<ResourceIdViewModel>("/api/v1/rentals", rental);
 
             var booking = new BookingBindingModel
             {
@@ -93,15 +157,36 @@ namespace VacationRental.Api.Tests
                 Start = DateTime.Now.AddYears(10)
             };
 
-            var postBooking1 = await HttpClientHelper.Post<ResourceIdViewModel>("/api/v1/bookings", booking, _client, Code.OK);
-            var postBooking2 = await HttpClientHelper.Post<ExceptionViewModel>("/api/v1/bookings", booking, _client, Code.Unprocessable);
+            var postBooking1 = await client.PostAsync<ResourceIdViewModel>("/api/v1/bookings", booking, Code.OK);
+            var postBooking2 = await client.PostAsync<ExceptionViewModel>("/api/v1/bookings", booking, Code.Unprocessable);
 
             Assert.Equal(postBooking2.Message, Error.NoVacancy);
         }
 
         [Fact]
-        public async Task RegisterTwoBooking_OneUnit_FirstBookingEndDate_Same_SecondStartDate_AwaitFail() 
+        public async Task RegisterTwoBooking_OneUnit_FirstBookingEndDate_Same_SecondStartDate_AwaitFail()
         {
+            var rental = new RentalBindingModel { Units = 1 };
+            var postRental = await client.PostAsync<ResourceIdViewModel>("/api/v1/rentals", rental);
+
+            int nights = 10;
+            var booking1 = new BookingBindingModel
+            {
+                RentalId = postRental.Id,
+                Nights = nights,
+                Start = DateTime.Now.AddDays(1)
+            };
+            var booking2 = new BookingBindingModel
+            {
+                RentalId = postRental.Id,
+                Nights = nights,
+                Start = DateTime.Now.AddDays(1 + nights)
+            };
+            var postBooking1 = await client.PostAsync<ResourceIdViewModel>("/api/v1/bookings", booking1, Code.OK);
+            var postBooking2 = await client.PostAsync<ExceptionViewModel>("/api/v1/bookings", booking2, Code.Unprocessable);
+            Assert.Equal(postBooking2.Message, Error.NoVacancy);
         }
+
+
     }
 }
