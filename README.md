@@ -41,6 +41,8 @@ The contracts with API consumers are already defined. You have to extend existin
 
 A new `Unit` property is added to the `Booking` calendar model and to the new `PreparationTime` calendar model. This property is a number that references one of the available units in the Rental. For example, if the Rental has a total of 3 units, the Unit property can accept the values 1, 2,  or 3. It is irrelevant whether the Booking occupies unit 1, 2 or 3, as long as its associated PreparationTime occupies the same Unit number as the Booking.
 
+If the calendar model contains `Booking` with `Unit` 2 then it means that `Booking` is associated to `Unit` number 2. It does NOT mean that the booking occupies two units.
+
 a) extend `POST api/v1/vacationrental/rentals` endpoint request body by adding `PreparationTimeInDays` property:
 
 POST api/v1/vacationrental/rentals
