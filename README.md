@@ -34,7 +34,7 @@ As it is presented the information for the contacts is only stored in memory and
 1. Our customers requested a new feature related to the coronavirus restriction. They have to clean each rental unit after their guest occupies it. To achieve this we should block additional **X days** after each booking. Block means to not allow to have any booking for the same unit during this time. The number of days will be defined by the host.
 
 E.g.: 1 day preparation time:
-For any booking without another booking before nor after, an extra day is blocked for the unit where the existing booking occurs.
+For any booking without another booking after, an extra day is blocked for the unit where the existing booking occurs.
 
 One booking always occupies only one unit. The rental can have many units. So a rental with 3 units is fully occupied for the selected night when it has (3 bookings) OR (2 bookings and 1 preparation time period) OR (1 booking and 2 preparation time periods) OR (3 preparation time periods).
 
