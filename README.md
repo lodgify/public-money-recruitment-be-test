@@ -44,7 +44,7 @@ A new `Unit` property is added to the `Booking` calendar model and to the new `P
 
 If the calendar model contains `Booking` with `Unit` 2 then it means that `Booking` is booked at `Unit` number 2. **It does NOT mean that the booking occupies two units**.
 
-a) extend `POST api/v1/vacationrental/rentals` endpoint request body by adding `PreparationTimeInDays` property:
+a) extend `POST api/v1/rentals` endpoint request body by adding `PreparationTimeInDays` property:
 
 POST api/v1/vacationrental/rentals
 {
@@ -52,7 +52,7 @@ POST api/v1/vacationrental/rentals
    PreparationTimeInDays: 2
 }
 
-b) extend `GET api/v1/vacationrental/calendar` response by adding the occupied unit number to `Bookings` collection (property `Unit`) and by adding collection of preparation time objects (property `PreparationTimes`) - each object should have `Unit` number property:
+b) extend `GET api/v1/calendar` response by adding the occupied unit number to `Bookings` collection (property `Unit`) and by adding collection of preparation time objects (property `PreparationTimes`) - each object should have `Unit` number property:
 
 {
   Dates: [
@@ -93,7 +93,7 @@ b) extend `GET api/v1/vacationrental/calendar` response by adding the occupied u
 3. **Optional** (nice to have). Our customers requested the possibility of updating their existing rentals. They would like to be able to change the number of units and the length of preparation time. 
 Please provide a new endpoint which allows them to do it:
 
-PUT api/v1/vacationrental/rentals/{id} 
+PUT api/v1/rentals/{id} 
 {
    Units: 3,
    PreparationTimeInDays: 2
