@@ -99,12 +99,12 @@ PUT api/v1/rentals/{id}
    PreparationTimeInDays: 2
 }
 
-If the length of preparation time is changed then it should be updated for all existing bookings. The request should fail if decreasing the number of units or increasing the length of preparation time will produce overlapping between existing bookings and/or their preparation times.
+If the length of preparation time is changed then it should be updated for all existing bookings. The request should fail if overlapping between existing bookings and/or their preparation times occurs due to a decrease of the number of units or an increase of the length of preparation time.
 
 ### What we are looking for
 
-- How you deal with the existing code and its refactoring
-- How you implement new features
+- How you refactor the existing code to make it more readable and structured
+- How you implement new features and understand the requirements (feel free to ask in case of doubts)
 - How you test the correctness of your solution
 
 ### Restrictions
