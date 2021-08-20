@@ -11,13 +11,16 @@ namespace VacationRental.Api.Controllers
     {
         private readonly IDictionary<int, RentalViewModel> _rentals;
         private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IDictionary<int, PreparationTimeModel> _preparationTimes;
 
         public CalendarController(
             IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+            IDictionary<int, BookingViewModel> bookings,
+            IDictionary<int, PreparationTimeModel> preparationTimes)
         {
             _rentals = rentals;
             _bookings = bookings;
+            _preparationTimes = preparationTimes;
         }
 
         [HttpGet]
@@ -38,7 +41,8 @@ namespace VacationRental.Api.Controllers
                 var date = new CalendarDateViewModel
                 {
                     Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingViewModel>()
+                    Bookings = new List<CalendarBookingViewModel>(),
+                    PreparationTimes = new List<PreparationTimeModel>()
                 };
 
                 foreach (var booking in _bookings.Values)
@@ -46,7 +50,15 @@ namespace VacationRental.Api.Controllers
                     if (booking.RentalId == rentalId
                         && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
                     {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
+                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id, Unit = booking.Unit });
+                        
+                        foreach (var preparationTimes in _preparationTimes.Values)
+                        {
+                            if (preparationTimes.Unit == booking.Unit)
+                            {
+                                date.PreparationTimes.Add(new PreparationTimeModel { Unit = booking.Unit, PreparationTimeInDays = preparationTimes.PreparationTimeInDays });
+                            }
+                        }
                     }
                 }
 

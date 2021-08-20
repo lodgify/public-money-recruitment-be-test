@@ -1,8 +1,8 @@
 ﻿namespace VacationRental.Api.Models
 {
-    public class RentalBindingModel
+    public class PreparationTimeModel
     {
-        public int Units { get; set; }
+        public int Unit { get; set; }
         public int PreparationTimeInDays { get; set; }
     }
 }
