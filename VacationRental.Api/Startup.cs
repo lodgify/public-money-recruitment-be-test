@@ -27,6 +27,7 @@ namespace VacationRental.Api
 
             services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
             services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+            services.AddSingleton<IDictionary<int, IList<PreparationTimeModel>>>(new Dictionary<int, IList<PreparationTimeModel>>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
