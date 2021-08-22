@@ -13,14 +13,18 @@ namespace VacationRental.Api.Controllers
         private readonly IDictionary<int, RentalViewModel> _rentals;
         private readonly IDictionary<int, BookingViewModel> _bookings;
         private readonly IDictionary<int, IList<PreparationTimeModel>> _preparationTimes;
+        private readonly IBookingValidator _bookingValidator;
+
         public BookingsController(
             IDictionary<int, RentalViewModel> rentals,
             IDictionary<int, BookingViewModel> bookings, 
-            IDictionary<int, IList<PreparationTimeModel>> preparationTimes)
+            IDictionary<int, IList<PreparationTimeModel>> preparationTimes,
+            IBookingValidator bookingValidator)
         {
             _rentals = rentals;
             _bookings = bookings;
             _preparationTimes = preparationTimes;
+            _bookingValidator = bookingValidator;
         }
 
         [HttpGet]
@@ -50,10 +54,7 @@ namespace VacationRental.Api.Controllers
 
                 foreach (var booking in _bookings.Values)
                 {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights + preparationDays) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights + preparationDays) && booking.Start.AddDays(booking.Nights + preparationDays) >= model.Start.AddDays(model.Nights + preparationDays))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights + preparationDays) < model.Start.AddDays(model.Nights + preparationDays)))
+                    if (booking.RentalId == model.RentalId && _bookingValidator.Validate(booking.Start, model.Start, booking.Nights + preparationDays))
                     {
                         availableUnits.Remove(booking.Unit);
                         count++;

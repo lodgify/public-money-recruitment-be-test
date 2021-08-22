@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
@@ -10,10 +11,17 @@ namespace VacationRental.Api.Controllers
     public class RentalsController : ControllerBase
     {
         private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IBookingValidator _bookingValidator;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(
+            IDictionary<int, RentalViewModel> rentals,
+            IDictionary<int, BookingViewModel> bookings,
+            IBookingValidator bookingValidator)
         {
             _rentals = rentals;
+            _bookings = bookings;
+            _bookingValidator = bookingValidator;
         }
 
         [HttpGet]
@@ -39,6 +47,39 @@ namespace VacationRental.Api.Controllers
             });
 
             return key;
+        }
+
+        [HttpPost]
+        [Route("{rentalId:int}")]
+        public RentalViewModel Post(int rentalId, RentalBindingModel model)
+        {
+            if (!_rentals.ContainsKey(rentalId))
+                throw new ApplicationException("Rental not found");
+
+            var key = rentalId;
+
+            if(_bookings.Values.Where(b => b.RentalId == key).Count() > model.Units)
+            {
+                throw new ApplicationException("Update sets unit count below already booked amount");
+            }
+
+            if (_rentals.TryGetValue(key, out RentalViewModel rvm))
+            {
+                var previousBookings = _bookings.Values.Where(b => b.RentalId == key).ToArray();
+                
+                for(int i = 0; i < previousBookings.Count() - 1; i++)
+                {
+                    if(!_bookingValidator.Validate(previousBookings[i].Start, previousBookings[i + 1].Start, previousBookings[i].Nights + model.PreparationTimeInDays))
+                    {
+                        throw new ApplicationException("Update causes booking conflicts");
+                    }
+                }
+            }
+
+            rvm.Units = model.Units;
+            rvm.PreparationTimeInDays = model.PreparationTimeInDays;
+
+            return rvm;
         }
     }
 }
