@@ -54,7 +54,7 @@ namespace VacationRental.Api.Controllers
 
                 foreach (var booking in _bookings.Values)
                 {
-                    if (booking.RentalId == model.RentalId && _bookingValidator.Validate(booking.Start, model.Start, booking.Nights + preparationDays))
+                    if (booking.RentalId == model.RentalId && _bookingValidator.FoundMatch(booking.Start, model.Start, booking.Nights + preparationDays))
                     {
                         availableUnits.Remove(booking.Unit);
                         count++;

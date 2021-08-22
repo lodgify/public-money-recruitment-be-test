@@ -57,8 +57,9 @@ namespace VacationRental.Api.Controllers
                 throw new ApplicationException("Rental not found");
 
             var key = rentalId;
+            int count = 0;
 
-            if(_bookings.Values.Where(b => b.RentalId == key).Count() > model.Units)
+            if(_bookings.Values.Where(b => b.RentalId == key).Select(b => b.Unit).Distinct().Count() > model.Units)
             {
                 throw new ApplicationException("Update sets unit count below already booked amount");
             }
@@ -69,11 +70,17 @@ namespace VacationRental.Api.Controllers
                 
                 for(int i = 0; i < previousBookings.Count() - 1; i++)
                 {
-                    if(!_bookingValidator.Validate(previousBookings[i].Start, previousBookings[i + 1].Start, previousBookings[i].Nights + model.PreparationTimeInDays))
+                    if(previousBookings[i].Unit == previousBookings[i + 1].Unit &&
+                        _bookingValidator.FoundMatch(previousBookings[i].Start, previousBookings[i + 1].Start, previousBookings[i].Nights + model.PreparationTimeInDays))
                     {
-                        throw new ApplicationException("Update causes booking conflicts");
+                        count++;
                     }
                 }
+            }
+
+            if (model.Units <= count)
+            {
+                throw new ApplicationException("Update causes booking conflicts");
             }
 
             rvm.Units = model.Units;
