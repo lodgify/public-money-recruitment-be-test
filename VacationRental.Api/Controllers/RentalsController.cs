@@ -65,7 +65,7 @@ namespace VacationRental.Api.Controllers
 
             if (_rentals.TryGetValue(key, out RentalViewModel rvm))
             {
-                var previousBookings = _bookings.Values.Where(b => b.RentalId == key).ToArray();
+                var previousBookings = _bookings.Values.Where(b => b.RentalId == key).OrderBy(b => b.Start).ToArray();
                 
                 for(int i = 0; i < previousBookings.Count() - 1; i++)
                 {
