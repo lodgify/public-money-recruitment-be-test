@@ -1,0 +1,9 @@
+Some matters:
+
+- Sorry for not complete fully the -Nice to Have- requirement and not to add too much test cases, I fix the existing ones and add some checks, I added too a service layer test (I would like to add more test for each layer) but this is going to be a crazy hard week (we are in a migration to cloud proyect) and I prefer send you the solution "as is" than much later with everything
+- I created a quick n-layer arquitecture, the dependences of the proyects indicates the visibility of the layers (the controlles jusy have access to services layer)
+- In order to not change the contract signature is keep the int as id (but of course should be a long)
+- I Consider the Rental as the DDD aggregate, and because of this we don't have Add, Delete and Update methods in booking repository
+- I have added the generic repositories (are unused) just for future porpouses 
+- I don't use the automapper, for a bigger soplution maybe could be necessary
+- I Use the request/response pattern , is very clear and i like that the controllers just call the services and is very usefull for services Bus and so on.

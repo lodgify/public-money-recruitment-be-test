@@ -7,6 +7,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api", "Vacat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Tests", "VacationRental.Api.Tests\VacationRental.Api.Tests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Infrastructure", "VacationRental.Infrastructure\VacationRental.Infrastructure.csproj", "{C4B887FF-2057-4ED1-82EB-591522CA2E73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Application", "VacationRental.Service\VacationRental.Application.csproj", "{2C416300-73F6-4D79-9AC4-EA2902000947}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Data", "VacationRental.Data\VacationRental.Data.csproj", "{4634CCC0-1C44-43C2-AF78-3AD05B0E8FDA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Business", "VacationRental.Business\VacationRental.Business.csproj", "{2E138396-62EF-4ED9-8422-7A2986747580}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CF482CA8-9373-4BDC-9666-7992EECC44DD}"
+	ProjectSection(SolutionItems) = preProject
+		Notice.txt = Notice.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +34,22 @@ Global
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4B887FF-2057-4ED1-82EB-591522CA2E73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4B887FF-2057-4ED1-82EB-591522CA2E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4B887FF-2057-4ED1-82EB-591522CA2E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B887FF-2057-4ED1-82EB-591522CA2E73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C416300-73F6-4D79-9AC4-EA2902000947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C416300-73F6-4D79-9AC4-EA2902000947}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C416300-73F6-4D79-9AC4-EA2902000947}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C416300-73F6-4D79-9AC4-EA2902000947}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4634CCC0-1C44-43C2-AF78-3AD05B0E8FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4634CCC0-1C44-43C2-AF78-3AD05B0E8FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4634CCC0-1C44-43C2-AF78-3AD05B0E8FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4634CCC0-1C44-43C2-AF78-3AD05B0E8FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E138396-62EF-4ED9-8422-7A2986747580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E138396-62EF-4ED9-8422-7A2986747580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E138396-62EF-4ED9-8422-7A2986747580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E138396-62EF-4ED9-8422-7A2986747580}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Application;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +9,63 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private IRentalService _iRentalService;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(IRentalService iRentalService)
         {
-            _rentals = rentals;
+            _iRentalService = iRentalService;
         }
 
         [HttpGet]
         [Route("{rentalId:int}")]
         public RentalViewModel Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
+            var response = _iRentalService.GetRental(new GetRentalRequest() { rentalId = rentalId });
 
-            return _rentals[rentalId];
+            if (response.Success)
+            {
+                return response.RentalViewModel;
+            }
+            else
+            {
+                // To don't change the signature (I like to return a Json with the error)
+                throw new Exception(response.Message);
+            }
         }
 
         [HttpPost]
         public ResourceIdViewModel Post(RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+            var response = _iRentalService.AddRental(new AddRentalRequest() { PreparationTimeInDays = model.PreparationTimeInDays,Units= model.Units });
 
-            _rentals.Add(key.Id, new RentalViewModel
+            if (response.Success)
             {
-                Id = key.Id,
-                Units = model.Units
-            });
-
-            return key;
+                return response.ResourceIdViewModel;
+            }
+            else
+            {
+                // To don't change the signature (I like to return a Json with the error)
+                throw new Exception(response.Message);
+            }
         }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public JsonResult Put(int rentalId, RentalBindingModel model)
+        {
+            UpdateRentalRequest updateRentalRequest = new UpdateRentalRequest() { Id = rentalId, Units = model.Units, PreparationTimeInDays = model.PreparationTimeInDays };
+
+            var response = _iRentalService.UpdateRental(updateRentalRequest);
+
+            if (response.Success)
+            {
+                return new JsonResult(response.Success); 
+            }
+            else
+            {
+                return new JsonResult(response);
+            }
+
+        }     
     }
 }

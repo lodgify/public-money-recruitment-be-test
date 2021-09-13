@@ -19,6 +19,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VacationRental.Api\VacationRental.Api.csproj" />
+    <ProjectReference Include="..\VacationRental.Business\VacationRental.Business.csproj" />
+    <ProjectReference Include="..\VacationRental.Data\VacationRental.Data.csproj" />
+    <ProjectReference Include="..\VacationRental.Infrastructure\VacationRental.Infrastructure.csproj" />
+    <ProjectReference Include="..\VacationRental.Service\VacationRental.Application.csproj" />
   </ItemGroup>
 
 </Project>

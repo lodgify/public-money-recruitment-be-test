@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
-using VacationRental.Api.Models;
+using VacationRental.Application;
+using VacationRental.Business;
+using VacationRental.Data;
 
 namespace VacationRental.Api
 {
@@ -15,7 +17,6 @@ namespace VacationRental.Api
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -25,8 +26,13 @@ namespace VacationRental.Api
 
             services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new Info { Title = "Vacation rental information", Version = "v1" }));
 
-            services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
-            services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+            services.AddTransient<IRentalService, RentalService>();
+            services.AddTransient<IBookingService, BookingService>();
+            services.AddTransient<ICalendarService, CalendarService>();
+            services.AddTransient<IBookingRepository, BookingRepository>();
+            services.AddTransient<IRentalRepository, RentalRepository>();
+            services.AddSingleton<IList<Rental>>(new List<Rental>());
+            services.AddSingleton<IList<Booking>>(new List<Booking>());            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

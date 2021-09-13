@@ -24,6 +24,6 @@ namespace VacationRental.Api.Tests
         {
             Client.Dispose();
             _server.Dispose();
-        }
+        } 
     }
 }

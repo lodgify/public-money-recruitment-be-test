@@ -1,8 +1,7 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
+using VacationRental.Application;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -11,7 +10,7 @@ namespace VacationRental.Api.Tests
     public class PostRentalTests
     {
         private readonly HttpClient _client;
-
+ 
         public PostRentalTests(IntegrationFixture fixture)
         {
             _client = fixture.Client;
@@ -20,6 +19,7 @@ namespace VacationRental.Api.Tests
         [Fact]
         public async Task GivenCompleteRequest_WhenPostRental_ThenAGetReturnsTheCreatedRental()
         {
+ 
             var request = new RentalBindingModel
             {
                 Units = 25

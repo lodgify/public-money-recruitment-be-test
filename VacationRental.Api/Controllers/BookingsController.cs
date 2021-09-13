@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Application;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,64 +9,44 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
-
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        private readonly IBookingService _iBookingService;
+        
+        public BookingsController(IBookingService iBookingService)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _iBookingService = iBookingService;            
         }
 
         [HttpGet]
         [Route("{bookingId:int}")]
         public BookingViewModel Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
+            GetBookingResponse response = _iBookingService.GetBooking(new GetBookingRequest() { bookingId = bookingId });
 
-            return _bookings[bookingId];
+            if (response.Success)
+            {
+                return response.BookingViewModel;
+            }
+            else
+            {
+                // To don't change the signature (I like to return a Json with the error)
+                throw new Exception(response.Message);
+            }
         }
 
         [HttpPost]
         public ResourceIdViewModel Post(BookingBindingModel model)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
+            AddBookingResponse response = _iBookingService.AddBooking(new AddBookingRequest() { NumberOfNigths = model.Nights, RentalId = model.RentalId, StartDate = model.Start });
 
-            for (var i = 0; i < model.Nights; i++)
+            if (response.Success)
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+                return response.ResourceIdViewModel;
             }
-
-
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
+            else
             {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
-
-            return key;
+                // To don't change the signature (I like to return a Json with the error)
+                return response.ResourceIdViewModel;
+            }
         }
     }
 }
