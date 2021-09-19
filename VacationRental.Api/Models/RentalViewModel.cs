@@ -4,5 +4,7 @@
     {
         public int Id { get; set; }
         public int Units { get; set; }
+
+        public double PreparationTimeInDays { get; set; }
     }
 }

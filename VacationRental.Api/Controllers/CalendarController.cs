@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
@@ -20,40 +21,54 @@ namespace VacationRental.Api.Controllers
             _bookings = bookings;
         }
 
+        
         [HttpGet]
-        public CalendarViewModel Get(int rentalId, DateTime start, int nights)
-        {
-            if (nights < 0)
-                throw new ApplicationException("Nights must be positive");
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            var result = new CalendarViewModel 
+        public IActionResult Get([FromQuery]CalendarBindingModel model)
+        {            
+            if (!_rentals.ContainsKey(model.RentalId))
             {
-                RentalId = rentalId,
-                Dates = new List<CalendarDateViewModel>() 
-            };
-            for (var i = 0; i < nights; i++)
-            {
-                var date = new CalendarDateViewModel
-                {
-                    Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingViewModel>()
-                };
-
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
-                    {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
-                    }
-                }
-
-                result.Dates.Add(date);
+                return StatusCode(StatusCodes.Status400BadRequest, "Rental not found");
             }
 
-            return result;
+            var bookings = _bookings.Where(b => b.Value.RentalId == model.RentalId);
+            if (!bookings.Any())
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, "Bookings not found");
+            }
+
+            var result = new CalendarViewModel
+            {
+                RentalId = model.RentalId,
+                Dates = new ()
+            };
+
+            var strartBookingDayThreshold = bookings.Min(b => b.Value.Start);
+            var endBookingDateThreshold = bookings.Max(b => b.Value.EndPreperations);
+            while (strartBookingDayThreshold <= endBookingDateThreshold)
+            {
+                strartBookingDayThreshold = strartBookingDayThreshold.AddDays(1);
+                var date = new CalendarDateViewModel
+                {
+                    Date = strartBookingDayThreshold,
+                    Bookings = new (),
+                    Preparations = new ()                    
+                };
+
+                foreach (var booking in bookings)
+                {
+                    if (booking.Value.Start <= date.Date && booking.Value.End > date.Date)
+                    {
+                        date.Bookings.Add(new () { Id = booking.Value.Id, Units = booking.Value.Units });
+                    }
+
+                    if (booking.Value.End <= date.Date && booking.Value.EndPreperations > date.Date)
+                    {
+                        date.Preparations.Add(new { Units = booking.Value.Units });
+                    } 
+                }
+                result.Dates.Add(date);
+            }
+            return Ok(result);
         }
     }
 }

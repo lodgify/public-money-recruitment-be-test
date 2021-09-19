@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VacationRental.Api.Library;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Controllers
@@ -22,51 +25,120 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        public IActionResult Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
-
-            return _bookings[bookingId];
+            try
+            {
+                if(!_bookings.ContainsKey(bookingId))
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, "Booking not found");
+                }
+                return Ok(_bookings[bookingId]);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
+        public IActionResult Post(BookingBindingModel model)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
-
-            for (var i = 0; i < model.Nights; i++)
-            {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
+            try
+            {   
+                if (!_rentals.ContainsKey(model.RentalId))
                 {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
+                    return StatusCode(StatusCodes.Status400BadRequest, "Rental not found");
                 }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+                               
+                var rental = _rentals[model.RentalId];
+                var existingUnitsInDatetimeThreshold = this.GetUsedUnitsInRental(model, rental);
+                var avaibleUnitsByBooking = rental.Units - existingUnitsInDatetimeThreshold;
+
+                if (rental.Units < model.Units || avaibleUnitsByBooking < model.Units)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, "Not available");
+                }
+
+                ResourceIdViewModel vm = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
+                _bookings.Add(vm.Id, new BookingViewModel
+                {
+                    Id = vm.Id,
+                    Nights = model.Nights,
+                    RentalId = model.RentalId,
+                    Start = model.Start.Date,
+                    Units = model.Units,
+                    PreparationTimeInDays = rental.PreparationTimeInDays
+                });
+                return Ok(vm);                
             }
-
-
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
+            catch (Exception ex)
             {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
-            return key;
+        [HttpPut]
+        public IActionResult Put(BookingBindingModel model)
+        {
+            try
+            {
+                if (!_rentals.ContainsKey(model.RentalId) || !_bookings.ContainsKey(model.BookingId))
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, "Rental or booking not found");
+                }
+
+                var rental = _rentals[model.RentalId];
+                var booking = _bookings.First(b => b.Key == model.BookingId);
+
+                _bookings.Remove(booking.Key);
+                var units = this.GetUsedUnitsInRental(model, rental);
+                var avaibleUnitsByBooking = rental.Units - units;
+
+                if (rental.Units < model.Units || avaibleUnitsByBooking < model.Units)
+                {
+                    _bookings.Add(booking);
+                    return StatusCode(StatusCodes.Status400BadRequest, "Not available");
+                }
+
+                if (booking.Value.RentalId == model.RentalId)                
+                {
+                    booking.Value.Nights = model.Nights;
+                    booking.Value.Start = model.Start.Date;
+                    booking.Value.Units = model.Units;
+                    _bookings.Add(booking);   
+                }
+                else
+                {
+                    var id = _bookings.Where(b => b.Value.RentalId == model.RentalId).Count();
+                    ResourceIdViewModel vm = new ResourceIdViewModel { Id = id };
+                    _bookings.Add(vm.Id, new BookingViewModel
+                    {
+                        Id = vm.Id,
+                        Nights = model.Nights,
+                        RentalId = model.RentalId,
+                        Start = model.Start.Date,
+                        Units = model.Units,
+                        PreparationTimeInDays = rental.PreparationTimeInDays
+                    });
+                }
+
+                return Ok(new ResourceIdViewModel { Id = booking.Key });
+                
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        private int GetUsedUnitsInRental(BookingBindingModel model, RentalViewModel rental)
+        {
+            return
+                _bookings
+                    .Where(b => b.Value.RentalId == model.RentalId 
+                            && (b.Value.Start, b.Value.EndPreperations).IsBewteenTwoDates(model.Start, model.End.AddDays(rental.PreparationTimeInDays)))
+                    .Sum(b => b.Value.Units);
         }
     }
 }
