@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VacationRental.Domain.Repositories;
+using VacationRental.Domain.Values;
 
 namespace VacationRental.Application.Commands.Rental
 {
@@ -18,9 +19,12 @@ namespace VacationRental.Application.Commands.Rental
         }
 
 
-        public async Task Handle(CreateRentalCommand request)
+        public async Task Handle(RentalBindingModel request)
         {
-            
+            var newRental = _rentalRepository.Add(new Domain.Entities.Rental(RentalId.Empty, request.Units,
+                request.PreparationTimeInDays));
+
+            _logger.LogInformation($"Rental '{newRental.Id}' has been created successfully");
         }
     }
 }

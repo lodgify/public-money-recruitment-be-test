@@ -13,5 +13,7 @@ namespace VacationRental.Domain.Values
         public int Id { get; }
 
         protected override IEnumerable<object> GetAttributesToIncludeInEqualityCheck() => new List<object>{Id};
+
+        public static RentalId Empty { get; } = new RentalId(int.MinValue);
     }
 }
