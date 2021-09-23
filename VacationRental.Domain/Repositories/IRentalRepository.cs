@@ -6,5 +6,6 @@ namespace VacationRental.Domain.Repositories
     public interface IRentalRepository
     {
         Rental Get(RentalId id);
+        Rental Add(Rental rental);
     }
 }
