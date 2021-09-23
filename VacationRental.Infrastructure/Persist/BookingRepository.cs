@@ -22,6 +22,11 @@ namespace VacationRental.Infrastructure.Persist
             throw new BookingNotFoundException(id);
         }
 
+        public IReadOnlyCollection<Booking> GetByRentalId(RentalId rentalId) =>
+            _bookings.Values.Where(booking => booking.RentalId == rentalId.Id)
+                .Select(MapToDomain)
+                .ToList();
+
         public Booking Add(Booking booking)
         {
             var newBookingDataModel = MapToDataModel(booking);
