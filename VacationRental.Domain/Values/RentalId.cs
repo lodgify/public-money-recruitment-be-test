@@ -5,6 +5,8 @@ namespace VacationRental.Domain.Values
 {
     public sealed class RentalId : ValueObject<RentalId>
     {
+        public static RentalId Empty { get; } = new RentalId(int.MinValue);
+
         public RentalId(int id)
         {
             Id = id;
@@ -14,6 +16,6 @@ namespace VacationRental.Domain.Values
 
         protected override IEnumerable<object> GetAttributesToIncludeInEqualityCheck() => new List<object>{Id};
 
-        public static RentalId Empty { get; } = new RentalId(int.MinValue);
+        public override string ToString() => Id.ToString();
     }
 }
