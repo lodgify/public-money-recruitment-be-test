@@ -25,6 +25,9 @@ namespace VacationRental.Domain.Values
         public bool IsOverlapped(BookingPeriod periodToCompare) =>  
             (Start >= periodToCompare.GetEndOfPeriod() || periodToCompare.Start >= periodToCompare.GetEndOfPeriod()) == false;
 
+
+        public bool Within(DateTime date) => Start <= date.Date && Start.AddDays(Nights) > date.Date;
+
         private DateTime GetEndOfPeriod() => Start.AddDays(Nights);
     }
 }
