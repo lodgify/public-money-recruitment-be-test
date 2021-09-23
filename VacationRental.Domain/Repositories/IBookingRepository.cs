@@ -5,6 +5,7 @@ namespace VacationRental.Domain.Repositories
 {
     public interface IBookingRepository
     {
-        Booking Get(BookingId bookingId);
+        Booking Get(BookingId id);
+        Booking Add(Booking booking);
     }
 }

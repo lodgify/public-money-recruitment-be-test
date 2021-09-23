@@ -38,7 +38,7 @@ namespace VacationRental.Infrastructure.Persist
             return maxId + 1;
         }
 
-        private RentalDataModel MapToDataModel(Rental rental)
+        private static RentalDataModel MapToDataModel(Rental rental)
         {
             return new RentalDataModel
             {
@@ -48,7 +48,7 @@ namespace VacationRental.Infrastructure.Persist
             };
         }
 
-        private Rental MapToDomain(RentalDataModel dataModel) =>
+        private static Rental MapToDomain(RentalDataModel dataModel) =>
             new Rental(new RentalId(dataModel.Id), dataModel.Units, dataModel.PreparationTimeInDays);
     }
 }
