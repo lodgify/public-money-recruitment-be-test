@@ -22,7 +22,7 @@ namespace VacationRental.Infrastructure.Persist.Storage
 
         public int Add(TModel model)
         {
-            var newKey = _lastKeyValue++;
+            var newKey = ++_lastKeyValue;
             _setNextKey(model, newKey);
             _items.Add(newKey, model);
 

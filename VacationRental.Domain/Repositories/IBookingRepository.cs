@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using VacationRental.Domain.Entities;
-using VacationRental.Domain.Values;
+﻿using VacationRental.Domain.Entities;
+using VacationRental.Domain.Repositories.ReadOnly;
 
 namespace VacationRental.Domain.Repositories
 {
-    public interface IBookingRepository
+    public interface IBookingRepository : IBookingReadOnlyRepository
     {
-        Booking Get(BookingId id);
-        IReadOnlyCollection<Booking> GetByRentalId(RentalId rentalId);
         Booking Add(Booking booking);
     }
 }
