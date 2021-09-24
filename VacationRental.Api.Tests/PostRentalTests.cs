@@ -1,8 +1,8 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
+using VacationRental.Application.Commands;
+using VacationRental.Application.Commands.Rental;
+using VacationRental.Application.Queries.Rental;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -20,7 +20,7 @@ namespace VacationRental.Api.Tests
         [Fact]
         public async Task GivenCompleteRequest_WhenPostRental_ThenAGetReturnsTheCreatedRental()
         {
-            var request = new RentalBindingModel
+            var request = new CreateRentalRequest
             {
                 Units = 25
             };

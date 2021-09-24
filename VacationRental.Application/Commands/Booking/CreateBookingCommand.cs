@@ -8,7 +8,7 @@ using VacationRental.Domain.Values;
 
 namespace VacationRental.Application.Commands.Booking
 {
-    public class CreateBookingCommand : IRequestHandler<BookingCommandRequest, ResourceIdResponse>
+    public class CreateBookingCommand : IRequestHandler<BookingCommandRequest, ResourceIdViewModel>
     {
         private readonly IRentalRepository _rentalRepository;
         private readonly IBookingRepository _bookingRepository;
@@ -21,7 +21,7 @@ namespace VacationRental.Application.Commands.Booking
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<ResourceIdResponse> Handle(BookingCommandRequest request, CancellationToken cancellationToken)
+        public async Task<ResourceIdViewModel> Handle(BookingCommandRequest request, CancellationToken cancellationToken)
         {
             var rental = _rentalRepository.Get(new RentalId(request.RentalId));
             var bookings = _bookingRepository.GetByRentalId(rental.Id);
@@ -33,7 +33,7 @@ namespace VacationRental.Application.Commands.Booking
 
             await Task.Delay(1);
 
-            return new ResourceIdResponse{Id = (int) newBooking.Id};
+            return new ResourceIdViewModel{Id = (int) newBooking.Id};
         }
     }
 }

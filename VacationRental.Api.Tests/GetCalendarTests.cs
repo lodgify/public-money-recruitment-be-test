@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
+using VacationRental.Application.Commands;
+using VacationRental.Application.Commands.Booking;
+using VacationRental.Application.Commands.Rental;
+using VacationRental.Application.Queries.Calendar.ViewModel;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -20,7 +22,7 @@ namespace VacationRental.Api.Tests
         [Fact]
         public async Task GivenCompleteRequest_WhenGetCalendar_ThenAGetReturnsTheCalculatedCalendar()
         {
-            var postRentalRequest = new RentalBindingModel
+            var postRentalRequest = new CreateRentalRequest
             {
                 Units = 2
             };
@@ -32,7 +34,7 @@ namespace VacationRental.Api.Tests
                 postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            var postBooking1Request = new BookingBindingModel
+            var postBooking1Request = new BookingCommandRequest
             {
                  RentalId = postRentalResult.Id,
                  Nights = 2,
@@ -46,7 +48,7 @@ namespace VacationRental.Api.Tests
                 postBooking1Result = await postBooking1Response.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            var postBooking2Request = new BookingBindingModel
+            var postBooking2Request = new BookingCommandRequest
             {
                 RentalId = postRentalResult.Id,
                 Nights = 2,
