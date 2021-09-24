@@ -47,9 +47,9 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public async Task<RentalViewModel> Get(int id)
+        public async Task<RentalViewModel> Get(int rentalId)
         {
-            return await _mediator.Send(new GetRentalByIdQuery(id));
+            return await _mediator.Send(new GetRentalByIdQuery(rentalId));
         }
 
 
