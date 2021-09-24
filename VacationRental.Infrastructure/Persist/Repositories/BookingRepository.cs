@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VacationRental.Domain.Entities;
+using VacationRental.Domain.Exceptions;
 using VacationRental.Domain.Repositories;
 using VacationRental.Domain.Values;
-using VacationRental.Infrastructure.Persist.Exceptions;
 using VacationRental.Infrastructure.Persist.PersistModels;
 using VacationRental.Infrastructure.Persist.Storage;
 
