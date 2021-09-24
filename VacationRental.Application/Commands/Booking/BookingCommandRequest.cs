@@ -1,8 +1,9 @@
 ﻿using System;
+using MediatR;
 
 namespace VacationRental.Application.Commands.Booking
 {
-    public class BookingCommandRequest
+    public class BookingCommandRequest : IRequest<ResourceIdResponse>
     {
         public int RentalId { get; set; }
 
