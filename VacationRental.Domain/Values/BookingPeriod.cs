@@ -20,13 +20,12 @@ namespace VacationRental.Domain.Values
             return new List<object>{Start, Nights};
         }
 
-        public BookingPeriod AddNights(int nights) => new BookingPeriod(Start, Nights + nights);
+        internal BookingPeriod AddNights(int nights) => new BookingPeriod(Start, Nights + nights);
 
-        public bool IsOverlapped(BookingPeriod periodToCompare) =>  
+        internal bool IsOverlapped(BookingPeriod periodToCompare) =>  
             (Start >= periodToCompare.GetEndOfPeriod() || periodToCompare.Start >= periodToCompare.GetEndOfPeriod()) == false;
 
-
-        public bool Within(DateTime date) => Start <= date.Date && Start.AddDays(Nights) > date.Date;
+        internal bool Within(DateTime date) => Start <= date.Date && Start.AddDays(Nights) > date.Date;
 
         private DateTime GetEndOfPeriod() => Start.AddDays(Nights);
     }

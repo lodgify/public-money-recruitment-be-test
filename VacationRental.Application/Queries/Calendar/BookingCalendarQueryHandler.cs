@@ -4,16 +4,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using VacationRental.Application.Queries.Calendar.ViewModel;
-using VacationRental.Domain.Repositories;
+using VacationRental.Domain.Repositories.ReadOnly;
 using VacationRental.Domain.Values;
 
 namespace VacationRental.Application.Queries.Calendar
 {
     public class BookingCalendarQueryHandler : IRequestHandler<BookingCalendarForRentalQuery, CalendarViewModel>
     {
-        private readonly IBookingRepository _bookingRepository;
+        private readonly IBookingReadOnlyRepository _bookingRepository;
 
-        public BookingCalendarQueryHandler(IBookingRepository bookingRepository)
+        public BookingCalendarQueryHandler(IBookingReadOnlyRepository bookingRepository)
         {
             _bookingRepository = bookingRepository ?? throw new ArgumentNullException(nameof(bookingRepository));
         }
@@ -37,7 +37,7 @@ namespace VacationRental.Application.Queries.Calendar
 
                 foreach (var booking in bookings)
                 {
-                    if(booking.Period.Within(calendarDate.Date))
+                    if(booking.Within(calendarDate.Date))
                     {
                         calendarDate.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id.Id });
                     }

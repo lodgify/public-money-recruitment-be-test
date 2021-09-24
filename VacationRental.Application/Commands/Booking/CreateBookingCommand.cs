@@ -28,7 +28,7 @@ namespace VacationRental.Application.Commands.Booking
 
             var newBooking = rental.Book(bookings, new BookingPeriod(request.Start, request.Nights));
 
-            _bookingRepository.Add(newBooking);
+            newBooking = _bookingRepository.Add(newBooking); // booking with a generated identifier.
             _logger.LogInformation($"Booking for the rental '{rental.Id.Id}' from '{request.Start}' for '{request.Nights}' nights has been created");
 
             await Task.Delay(1);

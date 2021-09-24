@@ -2,16 +2,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using VacationRental.Domain.Repositories;
+using VacationRental.Domain.Repositories.ReadOnly;
 using VacationRental.Domain.Values;
 
 namespace VacationRental.Application.Queries.Rental
 {
     public class RentalByIdQueryHandler : IRequestHandler<GetRentalByIdQuery, RentalViewModel>
     {
-        private readonly IRentalRepository _rentalRepository;
+        private readonly IRentalReadOnlyRepository _rentalRepository;
 
-        public RentalByIdQueryHandler(IRentalRepository rentalRepository)
+        public RentalByIdQueryHandler(IRentalReadOnlyRepository rentalRepository)
         {
             _rentalRepository = rentalRepository ?? throw new ArgumentNullException(nameof(rentalRepository));
         }
