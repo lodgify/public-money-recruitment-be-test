@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api", "Vacat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Tests", "VacationRental.Api.Tests\VacationRental.Api.Tests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Domain", "VacationRental.Domain\VacationRental.Domain.csproj", "{FF931CC9-2AD6-4105-B3E4-1AFBAE4D2CD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Domain", "VacationRental.Domain\VacationRental.Domain.csproj", "{FF931CC9-2AD6-4105-B3E4-1AFBAE4D2CD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Application", "VacationRental.Application\VacationRental.Application.csproj", "{E975BB80-0301-49A3-9AEE-01E4C82CD178}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Application", "VacationRental.Application\VacationRental.Application.csproj", "{E975BB80-0301-49A3-9AEE-01E4C82CD178}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Infrastructure", "VacationRental.Infrastructure\VacationRental.Infrastructure.csproj", "{E09210AB-70AD-4E44-B04E-7C6DFB935CA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Infrastructure", "VacationRental.Infrastructure\VacationRental.Infrastructure.csproj", "{E09210AB-70AD-4E44-B04E-7C6DFB935CA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Infrastructure.DI.Extensions", "VacationRental.Infrastructure.DI.Extensions\VacationRental.Infrastructure.DI.Extensions.csproj", "{1E14342F-746B-4F6C-AA66-252DDFE4C2D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{E09210AB-70AD-4E44-B04E-7C6DFB935CA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E09210AB-70AD-4E44-B04E-7C6DFB935CA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E09210AB-70AD-4E44-B04E-7C6DFB935CA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E14342F-746B-4F6C-AA66-252DDFE4C2D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E14342F-746B-4F6C-AA66-252DDFE4C2D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E14342F-746B-4F6C-AA66-252DDFE4C2D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E14342F-746B-4F6C-AA66-252DDFE4C2D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
