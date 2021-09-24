@@ -10,6 +10,8 @@ namespace VacationRental.Domain.Entities
     {
         public Rental(RentalId id, int units, int preparationTimeInDays) :  base(id)
         {
+            CheckIfUnitsLessThanOne(units);
+            CheckIfPreparationTimeLessThanOne(preparationTimeInDays);
             Units = units;
             PreparationTimeInDays = preparationTimeInDays;
         }
@@ -25,6 +27,22 @@ namespace VacationRental.Domain.Entities
             }
 
             return new Booking(BookingId.Empty, Id, newBookingPeriod);
+        }
+
+        private static void CheckIfUnitsLessThanOne(int units)
+        {
+            if (units < 1)
+            {
+                throw new UnitsLessThanOneException();
+            }
+        }
+
+        private static void CheckIfPreparationTimeLessThanOne(int preparationTimeInDays)
+        {
+            if (preparationTimeInDays < 1)
+            {
+
+            }
         }
     }
 }

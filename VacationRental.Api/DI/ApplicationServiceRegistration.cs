@@ -8,7 +8,7 @@ namespace VacationRental.Api.DI
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
-            var applicationAssembly = typeof(BookingCommandRequest).Assembly;
+            var applicationAssembly = typeof(BookingRequest).Assembly;
             services.AddMediatR(applicationAssembly);
         }
     }

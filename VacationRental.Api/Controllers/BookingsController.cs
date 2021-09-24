@@ -67,7 +67,7 @@ namespace VacationRental.Api.Controllers
         //    });
 
         //    return key;
-        //}
+        //} 
 
 
         [HttpGet]
@@ -78,7 +78,7 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ResourceIdViewModel> Create(BookingCommandRequest request)
+        public async Task<ResourceIdViewModel> Create(BookingRequest request)
         {
             return await _mediator.Send(request);
         }

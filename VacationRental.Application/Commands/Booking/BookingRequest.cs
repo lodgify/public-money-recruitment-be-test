@@ -3,7 +3,7 @@ using MediatR;
 
 namespace VacationRental.Application.Commands.Booking
 {
-    public class BookingCommandRequest : IRequest<ResourceIdViewModel>
+    public class BookingRequest : IRequest<ResourceIdViewModel>
     {
         public int RentalId { get; set; }
 
