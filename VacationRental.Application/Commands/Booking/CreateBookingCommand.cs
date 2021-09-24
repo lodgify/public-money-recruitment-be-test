@@ -33,7 +33,7 @@ namespace VacationRental.Application.Commands.Booking
 
             await Task.Delay(1);
 
-            return new ResourceIdResponse{Id = newBooking.Id.Id};
+            return new ResourceIdResponse{Id = (int) newBooking.Id};
         }
     }
 }

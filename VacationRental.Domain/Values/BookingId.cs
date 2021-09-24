@@ -17,6 +17,10 @@ namespace VacationRental.Domain.Values
 
         protected override IEnumerable<object> GetAttributesToIncludeInEqualityCheck() => new List<object>{Id};
 
-        
+
+        public override string ToString() => Id.ToString();
+
+        public static explicit operator int(BookingId @this) => @this.Id;
+
     }
 }
