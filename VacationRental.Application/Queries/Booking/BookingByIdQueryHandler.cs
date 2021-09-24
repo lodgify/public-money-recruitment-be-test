@@ -16,10 +16,16 @@ namespace VacationRental.Application.Queries.Booking
             _bookingRepository = bookingRepository ?? throw new ArgumentNullException(nameof(bookingRepository));
         }
 
-        public Task<BookingViewModel> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
+        public async Task<BookingViewModel> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
         {
             var booking = _bookingRepository.Get(new BookingId(request.Id));
-            return null;
+            return new BookingViewModel
+            {
+                Id = (int) booking.Id,
+                Nights = booking.Period.Nights,
+                Start = booking.Period.Start,
+                RentalId = (int) booking.RentalId
+            };
         }
     }
 }
