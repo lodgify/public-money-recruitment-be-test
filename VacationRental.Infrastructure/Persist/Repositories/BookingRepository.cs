@@ -1,20 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Repositories;
 using VacationRental.Domain.Values;
 using VacationRental.Infrastructure.Persist.Exceptions;
 using VacationRental.Infrastructure.Persist.PersistModels;
+using VacationRental.Infrastructure.Persist.Storage;
 
-namespace VacationRental.Infrastructure.Persist
+namespace VacationRental.Infrastructure.Persist.Repositories
 {
     public sealed class BookingRepository : IBookingRepository
     {
-        private readonly Dictionary<int, BookingDataModel> _bookings = new Dictionary<int, BookingDataModel>();
+        private readonly IInMemoryDataStorage<BookingDataModel> _storage;
+
+        public BookingRepository(IInMemoryDataStorage<BookingDataModel> storage)
+        {
+            _storage = storage ?? throw new ArgumentNullException(nameof(storage));
+        }
 
         public Booking Get(BookingId id)
         {
-            if (_bookings.TryGetValue(id.Id, out var bookingDataModel))
+            if (_storage.TryGetValue(id.Id, out var bookingDataModel))
             {
                 return MapToDomain(bookingDataModel);
             }
@@ -23,24 +30,16 @@ namespace VacationRental.Infrastructure.Persist
         }
 
         public IReadOnlyCollection<Booking> GetByRentalId(RentalId rentalId) =>
-            _bookings.Values.Where(booking => booking.RentalId == rentalId.Id)
+            _storage.Get(booking => booking.RentalId == (int) rentalId)
                 .Select(MapToDomain)
                 .ToList();
 
         public Booking Add(Booking booking)
         {
             var newBookingDataModel = MapToDataModel(booking);
-            newBookingDataModel.Id = NextId(); // storage is responsible for generating new IDs. 
-
-            _bookings.Add(newBookingDataModel.Id, newBookingDataModel);
+            _storage.Add(newBookingDataModel);
 
             return MapToDomain(newBookingDataModel); // returns a domain object with the new ID.    
-        }
-
-        private int NextId()
-        {
-            var maxId = _bookings.Keys.Max(id => id);
-            return maxId + 1;
         }
 
         private static BookingDataModel MapToDataModel(Booking booking)

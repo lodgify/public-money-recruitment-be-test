@@ -1,20 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Repositories;
 using VacationRental.Domain.Values;
 using VacationRental.Infrastructure.Persist.Exceptions;
 using VacationRental.Infrastructure.Persist.PersistModels;
+using VacationRental.Infrastructure.Persist.Storage;
 
-namespace VacationRental.Infrastructure.Persist
+namespace VacationRental.Infrastructure.Persist.Repositories
 {
     public sealed class RentalRepository : IRentalRepository
     {
-        private readonly Dictionary<int, RentalDataModel> _rentals = new Dictionary<int, RentalDataModel>();
+        private readonly IInMemoryDataStorage<RentalDataModel> _storage;
+
+        public RentalRepository(IInMemoryDataStorage<RentalDataModel> storage)
+        {
+            _storage = storage ?? throw new ArgumentNullException(nameof(storage));
+        }
 
         public Rental Get(RentalId id)
         {
-            if (_rentals.TryGetValue(id.Id, out var rentalDataModel))
+            if (_storage.TryGetValue(id.Id, out var rentalDataModel))
             {
                 return MapToDomain(rentalDataModel);
             }
@@ -25,17 +30,9 @@ namespace VacationRental.Infrastructure.Persist
         public Rental Add(Rental rental)
         {
             var newRentalDataModel = MapToDataModel(rental);
-            newRentalDataModel.Id = NextId(); // storage is responsible for generating new IDs. 
-
-            _rentals.Add(newRentalDataModel.Id, newRentalDataModel);
+            _storage.Add(newRentalDataModel);
 
             return MapToDomain(newRentalDataModel); // returns a domain object with the new ID.
-        }
-
-        private int NextId()
-        {
-            var maxId = _rentals.Keys.Max(id => id);
-            return maxId + 1;
         }
 
         private static RentalDataModel MapToDataModel(Rental rental)

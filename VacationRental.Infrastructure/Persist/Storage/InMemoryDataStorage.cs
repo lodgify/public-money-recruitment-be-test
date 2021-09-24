@@ -20,16 +20,16 @@ namespace VacationRental.Infrastructure.Persist.Storage
             _setNextKey = CompileKeySetter(keyPropertyExpression);
         }
 
-        public TModel Add(TModel model)
+        public int Add(TModel model)
         {
-            var nextKey = _lastKeyValue++;
-            _setNextKey(model, nextKey);
-            _items.Add(nextKey, model);
+            var newKey = _lastKeyValue++;
+            _setNextKey(model, newKey);
+            _items.Add(newKey, model);
 
-            return model;
+            return newKey;
         }
 
-        public bool TryGetAsync(int key, out TModel model) =>
+        public bool TryGetValue(int key, out TModel model) =>
             _items.TryGetValue(key, out model);
 
         public IReadOnlyCollection<TModel> Get(Func<TModel, bool> specification) =>
