@@ -1,20 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using VacationRental.Domain.Common;
 using VacationRental.Domain.Exceptions;
 using VacationRental.Domain.Values;
 
 namespace VacationRental.Domain.Entities
 {
-    public class Rental
+    public class Rental : Entity<RentalId>
     {
-        public Rental(RentalId id, int units, int preparationTimeInDays)
+        public Rental(RentalId id, int units, int preparationTimeInDays) :  base(id)
         {
-            Id = id;
             Units = units;
             PreparationTimeInDays = preparationTimeInDays;
         }
-
-        public RentalId Id { get; }
         public int Units { get; }
         public int PreparationTimeInDays { get; }
 

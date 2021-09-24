@@ -23,15 +23,13 @@ namespace VacationRental.Application.Commands.Booking
 
         public async Task<ResourceIdViewModel> Handle(BookingCommandRequest request, CancellationToken cancellationToken)
         {
-            var rental = _rentalRepository.Get(new RentalId(request.RentalId));
-            var bookings = _bookingRepository.GetByRentalId(rental.Id);
+            var rental = await _rentalRepository.Get(new RentalId(request.RentalId));
+            var bookings = await _bookingRepository.GetByRentalId(rental.Id);
 
             var newBooking = rental.Book(bookings, new BookingPeriod(request.Start, request.Nights));
 
-            newBooking = _bookingRepository.Add(newBooking); // booking with a generated identifier.
+            newBooking = await _bookingRepository.Add(newBooking); // booking with a generated identifier.
             _logger.LogInformation($"Booking for the rental '{rental.Id.Id}' from '{request.Start}' for '{request.Nights}' nights has been created");
-
-            await Task.Delay(1);
 
             return new ResourceIdViewModel{Id = (int) newBooking.Id};
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Repositories;
 using VacationRental.Domain.Values;
@@ -17,22 +18,22 @@ namespace VacationRental.Infrastructure.Persist.Repositories
             _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
-        public Rental Get(RentalId id)
+        public ValueTask<Rental> Get(RentalId id)
         {
             if (_storage.TryGetValue(id.Id, out var rentalDataModel))
             {
-                return MapToDomain(rentalDataModel);
+                return new ValueTask<Rental>(MapToDomain(rentalDataModel)); 
             }
 
             throw new RentalNotFoundException(id);
         }
 
-        public Rental Add(Rental rental)
+        public ValueTask<Rental> Add(Rental rental)
         {
             var newRentalDataModel = MapToDataModel(rental);
             _storage.Add(newRentalDataModel);
 
-            return MapToDomain(newRentalDataModel); // returns a domain object with the new ID.
+            return new ValueTask<Rental>(MapToDomain(newRentalDataModel)); // returns a domain object with the new ID.
         }
 
         private static RentalDataModel MapToDataModel(Rental rental)

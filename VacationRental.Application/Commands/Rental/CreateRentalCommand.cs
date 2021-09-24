@@ -23,10 +23,8 @@ namespace VacationRental.Application.Commands.Rental
 
         public async Task<ResourceIdViewModel> Handle(CreateRentalRequest request, CancellationToken cancellationToken)
         {
-            var newRental = _rentalRepository.Add(new Domain.Entities.Rental(RentalId.Empty, request.Units,
+            var newRental = await _rentalRepository.Add(new Domain.Entities.Rental(RentalId.Empty, request.Units,
                 request.PreparationTimeInDays));
-
-            await Task.Delay(1);
 
             _logger.LogInformation($"Rental '{newRental.Id}' has been created successfully");
 

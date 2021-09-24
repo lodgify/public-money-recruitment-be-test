@@ -18,7 +18,7 @@ namespace VacationRental.Application.Queries.Booking
 
         public async Task<BookingViewModel> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
         {
-            var booking = _bookingRepository.Get(new BookingId(request.Id));
+            var booking = await _bookingRepository.Get(new BookingId(request.Id));
             return new BookingViewModel
             {
                 Id = (int) booking.Id,

@@ -18,7 +18,7 @@ namespace VacationRental.Application.Queries.Rental
 
         public async Task<RentalViewModel> Handle(GetRentalByIdQuery query, CancellationToken cancellationToken)
         {
-            var domainModel = _rentalRepository.Get(new RentalId(query.Id));
+            var domainModel = await _rentalRepository.Get(new RentalId(query.Id));
             return new RentalViewModel
             {
                 Id = (int) domainModel.Id,

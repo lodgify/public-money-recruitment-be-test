@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Values;
 
@@ -6,7 +7,7 @@ namespace VacationRental.Domain.Repositories.ReadOnly
 {
     public interface IBookingReadOnlyRepository
     {
-        Booking Get(BookingId id);
-        IReadOnlyCollection<Booking> GetByRentalId(RentalId rentalId);
+        ValueTask<Booking> Get(BookingId id);
+        ValueTask<IReadOnlyCollection<Booking>> GetByRentalId(RentalId rentalId);
     }
 }

@@ -6,14 +6,12 @@ namespace VacationRental.Domain.Entities
 {
     public class Booking : Entity<BookingId>
     {
-        public Booking(BookingId id, RentalId rentalId, BookingPeriod period)
+        public Booking(BookingId id, RentalId rentalId, BookingPeriod period) : base(id)
         {
-            Id = id;
             RentalId = rentalId;
             Period = period;
         }
 
-        public BookingId Id { get; }
         public RentalId RentalId { get;}
         public BookingPeriod Period { get; }
 

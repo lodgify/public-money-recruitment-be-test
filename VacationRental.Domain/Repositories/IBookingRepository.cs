@@ -1,10 +1,11 @@
-﻿using VacationRental.Domain.Entities;
+﻿using System.Threading.Tasks;
+using VacationRental.Domain.Entities;
 using VacationRental.Domain.Repositories.ReadOnly;
 
 namespace VacationRental.Domain.Repositories
 {
     public interface IBookingRepository : IBookingReadOnlyRepository
     {
-        Booking Add(Booking booking);
+        ValueTask<Booking> Add(Booking booking);
     }
 }

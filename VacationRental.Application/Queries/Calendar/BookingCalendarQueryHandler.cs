@@ -20,7 +20,7 @@ namespace VacationRental.Application.Queries.Calendar
 
         public async Task<CalendarViewModel> Handle(BookingCalendarForRentalQuery query, CancellationToken cancellationToken)
         {
-            var bookings = _bookingRepository.GetByRentalId(new RentalId(query.RentalId));
+            var bookings = await _bookingRepository.GetByRentalId(new RentalId(query.RentalId));
             var rentalCalendar = new CalendarViewModel
             {
                 RentalId = query.RentalId,
@@ -46,7 +46,6 @@ namespace VacationRental.Application.Queries.Calendar
                 rentalCalendar.Dates.Add(calendarDate);
             }
 
-            await Task.Delay(1);
             return rentalCalendar;
         }
     }

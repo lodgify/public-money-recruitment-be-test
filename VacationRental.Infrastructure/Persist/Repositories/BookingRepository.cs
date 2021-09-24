@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Repositories;
 using VacationRental.Domain.Values;
@@ -19,27 +20,31 @@ namespace VacationRental.Infrastructure.Persist.Repositories
             _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
-        public Booking Get(BookingId id)
+        public ValueTask<Booking> Get(BookingId id)
         {
             if (_storage.TryGetValue(id.Id, out var bookingDataModel))
             {
-                return MapToDomain(bookingDataModel);
+                return new ValueTask<Booking>(MapToDomain(bookingDataModel));
             }
 
             throw new BookingNotFoundException(id);
         }
 
-        public IReadOnlyCollection<Booking> GetByRentalId(RentalId rentalId) =>
-            _storage.Get(booking => booking.RentalId == (int) rentalId)
+        public ValueTask<IReadOnlyCollection<Booking>> GetByRentalId(RentalId rentalId)
+        {
+            var bookings = _storage.Get(booking => booking.RentalId == (int)rentalId)
                 .Select(MapToDomain)
                 .ToList();
 
-        public Booking Add(Booking booking)
+            return new ValueTask<IReadOnlyCollection<Booking>>(bookings);
+        }
+
+        public ValueTask<Booking> Add(Booking booking)
         {
             var newBookingDataModel = MapToDataModel(booking);
             _storage.Add(newBookingDataModel);
 
-            return MapToDomain(newBookingDataModel); // returns a domain object with the new ID.    
+            return new ValueTask<Booking>(MapToDomain(newBookingDataModel)); // returns a domain object with the new ID.    
         }
 
         private static BookingDataModel MapToDataModel(Booking booking)
