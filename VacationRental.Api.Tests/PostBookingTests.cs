@@ -24,7 +24,8 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new CreateRentalRequest
             {
-                Units = 4
+                Units = 4,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postRentalResult;
@@ -64,7 +65,8 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new CreateRentalRequest
             {
-                Units = 1
+                Units = 1,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postRentalResult;

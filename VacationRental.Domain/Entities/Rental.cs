@@ -15,18 +15,27 @@ namespace VacationRental.Domain.Entities
             Units = units;
             PreparationTimeInDays = preparationTimeInDays;
         }
+
         public int Units { get; }
         public int PreparationTimeInDays { get; }
 
         public Booking Book(IReadOnlyCollection<Booking> existingBookings, BookingPeriod newBookingPeriod)
         {
-            var amountOfBookedUnits = existingBookings.Count(booking => booking.Period.AddNights(PreparationTimeInDays).IsOverlapped(newBookingPeriod));
-            if (amountOfBookedUnits == Units)
+            var bookedUnits = existingBookings
+                .Where(booking => booking.IsOverlapped(newBookingPeriod))
+                .Select(booking=>booking.Unit);
+
+            var availableUnits = Enumerable.Range(1, Units)
+                .Except(bookedUnits)
+                .OrderBy(unit => unit);
+
+            var firstAvailableUnit = availableUnits.FirstOrDefault();
+            if (firstAvailableUnit == 0) // default value for Int32
             {
                 throw new NoAvailableUnitException(Id);
             }
 
-            return new Booking(BookingId.Empty, Id, newBookingPeriod);
+            return new Booking(BookingId.Empty, Id, newBookingPeriod, firstAvailableUnit);
         }
 
         private static void CheckIfUnitsLessThanOne(int units)
@@ -41,7 +50,7 @@ namespace VacationRental.Domain.Entities
         {
             if (preparationTimeInDays < 1)
             {
-
+                throw new PreparationDaysLessThanOneException();
             }
         }
     }

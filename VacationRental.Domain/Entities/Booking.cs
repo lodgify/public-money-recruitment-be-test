@@ -6,13 +6,15 @@ namespace VacationRental.Domain.Entities
 {
     public class Booking : Entity<BookingId>
     {
-        public Booking(BookingId id, RentalId rentalId, BookingPeriod period) : base(id)
+        public Booking(BookingId id, RentalId rentalId, BookingPeriod period, int unit) : base(id)
         {
             RentalId = rentalId;
             Period = period;
+            Unit = unit;
         }
 
         public RentalId RentalId { get;}
+        public int Unit { get; }
         public BookingPeriod Period { get; }
 
         public bool IsOverlapped(BookingPeriod periodToCompare) => Period.IsOverlapped(periodToCompare);
