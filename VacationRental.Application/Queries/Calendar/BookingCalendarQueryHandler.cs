@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,21 +23,32 @@ namespace VacationRental.Application.Queries.Calendar
         {
             var bookings = await _bookingRepository.GetByRentalId(new RentalId(query.RentalId));
 
-            var calendarDates =  Enumerable.Range(0, query.Nights)
-                .Select(i => query.Start.AddDays(i))
-                .Select(date => (date, dateBookings: bookings.Where(booking => booking.WithinBookingPeriod(date))))
-                .Select(tuple => new CalendarDateViewModel
-                {
-                    Date = tuple.date,
-                    Bookings = tuple.dateBookings
-                        .Select(booking => new CalendarBookingViewModel {Id = (int) booking.Id, Unit = booking.Unit}).ToList()
-                }).ToList();
-                
-
             return new CalendarViewModel
             {
                 RentalId = query.RentalId,
-                Dates = calendarDates
+                Dates = FormRentalCalendarDates(bookings, query.Start, query.Nights)
+            };
+        }
+
+        private List<CalendarDateViewModel> FormRentalCalendarDates(IReadOnlyCollection<Domain.Entities.Booking> bookings,  DateTime start, int nights)
+        {
+            var calendarDates = Enumerable.Range(0, nights)
+                .Select(i => start.AddDays(i))
+                .Select(date => (date, reserved: bookings.Where(booking => booking.WithinBookingPeriod(date)),
+                    underPreparation: bookings.Where(booking => booking.WithinPreparationPeriod(date))))
+                .Select(tuple => FormCalendarViewModel(tuple.date, tuple.reserved, tuple.underPreparation));
+
+            return calendarDates.ToList();
+        }
+
+        private CalendarDateViewModel FormCalendarViewModel(DateTime date,
+            IEnumerable<Domain.Entities.Booking> bookings, IEnumerable<Domain.Entities.Booking> bookingUnderPreparation)
+        {
+            return new CalendarDateViewModel
+            {
+                Date = date,
+                Bookings = bookings.Select(booking => new CalendarBookingViewModel { Id = (int)booking.Id, Unit = booking.Unit }).ToList(),
+                PreparationTimes = bookingUnderPreparation.Select(booking=> new PreparationTimesViewModel { Unit = booking.Unit }).ToList()
             };
         }
     }

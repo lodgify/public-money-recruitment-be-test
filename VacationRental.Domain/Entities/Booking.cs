@@ -16,13 +16,37 @@ namespace VacationRental.Domain.Entities
 
         public RentalId RentalId { get;}
         public int Unit { get; }
+
+        /// <summary>
+        /// Booking period
+        /// </summary>
         public BookingPeriod Period { get; }
+
+        /// <summary>
+        /// Preparation period
+        /// </summary>
         public PreparationPeriod Preparation { get; }
 
+        /// <summary>
+        /// Checks whether the given and the booking period are overlapped
+        /// </summary>
+        /// <param name="periodToCompare">Period to check</param>
+        /// <returns></returns>
         public bool IsOverlapped(BookingPeriod periodToCompare) => 
             Period.IsOverlapped(periodToCompare) || Preparation.IsOverlapped(periodToCompare); //
 
+        /// <summary>
+        /// Checks whether the given date is within the booking period
+        /// </summary>
+        /// <param name="date">Date to check</param>
+        /// <returns></returns>
         public bool WithinBookingPeriod(DateTime date) => Period.Within(date);
+
+        /// <summary>
+        ///  Checks whether the given date is within the preparation period
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public bool WithinPreparationPeriod(DateTime date) => Preparation.Within(date);
     }
 }
