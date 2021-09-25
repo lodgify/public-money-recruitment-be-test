@@ -8,6 +8,7 @@ namespace VacationRental.Domain.Entities
 {
     public class Rental : Entity<RentalId>
     {
+        private const int FirstUnitNumber = 1;
         public Rental(RentalId id, int units, int preparationTimeInDays) :  base(id)
         {
             CheckIfUnitsLessThanOne(units);
@@ -25,7 +26,7 @@ namespace VacationRental.Domain.Entities
                 .Where(booking => booking.IsOverlapped(newBookingPeriod))
                 .Select(booking=>booking.Unit);
 
-            var availableUnits = Enumerable.Range(1, Units)
+            var availableUnits = Enumerable.Range(FirstUnitNumber, Units)
                 .Except(bookedUnits)
                 .OrderBy(unit => unit);
 

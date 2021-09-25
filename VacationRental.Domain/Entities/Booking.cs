@@ -6,6 +6,7 @@ namespace VacationRental.Domain.Entities
 {
     public class Booking : Entity<BookingId>
     {
+        //TODO: consider using a snapshot here. Too many parameters
         public Booking(BookingId id, RentalId rentalId, BookingPeriod period, PreparationPeriod preparationPeriod, int unit) : base(id)
         {
             RentalId = rentalId;
