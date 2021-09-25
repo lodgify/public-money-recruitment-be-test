@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Application.Commands;
 using VacationRental.Application.Commands.Rental;
 using VacationRental.Application.Queries.Rental;
-using VacationRental.Domain.Repositories;
 
 namespace VacationRental.Api.Controllers
 {

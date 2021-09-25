@@ -3,41 +3,41 @@ using System.Linq;
 
 namespace VacationRental.Domain.Common
 {
-    public abstract class ValueObject<T> where T : ValueObject<T>
+    public abstract class ValueObject
     {
-        protected abstract IEnumerable<object> GetAttributesToIncludeInEqualityCheck();
-
-        public override bool Equals(object other)
+        protected static bool EqualOperator(ValueObject left, ValueObject right)
         {
-            return Equals(other as T);
-        }
-
-        public bool Equals(T other)
-        {
-            if (other == null)
+            if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
             {
                 return false;
             }
+            return ReferenceEquals(left, null) || left.Equals(right);
+        }
+
+        protected static bool NotEqualOperator(ValueObject left, ValueObject right)
+        {
+            return !(EqualOperator(left, right));
+        }
+
+        protected abstract IEnumerable<object> GetAttributesToIncludeInEqualityCheck();
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || obj.GetType() != GetType())
+            {
+                return false;
+            }
+
+            var other = (ValueObject)obj;
+
             return GetAttributesToIncludeInEqualityCheck().SequenceEqual(other.GetAttributesToIncludeInEqualityCheck());
-        }
-
-        public static bool operator == (ValueObject<T> left, ValueObject<T> right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(ValueObject<T> left, ValueObject<T> right)
-        {
-            return !(left == right);
         }
 
         public override int GetHashCode()
         {
-            var hash = 17;
-            foreach (var obj in GetAttributesToIncludeInEqualityCheck())
-                hash = hash * 31 + (obj == null ? 0 : obj.GetHashCode());
-
-            return hash;
+            return GetAttributesToIncludeInEqualityCheck()
+                .Select(x => x != null ? x.GetHashCode() : 0)
+                .Aggregate((x, y) => x ^ y);
         }
     }
 }

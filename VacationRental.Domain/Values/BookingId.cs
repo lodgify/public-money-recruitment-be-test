@@ -3,7 +3,7 @@ using VacationRental.Domain.Common;
 
 namespace VacationRental.Domain.Values
 {
-    public sealed class BookingId : ValueObject<BookingId>
+    public sealed class BookingId : ValueObject
     {
 
         public static BookingId Empty { get; } = new BookingId(int.MinValue);

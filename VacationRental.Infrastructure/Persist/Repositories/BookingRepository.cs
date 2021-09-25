@@ -53,15 +53,19 @@ namespace VacationRental.Infrastructure.Persist.Repositories
             {
                 Id = booking.Id.Id,
                 RentalId = booking.RentalId.Id,
-                Start = booking.Period.Start,
-                Nights = booking.Period.Nights,
+                Period = new TimePeriodDataModel { Start =  booking.Period.Start, Days = booking.Period.Nights},
+                Preparation = new TimePeriodDataModel {  Start = booking.Preparation.Start, Days = booking.Period.Nights},
                 Unit = booking.Unit
             };
         }
 
-        private static Booking MapToDomain(BookingDataModel dataModel) =>
-            new Booking(new BookingId(dataModel.Id), 
+        private static Booking MapToDomain(BookingDataModel dataModel)
+        {
+            return new Booking(new BookingId(dataModel.Id),
                 new RentalId(dataModel.RentalId),
-                new BookingPeriod(dataModel.Start, dataModel.Nights), dataModel.Unit);
+                new BookingPeriod(dataModel.Period.Start, dataModel.Period.Days),
+                new PreparationPeriod(dataModel.Preparation.Start, dataModel.Preparation.Days),
+                dataModel.Unit);
+        }
     }
 }

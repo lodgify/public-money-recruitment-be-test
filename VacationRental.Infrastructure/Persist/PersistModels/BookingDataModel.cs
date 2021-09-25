@@ -6,8 +6,9 @@ namespace VacationRental.Infrastructure.Persist.PersistModels
     {
         public int Id { get; set; }
         public int RentalId { get; set; }
-        public DateTime Start { get; set; }
-        public int Nights { get; set; }
+        public TimePeriodDataModel Period { get; set; }
+        public TimePeriodDataModel Preparation { get; set; }
+
         public int Unit { get; set; }
     }
 }
