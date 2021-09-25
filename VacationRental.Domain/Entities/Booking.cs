@@ -34,7 +34,7 @@ namespace VacationRental.Domain.Entities
         /// <param name="periodToCompare">Period to check</param>
         /// <returns></returns>
         public bool IsOverlapped(BookingPeriod periodToCompare) => 
-            Period.IsOverlapped(periodToCompare) || Preparation.IsOverlapped(periodToCompare); //
+            Period.IsOverlapped(periodToCompare) || Preparation.IsOverlapped(periodToCompare);
 
         /// <summary>
         /// Checks whether the given date is within the booking period
