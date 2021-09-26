@@ -67,7 +67,7 @@ namespace VacationRental.UnitTests.Domain
             var bookings = new List<Booking>
             {
                 new Booking(new BookingId(1), rental.Id, new BookingPeriod(start, nights),
-                    new PreparationPeriod(startOfPreparation, preparationTime), numberOfUnits)
+                    preparationTime, numberOfUnits)
             };
 
             //Act
@@ -88,7 +88,6 @@ namespace VacationRental.UnitTests.Domain
             var preparationTime = 1;
             var start = new DateTime(2001, 1, 1);
             var nights = 10;
-            var startOfPreparation = start.AddDays(nights);
             var numberOfUnits = 1;
 
             var rental = new Rental(new RentalId(1), units, preparationTime);
@@ -96,7 +95,7 @@ namespace VacationRental.UnitTests.Domain
             var bookings = new List<Booking>
             {
                 new Booking(new BookingId(1), rental.Id, new BookingPeriod(start, nights),
-                    new PreparationPeriod(startOfPreparation, preparationTime), numberOfUnits)
+                    preparationTime, numberOfUnits)
             };
             
             //Act
@@ -120,7 +119,7 @@ namespace VacationRental.UnitTests.Domain
             {
                 //The booking is a month later than that one we're booking below
                 new Booking(new BookingId(1), rental.Id, new BookingPeriod(existingBookingsDate, nights),
-                    new PreparationPeriod(existingBookingsDate.AddDays(nights), preparationTime), 1)
+                    preparationTime, 1)
             };
 
             //Act

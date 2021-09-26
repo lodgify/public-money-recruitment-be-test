@@ -7,12 +7,12 @@ namespace VacationRental.Domain.Entities
     public class Booking : Entity<BookingId>
     {
         //TODO: consider using a snapshot here. Too many parameters
-        public Booking(BookingId id, RentalId rentalId, BookingPeriod period, PreparationPeriod preparationPeriod, int unit) : base(id)
+        public Booking(BookingId id, RentalId rentalId, BookingPeriod period, int preparationTimeInDays, int unit) : base(id)
         {
             RentalId = rentalId;
             Period = period;
             Unit = unit;
-            Preparation = preparationPeriod;
+            Preparation = new PreparationPeriod(period.GetEndOfPeriod(), preparationTimeInDays); // The preparation period starts when the booking is finished
         }
 
         public RentalId RentalId { get;}

@@ -37,9 +37,7 @@ namespace VacationRental.Domain.Entities
             }
 
             return new Booking(BookingId.Empty, Id, newBookingPeriod,
-                new PreparationPeriod(newBookingPeriod.GetEndOfPeriod(), // The preparation period starts when the booking is finished
-                    PreparationTimeInDays), 
-                firstAvailableUnit);
+                PreparationTimeInDays, firstAvailableUnit);
         }
 
         private static void CheckIfUnitsLessThanOne(int units)

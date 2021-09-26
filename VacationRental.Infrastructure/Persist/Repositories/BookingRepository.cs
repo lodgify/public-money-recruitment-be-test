@@ -54,7 +54,7 @@ namespace VacationRental.Infrastructure.Persist.Repositories
                 Id = booking.Id.Id,
                 RentalId = booking.RentalId.Id,
                 Period = new TimePeriodDataModel { Start =  booking.Period.Start, Days = booking.Period.Nights},
-                Preparation = new TimePeriodDataModel {  Start = booking.Preparation.Start, Days = booking.Period.Nights},
+                PreparationInDays = booking.Preparation.Days,
                 Unit = booking.Unit
             };
         }
@@ -64,7 +64,7 @@ namespace VacationRental.Infrastructure.Persist.Repositories
             return new Booking(new BookingId(dataModel.Id),
                 new RentalId(dataModel.RentalId),
                 new BookingPeriod(dataModel.Period.Start, dataModel.Period.Days),
-                new PreparationPeriod(dataModel.Preparation.Start, dataModel.Preparation.Days),
+                dataModel.PreparationInDays,
                 dataModel.Unit);
         }
     }
