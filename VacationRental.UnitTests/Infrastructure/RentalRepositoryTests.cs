@@ -67,7 +67,7 @@ namespace VacationRental.UnitTests.Infrastructure
             var preparationTime = 2;
             var rental = new Rental(new RentalId(1), units, preparationTime);
 
-            A.CallTo(() => fakeStorage.TryGetValue(1, out modelBeforeUpdating)).Returns(true);
+            A.CallTo(() => fakeStorage.TryGetValue(id, out modelBeforeUpdating)).Returns(true);
 
             var repository = new RentalRepository(fakeStorage);
 
@@ -77,9 +77,8 @@ namespace VacationRental.UnitTests.Infrastructure
 
             A.CallTo(() => fakeStorage.Update(A<RentalDataModel>.That.Matches(param=>param.Id == id 
                                                                                      && param.Units == units 
-                                                                                     && param.PreparationTimeInDays == preparationTime)))
-                .MustHaveHappenedOnceExactly();
-
+                                                                                     && param.PreparationTimeInDays == preparationTime))
+                ).MustHaveHappenedOnceExactly();
         }
     }
 }

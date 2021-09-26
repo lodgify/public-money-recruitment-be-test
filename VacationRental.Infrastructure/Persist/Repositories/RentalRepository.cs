@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Exceptions;
 using VacationRental.Domain.Repositories;
@@ -9,46 +8,22 @@ using VacationRental.Infrastructure.Persist.Storage;
 
 namespace VacationRental.Infrastructure.Persist.Repositories
 {
-    public sealed class RentalRepository : IRentalRepository
+    public sealed class RentalRepository : InMemoryRepository<Rental, RentalId, RentalDataModel>, IRentalRepository
     {
-        private readonly IInMemoryDataStorage<RentalDataModel> _storage;
 
-        public RentalRepository(IInMemoryDataStorage<RentalDataModel> storage)
+        public RentalRepository(IInMemoryDataStorage<RentalDataModel> storage) : base(storage)
         {
-            _storage = storage ?? throw new ArgumentNullException(nameof(storage));
+
         }
 
-        public ValueTask<Rental> Get(RentalId id)
-        {
-            if (_storage.TryGetValue(id.Id, out var rentalDataModel))
-            {
-                return new ValueTask<Rental>(MapToDomain(rentalDataModel)); 
-            }
+        protected override int RetrieveId(RentalId entity) => entity.Id;
 
-            throw new RentalNotFoundException(id);
-        }
+        protected override Exception GetNotFoundException(RentalId id) => new RentalNotFoundException(id);
 
-        public ValueTask<Rental> Add(Rental rental)
-        {
-            var newRentalDataModel = MapToDataModel(rental);
-            _storage.Add(newRentalDataModel);
+        protected override Rental MapToDomain(RentalDataModel dataModel) =>
+            new Rental(new RentalId(dataModel.Id), dataModel.Units, dataModel.PreparationTimeInDays);
 
-            return new ValueTask<Rental>(MapToDomain(newRentalDataModel)); // returns a domain object with the new ID.
-        }
-
-        public Task Update(Rental rental)
-        {
-            if (_storage.TryGetValue((int)rental.Id, out _))
-            {
-                var updateRentalDataModel = MapToDataModel(rental);
-                _storage.Update(updateRentalDataModel);
-                return Task.CompletedTask;
-            }
-
-            throw new RentalNotFoundException(rental.Id);
-        }
-
-        private static RentalDataModel MapToDataModel(Rental rental)
+        protected override RentalDataModel MapToDataModel(Rental rental)
         {
             return new RentalDataModel
             {
@@ -57,8 +32,5 @@ namespace VacationRental.Infrastructure.Persist.Repositories
                 PreparationTimeInDays = rental.PreparationTimeInDays
             };
         }
-
-        private static Rental MapToDomain(RentalDataModel dataModel) =>
-            new Rental(new RentalId(dataModel.Id), dataModel.Units, dataModel.PreparationTimeInDays);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Exceptions;
@@ -11,43 +10,18 @@ using VacationRental.Infrastructure.Persist.Storage;
 
 namespace VacationRental.Infrastructure.Persist.Repositories
 {
-    public sealed class BookingRepository : IBookingRepository
+    public sealed class BookingRepository : InMemoryRepository<Booking, BookingId, BookingDataModel>, IBookingRepository
     {
-        private readonly IInMemoryDataStorage<BookingDataModel> _storage;
 
-        public BookingRepository(IInMemoryDataStorage<BookingDataModel> storage)
+        public BookingRepository(IInMemoryDataStorage<BookingDataModel> storage) : base(storage)
         {
-            _storage = storage ?? throw new ArgumentNullException(nameof(storage));
+
         }
 
-        public ValueTask<Booking> Get(BookingId id)
-        {
-            if (_storage.TryGetValue(id.Id, out var bookingDataModel))
-            {
-                return new ValueTask<Booking>(MapToDomain(bookingDataModel));
-            }
+        public ValueTask<IReadOnlyCollection<Booking>> GetByRentalId(RentalId rentalId) =>
+            Get(booking => booking.RentalId == (int) rentalId);
 
-            throw new BookingNotFoundException(id);
-        }
-
-        public ValueTask<IReadOnlyCollection<Booking>> GetByRentalId(RentalId rentalId)
-        {
-            var bookings = _storage.Get(booking => booking.RentalId == (int)rentalId)
-                .Select(MapToDomain)
-                .ToList();
-
-            return new ValueTask<IReadOnlyCollection<Booking>>(bookings);
-        }
-
-        public ValueTask<Booking> Add(Booking booking)
-        {
-            var newBookingDataModel = MapToDataModel(booking);
-            _storage.Add(newBookingDataModel);
-
-            return new ValueTask<Booking>(MapToDomain(newBookingDataModel)); // returns a domain object with the new ID.    
-        }
-
-        private static BookingDataModel MapToDataModel(Booking booking)
+        protected override BookingDataModel MapToDataModel(Booking booking)
         {
             return new BookingDataModel
             {
@@ -59,7 +33,12 @@ namespace VacationRental.Infrastructure.Persist.Repositories
             };
         }
 
-        private static Booking MapToDomain(BookingDataModel dataModel)
+        protected override int RetrieveId(BookingId id) => id.Id;
+
+        protected override Exception GetNotFoundException(BookingId id) =>
+            new BookingNotFoundException(id);
+
+        protected override Booking MapToDomain(BookingDataModel dataModel)
         {
             return new Booking(new BookingId(dataModel.Id),
                 new RentalId(dataModel.RentalId),
