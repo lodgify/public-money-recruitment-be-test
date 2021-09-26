@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using VacationRental.Application.Aspects;
 using Xunit;
@@ -10,7 +11,7 @@ namespace VacationRental.UnitTests.Application.Aspects.ErrorHandler
     public class ErrorHandlerAspectTests
     {
         [Fact]
-        public async Task Handle_NextDelegateThrowsDomainException_ApplicationExceptionShouldBeThrownInstead()
+        public async Task Handle_NextDelegateThrowsDomainException_ApplicationExceptionIsThrownInstead()
         {
             var fakeLogger = new TestLogger();
             var handler = new ErrorHandlerAspect<TestRequest, TestResponse>(fakeLogger);
@@ -66,6 +67,34 @@ namespace VacationRental.UnitTests.Application.Aspects.ErrorHandler
             Assert.True(fakeLogger.LogHasBeenCalled);
             Assert.Equal(LogLevel.Error, fakeLogger.LogLevelValueForLogMethod);
             Assert.Equal(exceptionToBeThrown.Message, fakeLogger.ErrorMessageParameter);
+        }
+
+        [Fact]
+        public async Task Handle_NextDelegateThrowsValidationException_ApplicationExceptionIsThrownInstead()
+        {
+            var fakeLogger = new TestLogger();
+            var handler = new ErrorHandlerAspect<TestRequest, TestResponse>(fakeLogger);
+            var validationMessage = "ValidationError";
+
+            var validationException = await Assert.ThrowsAsync<ApplicationException>(async () => await handler.Handle(new TestRequest(),
+                CancellationToken.None, () => throw new ValidationException(validationMessage)));
+
+            Assert.Equal(validationMessage, validationException.Message);
+        }
+
+        [Fact]
+        public async Task Handle_NextDelegateThrowsValidationException_LogErrorIsCalled()
+        {
+            var fakeLogger = new TestLogger();
+            var handler = new ErrorHandlerAspect<TestRequest, TestResponse>(fakeLogger);
+            var validationMessage = "ValidationError";
+
+            await Assert.ThrowsAsync<ApplicationException>(async () => await handler.Handle(new TestRequest(),
+                CancellationToken.None, () => throw new ValidationException(validationMessage)));
+
+            Assert.True(fakeLogger.LogHasBeenCalled);
+            Assert.Equal(LogLevel.Error, fakeLogger.LogLevelValueForLogMethod);
+            Assert.Equal(validationMessage, fakeLogger.ErrorMessageParameter);
         }
     }
 }
