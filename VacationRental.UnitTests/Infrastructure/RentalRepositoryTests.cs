@@ -39,7 +39,5 @@ namespace VacationRental.UnitTests.Infrastructure
             Assert.Equal(preparationTime, rental.PreparationTimeInDays);
             Assert.Equal(units, rental.Units);
         }
-
-
     }
 }
