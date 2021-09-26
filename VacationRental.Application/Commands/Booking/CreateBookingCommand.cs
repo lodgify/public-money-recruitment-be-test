@@ -29,7 +29,7 @@ namespace VacationRental.Application.Commands.Booking
             var newBooking = rental.Book(bookings, new BookingPeriod(request.Start, request.Nights));
 
             newBooking = await _bookingRepository.Add(newBooking); // booking with a generated identifier.
-            _logger.LogInformation($"Booking for the rental '{rental.Id.Id}' from '{request.Start}' for '{request.Nights}' nights has been created");
+            _logger.LogInformation($"Booking for the rental '{rental.Id}' from '{request.Start}' for '{request.Nights}' nights has been created");
 
             return new ResourceIdViewModel{Id = (int) newBooking.Id};
         }

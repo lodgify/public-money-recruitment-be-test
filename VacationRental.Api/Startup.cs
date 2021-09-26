@@ -23,7 +23,7 @@ namespace VacationRental.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new Info { Title = "Vacation rental information", Version = "v1" }));
-
+            
             services.AddInfrastructureServices();
             services.AddApplicationServices();
         }
