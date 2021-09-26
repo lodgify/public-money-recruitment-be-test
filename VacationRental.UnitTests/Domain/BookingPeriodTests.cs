@@ -22,6 +22,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(new DateTime(2001, 1, 1), 1);
             var anotherPeriod = new BookingPeriod(new DateTime(2000, 12, 1), 1);
 
+            //Act
             var isOverlapped = period.IsOverlapped(anotherPeriod);
 
             Assert.False(isOverlapped);
@@ -35,6 +36,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, nights);
             var anotherPeriod = new BookingPeriod(start.AddDays(nights), nights);
 
+            //Act
             var isOverlapped = period.IsOverlapped(anotherPeriod);
 
             Assert.False(isOverlapped);
@@ -49,6 +51,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, nights);
             var anotherPeriod = new BookingPeriod(start.AddMonths(1), nights);
 
+            //Act
             var isOverlapped = period.IsOverlapped(anotherPeriod);
 
             Assert.False(isOverlapped);
@@ -62,6 +65,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, nights);
             var anotherPeriod = new BookingPeriod(start.AddDays(-2), nights);
 
+            //Act
             var isOverlapped = period.IsOverlapped(anotherPeriod);
 
             Assert.True(isOverlapped);
@@ -74,6 +78,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, 5);
             var anotherPeriod = new BookingPeriod(start, 3);
 
+            //Act
             var isOverlapped = period.IsOverlapped(anotherPeriod);
 
             Assert.True(isOverlapped);
@@ -100,6 +105,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, nights);
             var anotherPeriod = new BookingPeriod(start.AddDays(nights - 1), 1);
 
+            //Act
             var isOverlapped = period.IsOverlapped(anotherPeriod);
 
             Assert.True(isOverlapped);
@@ -113,6 +119,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, nights);
             var anotherPeriod = new BookingPeriod(start.AddDays(1), nights-2);
 
+            //Act
             var isOverlapped = period.IsOverlapped(anotherPeriod);
 
             Assert.True(isOverlapped);
@@ -126,6 +133,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, nights);
             var dateToCheck = start.AddMonths(-1);
 
+            //Act
             var withinPeriod = period.Within(dateToCheck);
 
             Assert.False(withinPeriod);
@@ -152,6 +160,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, nights);
             var dateToCheck = start.AddDays(1);
 
+            //Act
             var withinPeriod = period.Within(dateToCheck);
 
             Assert.True(withinPeriod);
@@ -165,6 +174,7 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, night);
             var dateToCheck = start.AddDays(night);
 
+            //Act
             var withinPeriod = period.Within(dateToCheck);
 
             Assert.False(withinPeriod);
@@ -178,9 +188,26 @@ namespace VacationRental.UnitTests.Domain
             var period = new BookingPeriod(start, night);
             var dateToCheck = start.AddDays(night + 10);
 
+            //Act
             var withinPeriod = period.Within(dateToCheck);
 
             Assert.False(withinPeriod);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(10)]
+        [InlineData(100)]
+        public void GetEndOfPeriod__NoParams__Returns_Start_Plus_Number_Of_Days(int days)
+        {
+            var start = new DateTime(2001,1,1);
+            var period = new BookingPeriod(start, days);
+
+            //Act
+            var end = period.GetEndOfPeriod();
+
+            var expectedValue = start.AddDays(days);
+            Assert.Equal(expectedValue, end);
         }
     }
 }
