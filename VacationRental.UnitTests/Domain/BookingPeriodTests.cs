@@ -17,7 +17,7 @@ namespace VacationRental.UnitTests.Domain
         }
 
         [Fact]
-        public void IsOverlapped__ParameterPeriodStarts_Before_Start_And_Ends_Before_Start__ReturnsFalse()
+        public void IsOverlapped__ParameterPeriod_Starts_Before_Beginning_And_Ends_Before_Beginning__ReturnsFalse()
         {
             var period = new BookingPeriod(new DateTime(2001, 1, 1), 1);
             var anotherPeriod = new BookingPeriod(new DateTime(2000, 12, 1), 1);
@@ -28,14 +28,94 @@ namespace VacationRental.UnitTests.Domain
         }
 
         [Fact]
-        public void IsOverlapped__ParameterPeriodStarts_After_End__ReturnsFalse()
+        public void IsOverlapped__ParameterPeriod_Starts_InTheEnd__ReturnsFalse()
         {
-            var period = new BookingPeriod(new DateTime(2001, 1, 1), 1);
-            var anotherPeriod = new BookingPeriod(new DateTime(2001, 2, 1), 1);
+            var start = new DateTime(2001, 1, 1);
+            var nights = 5;
+            var period = new BookingPeriod(start, nights);
+            var anotherPeriod = new BookingPeriod(start.AddDays(nights), nights);
 
             var isOverlapped = period.IsOverlapped(anotherPeriod);
 
             Assert.False(isOverlapped);
+        }
+
+
+        [Fact]
+        public void IsOverlapped__ParameterPeriod_Starts_After_Ending__ReturnsFalse()
+        {
+            var start = new DateTime(2001, 1, 1);
+            var nights = 1;
+            var period = new BookingPeriod(start, nights);
+            var anotherPeriod = new BookingPeriod(start.AddMonths(1), nights);
+
+            var isOverlapped = period.IsOverlapped(anotherPeriod);
+
+            Assert.False(isOverlapped);
+        }
+
+        [Fact]
+        public void IsOverlapped__ParameterPeriod_Starts_Before_Beginning_And_Ends_After_Beginning__ReturnsTrue()
+        {
+            var start = new DateTime(2001, 2, 1);
+            var nights = 5;
+            var period = new BookingPeriod(start, nights);
+            var anotherPeriod = new BookingPeriod(start.AddDays(-2), nights);
+
+            var isOverlapped = period.IsOverlapped(anotherPeriod);
+
+            Assert.True(isOverlapped);
+        }
+
+        [Fact]
+        public void IsOverlapped__ParameterPeriod_Starts_InTheBeginning_And_Ends_After_Beginning__ReturnsTrue()
+        {
+            var start = new DateTime(2001,1,1);
+            var period = new BookingPeriod(start, 5);
+            var anotherPeriod = new BookingPeriod(start, 3);
+
+            var isOverlapped = period.IsOverlapped(anotherPeriod);
+
+            Assert.True(isOverlapped);
+        }
+
+        [Fact]
+        public void IsOverlapped__ParameterPeriod_Starts_Before_Ending_And_Ends_After_Ending__ReturnsTrue()
+        {
+            var start = new DateTime(2001, 1, 1);
+            var nights = 5;
+            var period = new BookingPeriod(start, nights);
+            var anotherPeriod = new BookingPeriod(start.AddDays(nights - 1), nights);
+
+            var isOverlapped = period.IsOverlapped(anotherPeriod);
+
+            Assert.True(isOverlapped);
+        }
+
+        [Fact]
+        public void IsOverlapped__ParameterPeriod_Starts_Before_Ending_And_Ends_InTheEnd__ReturnsTrue()
+        {
+            var start = new DateTime(2001, 1, 1);
+            var nights = 5;
+            var period = new BookingPeriod(start, nights);
+            var anotherPeriod = new BookingPeriod(start.AddDays(nights - 1), 1);
+
+            var isOverlapped = period.IsOverlapped(anotherPeriod);
+
+            Assert.True(isOverlapped);
+        }
+
+        [Fact]
+        public void IsOverlapped__ParameterPeriod_Starts_After_Beginning_And_Ends_Before_Ending__ReturnsTrue()
+        {
+            var start = new DateTime(2001,1,1);
+            var nights = 5;
+            var period = new BookingPeriod(start, nights);
+            var anotherPeriod = new BookingPeriod(start.AddDays(1), nights-2);
+
+            var isOverlapped = period.IsOverlapped(anotherPeriod);
+
+            Assert.True(isOverlapped);
         }
     }
 }

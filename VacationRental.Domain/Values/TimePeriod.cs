@@ -21,7 +21,9 @@ namespace VacationRental.Domain.Values
         internal bool Within(DateTime date) => _start <= date.Date && _start.AddDays(_days) > date.Date;
 
         internal bool IsOverlapped(TimePeriod periodToCompare) =>
-            (_start >= periodToCompare.GetEndOfPeriod() || periodToCompare._start >= periodToCompare.GetEndOfPeriod()) == false;
+            StartsBeforeOrInTheBeginning_And_EndsAfterTheBeginning(periodToCompare)
+            || StartsBeforeTheEnd_And_EndsAfterOrIneTheEnd(periodToCompare)
+            || StartsAfterTheBeginning_And_EndsBeforeTheEnd(periodToCompare);
 
         internal DateTime GetEndOfPeriod() => _start.AddDays(_days);
 
@@ -30,5 +32,15 @@ namespace VacationRental.Domain.Values
         {
             return new List<object> { _start, _days };
         }
+
+        
+        private bool StartsBeforeOrInTheBeginning_And_EndsAfterTheBeginning(TimePeriod period) =>
+            _start <= period._start && GetEndOfPeriod() > period._start;
+        
+        private bool StartsBeforeTheEnd_And_EndsAfterOrIneTheEnd(TimePeriod period) =>
+            _start < period.GetEndOfPeriod() && GetEndOfPeriod() >= period.GetEndOfPeriod();
+
+        private bool StartsAfterTheBeginning_And_EndsBeforeTheEnd(TimePeriod period) =>
+            _start > period._start && GetEndOfPeriod() < period.GetEndOfPeriod();
     }
 }
