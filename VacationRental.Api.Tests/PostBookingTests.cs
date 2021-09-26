@@ -20,7 +20,7 @@ namespace VacationRental.Api.Tests
         }
 
         [Fact]
-        public async Task GivenCompleteRequest_WhenPostBooking_ThenAGetReturnsTheCreatedBooking()
+        public async Task Given__ARentalIsCreated__When_PostBooking__Then_AGetReturnsTheCreatedBooking()
         {
             var postRentalRequest = new CreateRentalRequest
             {
@@ -61,7 +61,7 @@ namespace VacationRental.Api.Tests
         }
 
         [Fact]
-        public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsErrorWhenThereIsOverbooking()
+        public async Task Given__ARentalIsCreated_And_BookingIsCreated__WhenPostBooking_AndNewBookingIsOverlapped__Then_APostReturnsErrorWhenThereIsOverbooking()
         {
             var postRentalRequest = new CreateRentalRequest
             {

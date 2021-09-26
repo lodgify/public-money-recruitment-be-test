@@ -39,6 +39,7 @@ namespace VacationRental.Api.Tests
 
                 var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
                 Assert.Equal(request.Units, getResult.Units);
+                Assert.Equal(request.PreparationTimeInDays, getResult.PreparationTimeIdDays);
             }
         }
     }
