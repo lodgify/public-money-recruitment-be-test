@@ -7,6 +7,7 @@ namespace VacationRental.Infrastructure.Persist.Storage
     where TModel : class, new()
     {
         int Add(TModel model);
+        void Update(TModel model);
         bool TryGetValue(int key, out TModel model);
         IReadOnlyCollection<TModel> Get(Func<TModel, bool> specification);
     }

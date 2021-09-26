@@ -7,5 +7,6 @@ namespace VacationRental.Domain.Repositories
     public interface IRentalRepository : IRentalReadOnlyRepository
     {
         ValueTask<Rental> Add(Rental rental);
+        Task Update(Rental rental);
     }
 }

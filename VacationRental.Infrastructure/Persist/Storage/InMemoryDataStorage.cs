@@ -14,10 +14,12 @@ namespace VacationRental.Infrastructure.Persist.Storage
         private int _lastKeyValue = 0;
         private readonly Dictionary<int, TModel> _items = new Dictionary<int, TModel>();
         private readonly Action<TModel, int> _setNextKey;
+        private readonly Func<TModel, int> _keyRetriever;
 
         public InMemoryDataStorage(Expression<Func<TModel, int>> keyPropertyExpression)
         {
             _setNextKey = CompileKeySetter(keyPropertyExpression);
+            _keyRetriever = keyPropertyExpression.Compile();
         }
 
         public int Add(TModel model)
@@ -27,6 +29,12 @@ namespace VacationRental.Infrastructure.Persist.Storage
             _items.Add(newKey, model);
 
             return newKey;
+        }
+
+        public void Update(TModel model)
+        {
+            var key = _keyRetriever(model);
+            _items[key] = model;
         }
 
         public bool TryGetValue(int key, out TModel model) =>
@@ -43,6 +51,7 @@ namespace VacationRental.Infrastructure.Persist.Storage
         /// <returns></returns>
         private Action<TModel, int> CompileKeySetter(Expression<Func<TModel, int>> keyPropertyExpression)
         {
+            //(TModel model, int newKey) => model.Key = newValue;
             var keyPropertyInfo = (PropertyInfo)(keyPropertyExpression.Body as MemberExpression).Member;
             var itemParameterExpression = Expression.Parameter(typeof(TModel));
             var newKeyParameterExpression = Expression.Parameter(typeof(int));

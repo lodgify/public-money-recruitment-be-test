@@ -36,6 +36,18 @@ namespace VacationRental.Infrastructure.Persist.Repositories
             return new ValueTask<Rental>(MapToDomain(newRentalDataModel)); // returns a domain object with the new ID.
         }
 
+        public Task Update(Rental rental)
+        {
+            if (_storage.TryGetValue((int)rental.Id, out _))
+            {
+                var updateRentalDataModel = MapToDataModel(rental);
+                _storage.Update(updateRentalDataModel);
+                return Task.CompletedTask;
+            }
+
+            throw new RentalNotFoundException(rental.Id);
+        }
+
         private static RentalDataModel MapToDataModel(Rental rental)
         {
             return new RentalDataModel
