@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Repositories.ReadOnly;
 
@@ -8,5 +9,6 @@ namespace VacationRental.Domain.Repositories
     {
         ValueTask<Booking> Add(Booking booking);
         Task Update(Booking booking);
+        Task UpdateRange(IReadOnlyCollection<Booking> bookings);
     }
 }

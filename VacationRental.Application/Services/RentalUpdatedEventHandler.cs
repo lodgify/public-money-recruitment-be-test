@@ -29,7 +29,9 @@ namespace VacationRental.Application.Services
             CheckOverlappingDueToUnitsDecreasing(bookings, eventDetails.Units);
             CheckOverlappingDueToPreparationIncreasing(bookings, eventDetails);
 
-            _logger.LogInformation($"Bookings are updated successfully according to the event", eventDetails);
+            await _bookingRepository.UpdateRange(bookings);
+            _logger.LogInformation("Bookings are updated successfully according to the event", eventDetails);
+
         }
 
         private void UpdatePreparationTimePeriod(IReadOnlyCollection<Booking> bookings, int preparationTimesInDays)

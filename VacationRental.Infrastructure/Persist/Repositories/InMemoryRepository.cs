@@ -33,6 +33,7 @@ namespace VacationRental.Infrastructure.Persist.Repositories
             {
                 var updateDataModel = MapToDataModel(entity);
                 _storage.Update(updateDataModel);
+
                 return Task.CompletedTask;
             }
 
@@ -56,6 +57,22 @@ namespace VacationRental.Infrastructure.Persist.Repositories
                 .ToList();
 
             return new ValueTask<IReadOnlyCollection<TDomainEntity>>(models);
+        }
+
+        protected async Task Update(IReadOnlyCollection<TDomainEntity> entities)
+        {
+            // As far as all entities should be updated at once we need to check if all of them are in the storage
+            // in case of an attempt to update not stored entity, NotFoundException should be thrown
+            var notStoredEntity = entities.FirstOrDefault(entity => _storage.TryGetValue(RetrieveId(entity.Id), out _) == false);
+            if (notStoredEntity != null)
+            {
+                throw GetNotFoundException(notStoredEntity.Id); 
+            }
+
+            foreach (var entity in entities)
+            {
+                await Update(entity);
+            }
         }
 
 

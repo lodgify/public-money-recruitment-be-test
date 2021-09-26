@@ -46,5 +46,7 @@ namespace VacationRental.Infrastructure.Persist.Repositories
                 dataModel.PreparationInDays,
                 dataModel.Unit);
         }
+
+        public Task UpdateRange(IReadOnlyCollection<Booking> bookings) => Update(bookings);
     }
 }

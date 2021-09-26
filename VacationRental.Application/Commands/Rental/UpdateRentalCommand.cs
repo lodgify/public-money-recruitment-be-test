@@ -30,6 +30,7 @@ namespace VacationRental.Application.Commands.Rental
 
             await rental.Update(request.Units, rental.PreparationTimeInDays);
 
+            await _rentalRepository.Update(rental);
             _logger.LogInformation($"Rental '{rentalId}' is updated successfully");
 
             return Unit.Value;
