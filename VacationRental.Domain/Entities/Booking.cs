@@ -26,7 +26,10 @@ namespace VacationRental.Domain.Entities
         /// <summary>
         /// Preparation period
         /// </summary>
-        public PreparationPeriod Preparation { get; }
+        public PreparationPeriod Preparation { get; private set; }
+
+        public void UpdatePreparationTime(int days) =>
+            Preparation = new PreparationPeriod(Period.GetEndOfPeriod(), days);
 
         /// <summary>
         /// Checks whether the given and the booking period are overlapped
@@ -35,6 +38,28 @@ namespace VacationRental.Domain.Entities
         /// <returns></returns>
         public bool IsOverlapped(BookingPeriod periodToCompare) => 
             Period.IsOverlapped(periodToCompare) || Preparation.IsOverlapped(periodToCompare);
+
+
+        public bool IsOverlapped(Booking booking)
+        {
+            return Period.IsOverlapped(booking.Period)
+                   || Period.IsOverlapped(booking.Preparation)
+                   || Preparation.IsOverlapped(booking.Period)
+                   || Preparation.IsOverlapped(booking.Preparation);
+        }
+
+
+        /// <summary>
+        /// Returns the last day when the unit is blocked
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetEndOfBooking() => Preparation.GetEndOfPeriod();
+
+        /// <summary>
+        /// Returns the beginning of the booking 
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetStartOfBooking() => Period.Start;
 
         /// <summary>
         /// Checks whether the given date is within the booking period

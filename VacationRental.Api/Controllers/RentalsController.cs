@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using VacationRental.Api.Models;
 using VacationRental.Application.Commands;
 using VacationRental.Application.Commands.Rental;
 using VacationRental.Application.Queries.Rental;
@@ -27,9 +28,17 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ResourceIdViewModel> Post(CreateRentalRequest request)
+        public async Task<ResourceIdViewModel> Post([FromBody] CreateRentalRequest request)
         {
             return await _mediator.Send(request);
+        }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public async Task Put(int rentalId, [FromBody] UpdateRentalModel request)
+        {
+            await _mediator.Send(new UpdateRentalRequest
+                {Id = rentalId, Units = request.Units, PreparationTimeInDays = request.PreparationTimeInDays});
         }
     }
 }

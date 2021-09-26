@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using VacationRental.Application.Aspects;
 using VacationRental.Application.Commands.Booking;
+using VacationRental.Application.Services;
+using VacationRental.Domain.Services;
 
 namespace VacationRental.Api.DI
 {
@@ -13,6 +15,7 @@ namespace VacationRental.Api.DI
             services.AddMediatR(applicationAssembly);
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ErrorHandlerAspect<,>));
+            services.AddScoped<IRentalUpdatedEventHandler, RentalUpdatedEventHandler>();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ResourceIdViewModel> Create(BookingRequest request)
+        public async Task<ResourceIdViewModel> Create([FromBody] BookingRequest request)
         {
             return await _mediator.Send(request);
         }
