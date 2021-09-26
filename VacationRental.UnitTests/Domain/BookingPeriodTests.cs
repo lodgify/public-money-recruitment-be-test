@@ -117,5 +117,70 @@ namespace VacationRental.UnitTests.Domain
 
             Assert.True(isOverlapped);
         }
+
+        [Fact]
+        public void Within__Date_Is_Before_Beginning__ReturnsFalse()
+        {
+            var start = new DateTime(2001, 1,1);
+            var nights = 5;
+            var period = new BookingPeriod(start, nights);
+            var dateToCheck = start.AddMonths(-1);
+
+            var withinPeriod = period.Within(dateToCheck);
+
+            Assert.False(withinPeriod);
+        }
+
+        [Fact]
+        public void Within__Date_Is_InTheBeginning__ReturnsTrue()
+        {
+            var start = new DateTime(2001, 1, 1);
+            var nights = 5;
+            var period = new BookingPeriod(start, nights);
+            var dateToCheck = start;
+
+            var withinPeriod = period.Within(dateToCheck);
+
+            Assert.True(withinPeriod);
+        }
+
+        [Fact]
+        public void Within__Date_Is_After_Beginning_Before_Ending__ReturnsTrue()
+        {
+            var start = new DateTime(2001, 1, 1);
+            var nights = 5;
+            var period = new BookingPeriod(start, nights);
+            var dateToCheck = start.AddDays(1);
+
+            var withinPeriod = period.Within(dateToCheck);
+
+            Assert.True(withinPeriod);
+        }
+
+        [Fact]
+        public void Within__Date_Is_InTheEnd__ReturnsFalse()
+        {
+            var start = new DateTime(2001, 1,1);
+            var night = 5;
+            var period = new BookingPeriod(start, night);
+            var dateToCheck = start.AddDays(night);
+
+            var withinPeriod = period.Within(dateToCheck);
+
+            Assert.False(withinPeriod);
+        }
+
+        [Fact]
+        public void Within__Date_Is_After_Ending_ReturnsFalse()
+        {
+            var start = new DateTime(2001, 1, 1);
+            var night = 5;
+            var period = new BookingPeriod(start, night);
+            var dateToCheck = start.AddDays(night + 10);
+
+            var withinPeriod = period.Within(dateToCheck);
+
+            Assert.False(withinPeriod);
+        }
     }
 }
