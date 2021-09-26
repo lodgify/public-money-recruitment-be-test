@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using VacationRental.Application.Exceptions;
 using VacationRental.Domain.Exceptions;
 
 namespace VacationRental.Application.Aspects
@@ -22,6 +24,18 @@ namespace VacationRental.Application.Aspects
             try
             {
                 return await next();
+            }
+            // it's forbidden to raise internal errors and passed them to the API level
+            // this information might be security-critical
+            catch (InfrastructureException ex) 
+            {
+                _logger.LogError(ex.Message);
+                throw new UnhandledInfrastructureException();
+            }
+            catch (ValidationException ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new ApplicationException(ex.Message);
             }
             catch (DomainException ex)
             {
