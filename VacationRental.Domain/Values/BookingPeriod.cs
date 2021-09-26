@@ -10,6 +10,11 @@ namespace VacationRental.Domain.Values
             ThrowIfNightsLessThanOne(nights);
         }
 
+
+        //Notice: Names of properties can be different and depend on the domain's terminology
+        //For instance, for BookingPeriod the 'Nights' property is the period length
+        //But for PreparationPeriod it's the 'Days' property
+
         public DateTime Start => GetStart();
         public int Nights => GetDays();
 
