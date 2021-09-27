@@ -3,7 +3,7 @@
 namespace VacationRental.Domain.Exceptions
 {
     /// <summary>
-    /// Base exception for all the domain model's exceptions
+    /// Serves as the base class for domain exceptions
     /// </summary>
     public abstract class DomainException : Exception
     {

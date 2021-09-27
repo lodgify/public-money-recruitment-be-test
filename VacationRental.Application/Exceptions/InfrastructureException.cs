@@ -2,6 +2,9 @@
 
 namespace VacationRental.Application.Exceptions
 {
+    /// <summary>
+    /// Serves as the base class for infrastructure exceptions
+    /// </summary>
     public abstract class InfrastructureException : Exception
     {
         protected InfrastructureException()
