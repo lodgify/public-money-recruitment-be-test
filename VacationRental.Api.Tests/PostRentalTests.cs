@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Application.Commands;
 using VacationRental.Application.Commands.Rental;
 using VacationRental.Application.Queries.Rental;
+using VacationRental.Domain.Exceptions;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -53,12 +55,13 @@ namespace VacationRental.Api.Tests
                 PreparationTimeInDays = 1
             };
 
-            var exception = await Assert.ThrowsAsync<ApplicationException>(async () =>
+            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
             {
-                using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-                {
-                }
-            });
+                Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
+
+                var errorMessage = await postResponse.Content.ReadAsStringAsync();
+                Assert.Equal(new UnitsLessThanOneException().Message, errorMessage);
+            }
         }
     }
 }

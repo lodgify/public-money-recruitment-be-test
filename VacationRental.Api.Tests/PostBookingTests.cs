@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Application.Commands;
 using VacationRental.Application.Commands.Booking;
 using VacationRental.Application.Commands.Rental;
 using VacationRental.Application.Queries.Booking;
+using VacationRental.Domain.Exceptions;
+using VacationRental.Domain.Values;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -95,12 +98,13 @@ namespace VacationRental.Api.Tests
                 Start = new DateTime(2002, 01, 02)
             };
 
-            await Assert.ThrowsAsync<ApplicationException>(async () =>
+            using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
             {
-                using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
-                {
-                }
-            });
+                Assert.Equal(HttpStatusCode.BadRequest, postBooking2Response.StatusCode);
+
+                var errorMessage = await postBooking2Response.Content.ReadAsStringAsync();
+                Assert.Equal(new NoAvailableUnitException(new RentalId(postRentalResult.Id)).Message, errorMessage);
+            }
         }
     }
 }

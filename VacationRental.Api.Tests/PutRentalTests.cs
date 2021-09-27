@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
@@ -7,6 +8,7 @@ using VacationRental.Application.Commands.Booking;
 using VacationRental.Application.Commands.Rental;
 using VacationRental.Application.Queries.Calendar.ViewModel;
 using VacationRental.Application.Queries.Rental;
+using VacationRental.Domain.Exceptions;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -136,15 +138,14 @@ namespace VacationRental.Api.Tests
                 PreparationTimeInDays = 1
             };
 
-            await Assert.ThrowsAsync<ApplicationException>(async () =>
-                {
-                    using (var putHttpResponseMessage =
-                        await _client.PutAsJsonAsync($"/api/v1/rentals/{postRentalResult.Id}", putRentalRequest))
-                    {
-                        Assert.True(putHttpResponseMessage.IsSuccessStatusCode);
-                    }
-                }
-            );
+            using (var putHttpResponseMessage =
+                await _client.PutAsJsonAsync($"/api/v1/rentals/{postRentalResult.Id}", putRentalRequest))
+            {
+                Assert.Equal(HttpStatusCode.BadRequest, putHttpResponseMessage.StatusCode);
+
+                var errorMessage = await putHttpResponseMessage.Content.ReadAsStringAsync();
+                Assert.Equal(new DecreasingNumberOfUnitsFailedException().Message, errorMessage);
+            }
         }
 
         [Fact]

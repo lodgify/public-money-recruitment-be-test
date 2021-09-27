@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Application.Commands;
 using VacationRental.Application.Commands.Booking;
 using VacationRental.Application.Commands.Rental;
+using VacationRental.Application.Queries.Calendar;
 using VacationRental.Application.Queries.Calendar.ViewModel;
+using VacationRental.Domain.Exceptions;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -130,12 +133,13 @@ namespace VacationRental.Api.Tests
                 postBooking1Result = await postBooking1Response.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            await Assert.ThrowsAsync<ApplicationException>(async () =>
+            using (var getCalendarResponse = await _client.GetAsync($"/api/v1/calendar?rentalId={postRentalResult.Id}&start=2000-01-01&nights=0"))
             {
-                using (var getCalendarResponse = await _client.GetAsync($"/api/v1/calendar?rentalId={postRentalResult.Id}&start=2000-01-01&nights=0"))
-                {
-                }
-            });
+                Assert.Equal(HttpStatusCode.BadRequest, getCalendarResponse.StatusCode);
+
+                var errorMessage = await getCalendarResponse.Content.ReadAsStringAsync();
+                Assert.Contains($"'{nameof(BookingCalendarForRentalQuery.Nights)}' can't be less than 1", errorMessage);
+            }
         }
     }
 }
