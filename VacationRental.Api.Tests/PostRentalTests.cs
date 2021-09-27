@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Application.Commands;
 using VacationRental.Application.Commands.Rental;
@@ -41,6 +42,23 @@ namespace VacationRental.Api.Tests
                 Assert.Equal(request.Units, getResult.Units);
                 Assert.Equal(request.PreparationTimeInDays, getResult.PreparationTimeIdDays);
             }
+        }
+
+        [Fact]
+        public async Task GivenCompleteRequest__When_PostRental_And_RequestIsInvalid__ThenThePostReturnsError()
+        {
+            var request = new CreateRentalRequest
+            {
+                Units = 0,
+                PreparationTimeInDays = 1
+            };
+
+            var exception = await Assert.ThrowsAsync<ApplicationException>(async () =>
+            {
+                using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
+                {
+                }
+            });
         }
     }
 }
