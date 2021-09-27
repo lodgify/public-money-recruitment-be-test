@@ -8,6 +8,7 @@ using Xunit;
 
 namespace VacationRental.UnitTests.Application.Aspects.ErrorHandler
 {
+    [Collection("Application")]
     public class ErrorHandlerAspectTests
     {
         [Fact]

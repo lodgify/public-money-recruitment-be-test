@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Security.Cryptography;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Values;
 using Xunit;
 
 namespace VacationRental.UnitTests.Domain
 {
+    [Collection("Domain")]
     public class BookingTests
     {
         [Fact]

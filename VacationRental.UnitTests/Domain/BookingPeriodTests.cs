@@ -5,6 +5,7 @@ using Xunit;
 
 namespace VacationRental.UnitTests.Domain
 {
+    [Collection("Domain")]
     public class BookingPeriodTests
     {
         [Theory]

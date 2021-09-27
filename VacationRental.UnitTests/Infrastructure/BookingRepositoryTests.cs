@@ -11,6 +11,7 @@ using Xunit;
 
 namespace VacationRental.UnitTests.Infrastructure
 {
+    [Collection("Infrastructure")]
     public class BookingRepositoryTests
     {
         [Fact]
