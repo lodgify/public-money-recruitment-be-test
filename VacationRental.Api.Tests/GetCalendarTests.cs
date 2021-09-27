@@ -85,7 +85,7 @@ namespace VacationRental.Api.Tests
                 Assert.Equal(2, getCalendarResult.Dates[2].Bookings.Count);
                 Assert.Contains(getCalendarResult.Dates[2].Bookings, x => x.Id == postBooking1Result.Id);
                 Assert.Contains(getCalendarResult.Dates[2].Bookings, x => x.Id == postBooking2Result.Id);
-                Assert.Empty(getCalendarResult.Dates[1].PreparationTimes);
+                Assert.Empty(getCalendarResult.Dates[2].PreparationTimes);
 
                 Assert.Equal(new DateTime(2000, 01, 04), getCalendarResult.Dates[3].Date);
                 Assert.Single(getCalendarResult.Dates[3].Bookings);

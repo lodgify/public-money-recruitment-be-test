@@ -28,7 +28,7 @@ namespace VacationRental.Application.Commands.Rental
             var rental = await _rentalRepository.Get(rentalId);
             rental.RentalUpdateEvent += _rentalUpdatedHandler.Handle;
 
-            await rental.Update(request.Units, rental.PreparationTimeInDays);
+            await rental.Update(request.Units, request.PreparationTimeInDays);
 
             await _rentalRepository.Update(rental);
             _logger.LogInformation($"Rental '{rentalId}' is updated successfully");
