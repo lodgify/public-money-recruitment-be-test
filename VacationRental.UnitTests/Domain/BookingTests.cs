@@ -109,10 +109,6 @@ namespace VacationRental.UnitTests.Domain
             Assert.True(isOverlapped);
         }
 
-        /// <summary>
-        /// /////////////////////////////////////////////////////////////////////////////////////////////////
-        /// </summary>
-
         [Fact]
         public void WithinBookingPeriod__Date_Is_Before_Beginning__ReturnsFalse()
         {
