@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
@@ -38,21 +39,28 @@ namespace VacationRental.Api.Controllers
             if (!_rentals.ContainsKey(model.RentalId))
                 throw new ApplicationException("Rental not found");
 
-            for (var i = 0; i < model.Nights; i++)
+            RentalViewModel rental = _rentals[model.RentalId];
+            int realNightsBlocked = rental.PreparationTimeInDays + model.Nights;
+            var selectedUnit = 1;
+            for (var i = 0; i < realNightsBlocked; i++)
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
+                var count = selectedUnit;
+                // TODO: improve from O(n) to O(1)
+                foreach (var booking in _bookings.Values
+                    .Where(x=> x.RentalId == model.RentalId && x.Unit == selectedUnit))
                 {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
+                    int bookingNightsBlocked = rental.PreparationTimeInDays + booking.Nights;
+                    if ( (booking.Start <= model.Start.Date && booking.Start.AddDays(bookingNightsBlocked) > model.Start.Date)
+                         || (booking.Start < model.Start.AddDays(realNightsBlocked) && booking.Start.AddDays(bookingNightsBlocked) >= model.Start.AddDays(realNightsBlocked))
+                         || (booking.Start > model.Start && booking.Start.AddDays(bookingNightsBlocked) < model.Start.AddDays(realNightsBlocked)))
                     {
                         count++;
                     }
                 }
-                if (count >= _rentals[model.RentalId].Units)
+                if (count > rental.Units) 
                     throw new ApplicationException("Not available");
+                selectedUnit = count;
+
             }
 
 
@@ -63,9 +71,9 @@ namespace VacationRental.Api.Controllers
                 Id = key.Id,
                 Nights = model.Nights,
                 RentalId = model.RentalId,
-                Start = model.Start.Date
+                Start = model.Start.Date,
+                Unit = selectedUnit,
             });
-
             return key;
         }
     }

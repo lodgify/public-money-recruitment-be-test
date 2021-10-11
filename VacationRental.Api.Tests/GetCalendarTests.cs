@@ -22,7 +22,8 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 2
+                Units = 2,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postRentalResult;
@@ -71,23 +72,35 @@ namespace VacationRental.Api.Tests
 
                 Assert.Equal(new DateTime(2000, 01, 01), getCalendarResult.Dates[0].Date);
                 Assert.Empty(getCalendarResult.Dates[0].Bookings);
-                
+                Assert.Empty(getCalendarResult.Dates[0].PreparationTimes);
+
+
                 Assert.Equal(new DateTime(2000, 01, 02), getCalendarResult.Dates[1].Date);
                 Assert.Single(getCalendarResult.Dates[1].Bookings);
                 Assert.Contains(getCalendarResult.Dates[1].Bookings, x => x.Id == postBooking1Result.Id);
-                
+                Assert.Empty(getCalendarResult.Dates[1].PreparationTimes);
+
+
                 Assert.Equal(new DateTime(2000, 01, 03), getCalendarResult.Dates[2].Date);
                 Assert.Equal(2, getCalendarResult.Dates[2].Bookings.Count);
                 Assert.Contains(getCalendarResult.Dates[2].Bookings, x => x.Id == postBooking1Result.Id);
                 Assert.Contains(getCalendarResult.Dates[2].Bookings, x => x.Id == postBooking2Result.Id);
-                
+                Assert.Empty(getCalendarResult.Dates[2].PreparationTimes);
+
+
                 Assert.Equal(new DateTime(2000, 01, 04), getCalendarResult.Dates[3].Date);
                 Assert.Single(getCalendarResult.Dates[3].Bookings);
                 Assert.Contains(getCalendarResult.Dates[3].Bookings, x => x.Id == postBooking2Result.Id);
-                
+                Assert.Contains(getCalendarResult.Dates[3].PreparationTimes, x => x.Unit == 1);
+
+
                 Assert.Equal(new DateTime(2000, 01, 05), getCalendarResult.Dates[4].Date);
                 Assert.Empty(getCalendarResult.Dates[4].Bookings);
+                Assert.Contains(getCalendarResult.Dates[4].PreparationTimes, x => x.Unit == 2);
+
             }
         }
+    
+        
     }
 }
