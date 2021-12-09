@@ -1,0 +1,11 @@
+
+1.  I have adopted a clean architecture project style which has been made popular by Architects such as Ardalis and Jason Taylor
+2.  I have adopted a Request/Response API style made popular by Architects such as Microsoft MVCP Nick Chapsas.
+3.  I have opted for a Unit of Work with generic repository pattern.
+4.  For the backend data I have decided to go with an Entity Framework Core In Memory Database.
+5.  I took the liberty of making the Controller end points Asynchronous.  I have personally seen several debates about whether Async affects the API Contracts
+    and the consensus is that Asynchronous endpoints only deals with responses and not with contracts. 
+6.  I have implemented Exception handling however I have not implemented Logging with Serilog as I did not wish to create too much project bloat for this project purpose.
+
+Due to going into theater for an operation last week and spending 4 days recovering, I was severely pushed for time in order not
+to take any longer than is comfortable with this project, I have opted to not do the Optional requirement in order to save time.
