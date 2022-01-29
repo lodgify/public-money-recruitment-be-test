@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DAL\VacationRental.DAL.csproj" />
+    <ProjectReference Include="..\Models\VacationRental.Models.csproj" />
+    <ProjectReference Include="..\Services\VacationRental.Services.csproj" />
     <ProjectReference Include="..\VacationRental.Api\VacationRental.Api.csproj" />
   </ItemGroup>
 
