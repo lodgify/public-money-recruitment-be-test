@@ -1,5 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Application.Business.Commands.Rental;
+using Application.Business.Queries.Rental;
+using Application.Models;
+using Application.Models.Rental.Requests;
+using Application.Models.Rental.Responses;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
@@ -9,35 +16,30 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IMediator _mediator;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(IMediator mediator)
         {
-            _rentals = rentals;
+            _mediator = mediator;
         }
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        public async Task<RentalResponse> Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            return _rentals[rentalId];
+            return await _mediator.Send(new GetRentalQuery(rentalId));
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        public async Task<ResourceIdViewModel> Post(CreateRentalRequest model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
-
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
-
-            return key;
+            return await _mediator.Send(new CreateRentalCommand(model));
+        }
+        
+        [HttpPut]
+        public async Task Put(UpdateRentalRequest request, CancellationToken token)
+        {
+            await _mediator.Send(new UpdateRentalCommand(request), token);
         }
     }
 }

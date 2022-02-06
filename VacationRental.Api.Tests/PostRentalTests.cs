@@ -2,6 +2,9 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Application.Models;
+using Domain.DAL.Models;
+using FluentValidation;
 using VacationRental.Api.Models;
 using Xunit;
 
@@ -20,9 +23,10 @@ namespace VacationRental.Api.Tests
         [Fact]
         public async Task GivenCompleteRequest_WhenPostRental_ThenAGetReturnsTheCreatedRental()
         {
-            var request = new RentalBindingModel
+            var request = new CreateRentalRequest
             {
-                Units = 25
+                Units = 25,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postResult;
@@ -36,9 +40,61 @@ namespace VacationRental.Api.Tests
             {
                 Assert.True(getResponse.IsSuccessStatusCode);
 
-                var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
+                var getResult = await getResponse.Content.ReadAsAsync<Rental>();
                 Assert.Equal(request.Units, getResult.Units);
+                Assert.Equal(request.PreparationTimeInDays, getResult.PreparationTimeInDays);
             }
+        }
+        
+        [Fact]
+        public async Task GivenCompleteRequest_WhenPostRental_ThenAPostReturnsErrorWhenPreparationTimeInDaysIsNegative()
+        {
+            var request = new CreateRentalRequest
+            {
+                Units = 25,
+                PreparationTimeInDays = -1
+            };
+            
+            await Assert.ThrowsAsync<ValidationException>(async () =>
+            {
+                using (var postrentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
+                {
+                }
+            });
+        }
+        
+        [Fact]
+        public async Task GivenCompleteRequest_WhenPostRental_ThenAPostReturnsErrorWhenUnitsIsNegative()
+        {
+            var request = new CreateRentalRequest
+            {
+                Units = -25,
+                PreparationTimeInDays = 1
+            };
+            
+            await Assert.ThrowsAsync<ValidationException>(async () =>
+            {
+                using (var postrentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
+                {
+                }
+            });
+        }
+        
+        [Fact]
+        public async Task GivenCompleteRequest_WhenPostRental_ThenAPostReturnsErrorWhenUnitsIsAndPreparationTimeInDaysNegative()
+        {
+            var request = new CreateRentalRequest
+            {
+                Units = -25,
+                PreparationTimeInDays = -1
+            };
+            
+            await Assert.ThrowsAsync<ValidationException>(async () =>
+            {
+                using (var postrentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
+                {
+                }
+            });
         }
     }
 }
