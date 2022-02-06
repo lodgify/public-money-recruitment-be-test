@@ -1,10 +1,12 @@
 ﻿using System;
 
-namespace VacationRental.Api.Models
+namespace Application.Models.Booking.Requests
 {
-    public class BookingBindingModel
+    public class CreateBookingRequest
     {
         public int RentalId { get; set; }
+        
+        public int Unit { get; set; }
 
         public DateTime Start
         {
