@@ -4,7 +4,7 @@ using System;
 using System.Net.Http;
 using Xunit;
 
-namespace VacationRental.Api.Tests
+namespace VacationRental.Api.Tests.ApiTests
 {
     [CollectionDefinition("Integration")]
     public sealed class IntegrationFixture : IDisposable, ICollectionFixture<IntegrationFixture>
