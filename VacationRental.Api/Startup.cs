@@ -31,8 +31,11 @@ namespace VacationRental.Api
             services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
             services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
 
+            services.AddSingleton<IDictionary<int, Booking>>(new Dictionary<int, Booking>());
             services.AddSingleton<IDictionary<int, Rental>>(new Dictionary<int, Rental>());
 
+            services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<ICalendarService, CalendarService>();
             services.AddScoped<IRentalService, RentalService>();
         }
 
