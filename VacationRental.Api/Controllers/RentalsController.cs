@@ -30,9 +30,19 @@ namespace VacationRental.Api.Controllers
         [HttpPost]
         public ResourceIdViewModel Post(RentalBindingModel model)
         {
-            // wish that have a chance to check if exists
+            // wish to have a chance to check if exists
 
             return _rentalService.Create(model);
+        }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public RentalViewModel Put(int rentalId, RentalBindingModel model)
+        {
+            if (rentalId <= 0)
+                throw new ApplicationException("Rental Id be greater than zero!");
+
+            return _rentalService.Update(rentalId, model);
         }
     }
 }
