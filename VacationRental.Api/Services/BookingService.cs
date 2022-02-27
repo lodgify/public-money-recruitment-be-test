@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VacationRental.Api.Data;
+using VacationRental.Api.Helpers;
 using VacationRental.Api.Models;
 using VacationRental.Api.Services.Interfaces;
 
@@ -113,7 +114,7 @@ namespace VacationRental.Api.Services
                     throw new ApplicationException("No available unit could found for this process");
             }
 
-            List<int> allUnits = GetUnits(rentalModel.Units);
+            List<int> allUnits = UnitHelper.GetUnits(rentalModel.Units);
             int newSelectedUnit = allUnits.FirstOrDefault(x => !bookedUnits.Contains(x));
 
             if (newSelectedUnit == default)
@@ -144,21 +145,6 @@ namespace VacationRental.Api.Services
                 Unit = availableUnit
             });
             return key;
-        }
-
-        private static List<int> GetUnits(int unitCount)
-        {
-            List<int> units = new List<int>();
-
-            if (unitCount <= 0)
-                return units;
-
-            for (int i = 1; i <= unitCount; i++)
-            {
-                units.Add(i);
-            }
-
-            return units;
         }
     }
 }

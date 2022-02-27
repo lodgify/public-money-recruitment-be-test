@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VacationRental.Api.Data;
+using VacationRental.Api.Helpers;
 using VacationRental.Api.Models;
 using VacationRental.Api.Services.Interfaces;
 
@@ -177,7 +178,7 @@ namespace VacationRental.Api.Services
                                                                                              && x.Start.AddDays(x.Nights) >= DateTime.Today
                                                                                              && x.Unit > rental.Units);
 
-            IEnumerable<int> rentalUnits = GetUnits(rental.Units);
+            IEnumerable<int> rentalUnits = UnitHelper.GetUnits(rental.Units);
 
             foreach (var booking in bookingsToUpdate)
             {
@@ -220,21 +221,6 @@ namespace VacationRental.Api.Services
         {
             return _bookings.Values.Where(x => x.RentalId == rentalId
                                                             && x.Start.AddDays(x.Nights) >= date);
-        }
-
-        private List<int> GetUnits(int unitCount)
-        {
-            List<int> units = new List<int>();
-
-            if (unitCount <= 0)
-                return units;
-
-            for (int i = 1; i <= unitCount; i++)
-            {
-                units.Add(i);
-            }
-
-            return units;
         }
     }
 }
