@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Collections.Generic;
 using VacationRental.Api.Data;
-using VacationRental.Api.Models;
 using VacationRental.Api.Services;
 using VacationRental.Api.Services.Interfaces;
 
@@ -32,11 +31,8 @@ namespace VacationRental.Api
 
             services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new Info { Title = "Vacation rental information", Version = "v1" }));
 
-            services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
-            services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
-
-            services.AddSingleton<IDictionary<int, Booking>>(new Dictionary<int, Booking>());
             services.AddSingleton<IDictionary<int, Rental>>(new Dictionary<int, Rental>());
+            services.AddSingleton<IDictionary<int, Booking>>(new Dictionary<int, Booking>());
 
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<ICalendarService, CalendarService>();

@@ -52,7 +52,7 @@ namespace VacationRental.Api.Services
                 };
 
                 date.Bookings = _bookingService.GetBookingsByDate(model.RentalId, date.Date).ToList();
-                date.Preparations = _bookingService.GetBookingsWithPreparationsByDate(model.RentalId, rental.PreparationTimeInDays, date.Date).ToList();
+                date.Preparations = _bookingService.GetPreparationsByDate(model.RentalId, rental.PreparationTimeInDays, date.Date).ToList();
 
                 result.Dates.Add(date);
             }

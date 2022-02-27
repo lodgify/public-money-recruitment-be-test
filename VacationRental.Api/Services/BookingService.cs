@@ -73,7 +73,7 @@ namespace VacationRental.Api.Services
                 });
         }
 
-        public IEnumerable<CalendarPreparationViewModel> GetBookingsWithPreparationsByDate(int rentalId, int preparationTime, DateTime date)
+        public IEnumerable<CalendarPreparationViewModel> GetPreparationsByDate(int rentalId, int preparationTime, DateTime date)
         {
             return _bookings.Values.Where(x => x.RentalId == rentalId
                                                             && x.Start.AddDays(x.Nights) <= date.Date

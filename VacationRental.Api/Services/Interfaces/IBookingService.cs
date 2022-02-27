@@ -12,6 +12,6 @@ namespace VacationRental.Api.Services.Interfaces
 
         IEnumerable<CalendarBookingViewModel> GetBookingsByDate(int rentalId, DateTime date);
 
-        IEnumerable<CalendarPreparationViewModel> GetBookingsWithPreparationsByDate(int rentalId, int preparationTime, DateTime date);
+        IEnumerable<CalendarPreparationViewModel> GetPreparationsByDate(int rentalId, int preparationTime, DateTime date);
     }
 }
