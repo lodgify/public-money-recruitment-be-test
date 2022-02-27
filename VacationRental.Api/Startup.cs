@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using VacationRental.Api.Data;
 using VacationRental.Api.Models;
+using VacationRental.Api.Services;
+using VacationRental.Api.Services.Interfaces;
 
 namespace VacationRental.Api
 {
@@ -27,6 +30,10 @@ namespace VacationRental.Api
 
             services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
             services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+
+            services.AddSingleton<IDictionary<int, Rental>>(new Dictionary<int, Rental>());
+
+            services.AddScoped<IRentalService, RentalService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
