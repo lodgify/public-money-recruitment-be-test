@@ -51,9 +51,9 @@ namespace VacationRental.WebAPI
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo
 				{
-					Title = "Lodgify Vacation Rental Service",
+					Title = "Lodgify Vacation Rental Task",
 					Version = "v1",
-					Description = "This vacation rental service to manage bookings and rentals"
+					Description = "Vacation rental service to manage bookings and rentals"
 				});
 			});
 

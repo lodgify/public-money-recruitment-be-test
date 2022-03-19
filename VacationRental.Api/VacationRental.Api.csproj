@@ -40,9 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="VacationRental.DataAccessLayer">
-      <HintPath>..\VacationRental.DataAccessLayer\bin\Debug\netstandard2.1\VacationRental.DataAccessLayer.dll</HintPath>
-    </Reference>
     <Reference Include="VacationRental.Domain">
       <HintPath>..\VacationRental.Domain\bin\Debug\netstandard2.1\VacationRental.Domain.dll</HintPath>
     </Reference>

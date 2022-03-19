@@ -54,7 +54,11 @@
 2022-03-19 18:20:13.5860 Info Loading assembly: NLog.Web.AspNetCore
 2022-03-19 18:20:13.7037 Info Adding target FileTarget(Name=logFile)
 2022-03-19 18:20:13.8042 Info Validating config: TargetNames=logFile, ConfigItems=28, FilePath=D:\test\Lodgify.VacationRentalService\src\VacationRental.Api\bin\Debug\net5.0\nlog.config
-2022-03-19 21:04:05.6480 Info Message Template Auto Format enabled
-2022-03-19 21:04:05.6615 Info Loading assembly: NLog.Web.AspNetCore
-2022-03-19 21:04:05.7093 Info Adding target FileTarget(Name=logFile)
-2022-03-19 21:04:05.7467 Info Validating config: TargetNames=logFile, ConfigItems=28, FilePath=C:\Users\nabbo247\source\repos\public-money-recruitment-be-test\VacationRental.Api\bin\Debug\net5.0\nlog.config
+2022-03-19 22:28:56.9780 Info Message Template Auto Format enabled
+2022-03-19 22:28:56.9919 Info Loading assembly: NLog.Web.AspNetCore
+2022-03-19 22:28:57.0448 Info Adding target FileTarget(Name=logFile)
+2022-03-19 22:28:57.0909 Info Validating config: TargetNames=logFile, ConfigItems=28, FilePath=C:\Users\nabbo247\source\repos\public-money-recruitment-be-test\VacationRental.Api\bin\Debug\net5.0\nlog.config
+2022-03-19 22:30:47.1761 Info Message Template Auto Format enabled
+2022-03-19 22:30:47.1910 Info Loading assembly: NLog.Web.AspNetCore
+2022-03-19 22:30:47.2447 Info Adding target FileTarget(Name=logFile)
+2022-03-19 22:30:47.2874 Info Validating config: TargetNames=logFile, ConfigItems=28, FilePath=C:\Users\nabbo247\source\repos\public-money-recruitment-be-test\VacationRental.Api\bin\Debug\net5.0\nlog.config
