@@ -31,7 +31,16 @@ namespace VacationRental.Api.Controllers
 			this.logger = logger;
 			this.rentalBookingService = rentalBookingService;
 		}
+		// GET
+		// /api/v1/rentals/{rentalId}
 
+		/// <summary>
+		/// Retrieves booking items
+		/// </summary>
+		/// <param name="bookingId">bookingId</param>
+		/// <returns>A response with booking item</returns>
+		/// <response code="200">Returns the stock items list</response>
+		/// <response code="404">Not found</response>
 		[HttpGet("{rentalId:int}")]
 		[ProducesResponseType(typeof(RentalViewModel), (int)HttpStatusCode.OK)]
 		[ProducesResponseType((int)HttpStatusCode.NotFound)]

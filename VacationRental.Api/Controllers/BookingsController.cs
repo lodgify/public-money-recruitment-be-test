@@ -30,13 +30,13 @@ namespace VacationRental.Api.Controllers
 			this.logger = logger;
 		}
 		// GET
-		// api/v1/Warehouse/StockItem
+		// /api/v1/bookings/{bookingId}
 
 		/// <summary>
 		/// Retrieves booking items
 		/// </summary>
 		/// <param name="bookingId">bookingId</param>
-		/// <returns>A response with stock items list</returns>
+		/// <returns>A response with booking item</returns>
 		/// <response code="200">Returns the stock items list</response>
 		/// <response code="404">Not found</response>
 		[HttpGet("{bookingId:int}")]
@@ -58,7 +58,19 @@ namespace VacationRental.Api.Controllers
 
 			return Ok(response);
 		}
+		// POST
+		// /api/v1/bookings
 
+		/// <summary>
+		/// booking items
+		/// </summary>
+		/// <param name="RentalId">RentalId</param>
+		/// <param name="start">Start date</param>
+		/// <param name="Nights">Nights</param>
+		/// <returns>A response with booking item</returns>
+		/// <response code="200">Returns the stock items list</response>
+		/// <response code="400">bad request</response>
+		/// <response code="404">Not found</response>
 		[HttpPost]
 		[ProducesResponseType(typeof(ResourceIdViewModel), (int)HttpStatusCode.OK)]
 		[ProducesResponseType((int)HttpStatusCode.BadRequest)]
