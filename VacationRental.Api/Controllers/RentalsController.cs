@@ -1,43 +1,103 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AutoMapper;
+using VacationRental.Domain.Models;
+using VacationRental.Domain.Interfaces;
+using VacationRental.WebAPI.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using Microsoft.Extensions.Logging;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace VacationRental.Api.Controllers
 {
-    [Route("api/v1/rentals")]
-    [ApiController]
-    public class RentalsController : ControllerBase
-    {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+	[Route("api/v1/rentals")]
+	[ApiController]
+	public class RentalsController : ControllerBase
+	{
+		private readonly IRentalService rentalService;
+		private readonly IRentalBookingService rentalBookingService;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
-        {
-            _rentals = rentals;
-        }
+		private readonly IMapper mapper;
+		private readonly ILogger<RentalsController> logger;
 
-        [HttpGet]
-        [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
-        {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
 
-            return _rentals[rentalId];
-        }
 
-        [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
-        {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+		public RentalsController(IRentalService rentalService,
+								 IRentalBookingService rentalBookingService,
+								 IMapper mapper,
+								 ILogger<RentalsController> logger)
+		{
+			this.rentalService = rentalService;
+			this.mapper = mapper;
+			this.logger = logger;
+			this.rentalBookingService = rentalBookingService;
+		}
 
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
+		[HttpGet("{rentalId:int}")]
+		[ProducesResponseType(typeof(RentalViewModel), (int)HttpStatusCode.OK)]
+		[ProducesResponseType((int)HttpStatusCode.NotFound)]
+		public ActionResult<RentalViewModel> Get(int rentalId)
+		{
+			var rental = rentalService.GetById(rentalId);
+			if (rental == null)
+			{
+				return NotFound("Rental not found");
+			}
 
-            return key;
-        }
-    }
+			logger.LogInformation($"GET rental '{rental.Id}'");
+
+			return Ok(rental);
+		}
+
+		[HttpPost]
+		[ProducesResponseType(typeof(ResourceIdViewModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<ResourceIdViewModel>> Post(RentalRequestDTO rentalRequest)
+		{
+			if (rentalRequest.Units <= 0)
+				throw new HttpException(HttpStatusCode.BadRequest, "Units must be positive");
+			//No need to validate since is optional
+			//if (rentalRequest.PreparationTimeInDays <= 0)
+			//	throw new HttpException(HttpStatusCode.BadRequest, "PreparationTimeInDays must be positive");
+			//Map model
+			var rental = mapper.Map<RentalRequestDTO, Rental>(rentalRequest);
+			
+			//Add
+			var model = await rentalService.AddAsync(rental);
+			if (model == null)
+			{
+				return BadRequest();
+			}
+			var response = mapper.Map<Rental, ResourceIdViewModel>(model);
+
+			logger.LogInformation($"POST rental '{response.Id}'");
+
+			return Ok(response);
+		}
+
+		[HttpPut("{rentalId:int}")]
+		[ProducesResponseType(typeof(ResourceIdViewModel), (int)HttpStatusCode.OK)]
+		[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+		[ProducesResponseType((int)HttpStatusCode.NotFound)]
+		[ProducesResponseType((int)HttpStatusCode.Conflict)]
+		public ActionResult<ResourceIdViewModel> Put(int rentalId, [FromBody] RentalRequestDTO rentalRequest)
+		{
+			if (rentalId <= 0)
+				throw new HttpException(HttpStatusCode.BadRequest, "rentalId must be positive");
+			//Map model
+			var model = mapper.Map<RentalRequestDTO, Rental>(rentalRequest);
+			model.Id = rentalId;
+
+			//Update
+			var response = rentalBookingService.UpdateRental(model);
+
+			if (response == null)
+			{
+				return BadRequest();
+			}
+
+			logger.LogInformation($"PUT rental '{response.Id}'");
+
+			return Ok(response);
+		}
+	}
 }
