@@ -20,6 +20,12 @@
         "ASPNETCORE_ENVIRONMENT": "$(Configuration)"
       },
       "applicationUrl": "http://localhost:9981"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "publishAllPorts": true
     }
   }
 }
