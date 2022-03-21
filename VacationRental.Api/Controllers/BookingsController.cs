@@ -1,72 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AutoMapper;
+using VacationRental.Domain.Models;
+using VacationRental.Domain.Interfaces;
+using VacationRental.WebAPI.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using Microsoft.Extensions.Logging;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace VacationRental.Api.Controllers
 {
-    [Route("api/v1/bookings")]
-    [ApiController]
-    public class BookingsController : ControllerBase
-    {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+	[Route("api/v1/bookings")]
+	[ApiController]
+	public class BookingsController : ControllerBase
+	{
+		private readonly IBookingService bookingService;
+		private readonly IRentalBookingService rentalBookingService;
 
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
-        {
-            _rentals = rentals;
-            _bookings = bookings;
-        }
+		private readonly IMapper mapper;
+		private readonly ILogger<BookingsController> logger;
 
-        [HttpGet]
-        [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
-        {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
+		public BookingsController(IBookingService bookingService,
+								  IRentalBookingService rentalBookingService,
+								  IMapper mapper,
+								  ILogger<BookingsController> logger)
+		{
+			this.bookingService = bookingService;
+			this.rentalBookingService = rentalBookingService;
+			this.mapper = mapper;
+			this.logger = logger;
+		}
+		// GET
+		// /api/v1/bookings/{bookingId}
 
-            return _bookings[bookingId];
-        }
+		/// <summary>
+		/// Retrieves booking items
+		/// </summary>
+		/// <param name="bookingId">bookingId</param>
+		/// <returns>A response with booking item</returns>
+		/// <response code="200">Returns the stock items list</response>
+		/// <response code="404">Not found</response>
+		[HttpGet("{bookingId:int}")]
+		[ProducesResponseType(typeof(BookingViewModel), (int)HttpStatusCode.OK)]
+		[ProducesResponseType((int)HttpStatusCode.NotFound)]
+		public ActionResult<BookingViewModel> Get(int bookingId)
+		{
+			if (bookingId <= 0)
+				throw new HttpException(HttpStatusCode.BadRequest, "bookingId must be positive");
 
-        [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
-        {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
+			var model = bookingService.GetById(bookingId);
+			if (model == null)
+			{
+				return NotFound("Booking not found");
+			}
+			var response = mapper.Map<Booking, BookingViewModel>(model);
 
-            for (var i = 0; i < model.Nights; i++)
-            {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
-            }
+			logger.LogInformation($"GET booking '{model.Id}'");
 
+			return Ok(response);
+		}
+		// POST
+		// /api/v1/bookings
 
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
+		/// <summary>
+		/// booking items
+		/// </summary>
+		/// <param name="RentalId">RentalId</param>
+		/// <param name="start">Start date</param>
+		/// <param name="Nights">Nights</param>
+		/// <returns>A response with booking item</returns>
+		/// <response code="200">Returns the stock items list</response>
+		/// <response code="400">bad request</response>
+		/// <response code="404">Not found</response>
+		[HttpPost]
+		[ProducesResponseType(typeof(ResourceIdViewModel), (int)HttpStatusCode.OK)]
+		[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+		[ProducesResponseType((int)HttpStatusCode.NotFound)]
+		public async Task<ActionResult<ResourceIdViewModel>> Post(BookingBindingModel bookingRequestDTO)
+		{
+			if (bookingRequestDTO.Nights <= 0)
+				throw new HttpException(HttpStatusCode.BadRequest, "Nigts must be positive");
+			
+			//Map model
+			var model = mapper.Map<BookingBindingModel, Booking>(bookingRequestDTO);
 
-            _bookings.Add(key.Id, new BookingViewModel
-            {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
+			//Add to db
+			var addedBooking = await rentalBookingService.AddBooking(model);
 
-            return key;
-        }
-    }
+			var response = mapper.Map<Booking, ResourceIdViewModel>(addedBooking);
+
+			logger.LogInformation($"POST booking '{response.Id}'");
+
+			return Ok(response);
+		}
+	}
 }
