@@ -2,7 +2,6 @@
 
 namespace VacationRental.WebAPI.DTOs
 {
-	//BookingBindingModel --BookingRequestDTO
 	public class BookingBindingModel
 	{
 		public int RentalId { get; set; }

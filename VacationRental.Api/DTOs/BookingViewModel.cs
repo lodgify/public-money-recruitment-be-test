@@ -2,7 +2,6 @@
 
 namespace VacationRental.WebAPI.DTOs
 {
-	//BookingViewModel BookingResponseDTO
 	public class BookingViewModel
 	{
 		public int Id { get; set; }
