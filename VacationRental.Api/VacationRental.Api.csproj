@@ -42,10 +42,8 @@
     <ProjectReference Include="..\VacationRental.DataAccessLayer\VacationRental.DataAccessLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="VacationRental.Domain">
-      <HintPath>..\VacationRental.Domain\bin\Debug\netstandard2.1\VacationRental.Domain.dll</HintPath>
-    </Reference>
+   <ItemGroup>
+    <ProjectReference Include="..\VacationRental.Domain\VacationRental.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -66,8 +66,9 @@ namespace VacationRental.Domain.Services
             }
             catch (Exception exs)
             {
-				throw new HttpException(HttpStatusCode.InternalServerError, "Error Occured");
-			}
+                throw new HttpException(HttpStatusCode.BadRequest, "booking error");
+                //throw new HttpException(HttpStatusCode.InternalServerError, "Error Occured");
+            }
 		}
 
 		/// This method will filter the bookings in the DB by rental Id and a Date Range

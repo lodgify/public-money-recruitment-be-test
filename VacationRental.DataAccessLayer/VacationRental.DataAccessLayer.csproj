@@ -14,10 +14,8 @@
 
   </ItemGroup>
 
+  
   <ItemGroup>
-    <Reference Include="VacationRental.Domain">
-      <HintPath>..\VacationRental.Domain\bin\Debug\netstandard2.1\VacationRental.Domain.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\VacationRental.Domain\VacationRental.Domain.csproj" />
   </ItemGroup>
-
 </Project>

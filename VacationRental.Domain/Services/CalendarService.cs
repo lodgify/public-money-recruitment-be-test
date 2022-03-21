@@ -62,7 +62,8 @@ namespace VacationRental.Domain.Services
 			}
 			catch(Exception ex)
             {
-				throw new HttpException(HttpStatusCode.InternalServerError, "Error Occured");
+				throw new HttpException(HttpStatusCode.NotFound, "Not funds");
+				//throw new HttpException(HttpStatusCode.InternalServerError, "Error Occured");
 			}
 			
 		}
