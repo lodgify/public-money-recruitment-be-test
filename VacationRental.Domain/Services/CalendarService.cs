@@ -4,6 +4,7 @@ using VacationRental.Domain.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System;
 
 namespace VacationRental.Domain.Services
 {
@@ -22,40 +23,48 @@ namespace VacationRental.Domain.Services
 
 		public Calendar Get(CalendarRequest calendarRequest)
 		{
-			if (rentalService.GetById(calendarRequest.RentalId) == null)
-				throw new HttpException(HttpStatusCode.NotFound, "Rental not found");
+            try
+            {
+				if (rentalService.GetById(calendarRequest.RentalId) == null)
+					throw new HttpException(HttpStatusCode.NotFound, "Rental not found");
 
-			var result = new Calendar
-			{
-				RentalId = calendarRequest.RentalId,
-				Dates = new List<CalendarDate>()
-			};
-
-			var bookings = bookingService.BookByIdAndDateRange(calendarRequest.RentalId, calendarRequest.Start.Date, calendarRequest.Nights).ToList();
-			for (var i = 0; i < calendarRequest.Nights; i++)
-			{
-				var calendarDate = new CalendarDate
+				var result = new Calendar
 				{
-					Date = calendarRequest.Start.Date.AddDays(i),
-					Bookings = new List<IBookingPeriod>(),
-					PreparationTimes = new List<IBookingPeriod>()
+					RentalId = calendarRequest.RentalId,
+					Dates = new List<CalendarDate>()
 				};
 
-				foreach (var booking in bookings)
+				var bookings = bookingService.BookByIdAndDateRange(calendarRequest.RentalId, calendarRequest.Start.Date, calendarRequest.Nights).ToList();
+				for (var i = 0; i < calendarRequest.Nights; i++)
 				{
-					if (booking.IsPreparationTime)
+					var calendarDate = new CalendarDate
 					{
-						calendarDate.PreparationTimes.Add(new CalendarBooking { Id = booking.Id, Unit = booking.Unit });
-					}
-					else
-					{
-						calendarDate.Bookings.Add(new CalendarBooking { Id = booking.Id, Unit = booking.Unit });
-					}
-				}
-				result.Dates.Add(calendarDate);
-			}
+						Date = calendarRequest.Start.Date.AddDays(i),
+						Bookings = new List<IBookingPeriod>(),
+						PreparationTimes = new List<IBookingPeriod>()
+					};
 
-			return result;
+					foreach (var booking in bookings)
+					{
+						if (booking.IsPreparationTime)
+						{
+							calendarDate.PreparationTimes.Add(new CalendarBooking { Id = booking.Id, Unit = booking.Unit });
+						}
+						else
+						{
+							calendarDate.Bookings.Add(new CalendarBooking { Id = booking.Id, Unit = booking.Unit });
+						}
+					}
+					result.Dates.Add(calendarDate);
+				}
+
+				return result;
+			}
+			catch(Exception ex)
+            {
+				throw new HttpException(HttpStatusCode.InternalServerError, "Error Occured");
+			}
+			
 		}
 	}
 }
