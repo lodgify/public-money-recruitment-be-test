@@ -30,6 +30,7 @@ namespace VacationRental.Api.Controllers
                 Start = start,
                 Nights = nights
             });
+            
             return result;
         }
     }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 using VacationRental.Application.Bookings.Commands.PostBooking;
 using VacationRental.Application.Bookings.Queries.GetBooking;
+using VacationRental.Application.Common.ViewModel;
 
 namespace VacationRental.Api.Controllers
 {

@@ -1,4 +1,4 @@
-﻿namespace VacationRental.Api.Models
+﻿namespace VacationRental.Application.Common.ViewModel
 {
     public class RentalViewModel
     {

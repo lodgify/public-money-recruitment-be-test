@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using VacationRental.Api.Models;
 using VacationRental.Application.Bookings.Commands.PostBooking;
 using VacationRental.Application.Bookings.Queries.GetBooking;
+using VacationRental.Application.Common.ViewModel;
+using VacationRental.Application.Rentals.Commands.PostRental;
 using Xunit;
 
 namespace VacationRental.Api.Tests

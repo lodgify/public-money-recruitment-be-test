@@ -10,6 +10,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using VacationRental.Api.Models;
 using VacationRental.Application;
 using VacationRental.Application.Bookings.Queries.GetBooking;
+using VacationRental.Application.Common.ViewModel;
 
 namespace VacationRental.Api
 {
