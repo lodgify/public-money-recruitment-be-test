@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Application.Bookings.Queries.GetBooking;
 
 namespace VacationRental.Api.Controllers
 {
@@ -12,22 +15,25 @@ namespace VacationRental.Api.Controllers
         private readonly IDictionary<int, RentalViewModel> _rentals;
         private readonly IDictionary<int, BookingViewModel> _bookings;
 
+        private readonly IMediator _mediator;
         public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+            IDictionary<int, RentalViewModel> rentals, IMediator mediator, IDictionary<int, BookingViewModel> bookings)
         {
             _rentals = rentals;
+            _mediator = mediator;
             _bookings = bookings;
         }
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        public async Task<BookingViewModel> Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
+            var bookingViewModel = await _mediator.Send(new GetBookingQuery());
+            
+            if(bookingViewModel == null)
                 throw new ApplicationException("Booking not found");
 
-            return _bookings[bookingId];
+            return bookingViewModel;
         }
 
         [HttpPost]

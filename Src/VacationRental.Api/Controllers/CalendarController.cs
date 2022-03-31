@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Application.Bookings.Queries.GetBooking;
 
 namespace VacationRental.Api.Controllers
 {
