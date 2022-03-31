@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -29,27 +30,15 @@ namespace VacationRental.Application.Bookings.Commands.PostBooking
             if (rental == null)
                 throw new ApplicationException("Rental not found");
 
-            for (var i = 0; i < model.Nights; i++)
-            {
-                var count = 0;
-                foreach (var booking in _bookingRepository.GetAll())
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date &&
-                            booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) &&
-                            booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start &&
-                            booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
+            var bookingsByRental = _bookingRepository.GetByRentalId(rental.Id);
 
-                if (count >= rental.Units)
-                    throw new ApplicationException("Not available");
-            }
-
+            var bookings = bookingsByRental.Where(book => 
+                (book.Start.Date < model.Start.Date && book.End.Date > model.Start.Date) ||
+                (book.Start.Date > model.Start.Date && book.Start.Date < model.Start.AddDays(model.Nights)));
+            
+            if (bookings.Count() >= rental.Units)
+                throw new ApplicationException("Not available");
+            
             var lastId = _bookingRepository.GetLastId();
             
             var key = _bookingRepository.Save(new BookingModel
