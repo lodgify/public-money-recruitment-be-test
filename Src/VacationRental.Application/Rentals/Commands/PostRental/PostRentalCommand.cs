@@ -1,5 +1,4 @@
 using MediatR;
-using VacationRental.Api.Models;
 using VacationRental.Application.Common.ViewModel;
 
 namespace VacationRental.Application.Rentals.Commands.PostRental

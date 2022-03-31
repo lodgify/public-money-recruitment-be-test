@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
 using VacationRental.Application.Calendars.Queries.GetCalendar;
 
 namespace VacationRental.Api.Controllers

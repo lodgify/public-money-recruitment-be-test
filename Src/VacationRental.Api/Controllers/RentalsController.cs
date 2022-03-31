@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
-using VacationRental.Application.Bookings.Commands.PostBooking;
 using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
 using VacationRental.Application.Rentals.Queries.GetRental;

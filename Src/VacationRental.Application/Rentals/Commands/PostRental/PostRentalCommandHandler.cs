@@ -3,29 +3,28 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using VacationRental.Application.Common.ViewModel;
+using VacationRental.Domain.Rentals;
 
 namespace VacationRental.Application.Rentals.Commands.PostRental
 {
     public class PostRentalCommandHandler : IRequestHandler<PostRentalCommand, ResourceIdViewModel>
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IRentalRepository _repository;
 
-        public PostRentalCommandHandler(IDictionary<int, RentalViewModel> rentals)
+        public PostRentalCommandHandler(IRentalRepository repository)
         {
-            _rentals = rentals;
+            _repository = repository;
         }
 
         public async Task<ResourceIdViewModel> Handle(PostRentalCommand request, CancellationToken cancellationToken)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
-
-            _rentals.Add(key.Id, new RentalViewModel
+            var key = _repository.Save(new RentalModel()
             {
-                Id = key.Id,
+                Id = _repository.GetLastId() + 1,
                 Units = request.Units
-            });
-
-            return await Task.FromResult(key);
+            }); 
+            
+            return await Task.FromResult(new ResourceIdViewModel() {Id = key});
         }
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using MediatR;
-using VacationRental.Api.Models;
 
 namespace VacationRental.Application.Calendars.Queries.GetCalendar
 {

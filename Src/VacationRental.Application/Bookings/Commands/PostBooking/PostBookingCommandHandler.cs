@@ -1,62 +1,66 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using VacationRental.Api.Models;
-using VacationRental.Application.Bookings.Queries.GetBooking;
 using VacationRental.Application.Common.ViewModel;
+using VacationRental.Domain.Bookings;
+using VacationRental.Domain.Rentals;
 
 namespace VacationRental.Application.Bookings.Commands.PostBooking
 {
     public class PostBookingCommandHandler : IRequestHandler<PostBookingCommand, ResourceIdViewModel>
     {
-        private readonly IDictionary<int, BookingViewModel> _bookings;
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-
-        public PostBookingCommandHandler(IDictionary<int, BookingViewModel> bookings, IDictionary<int, RentalViewModel> rentals)
+        private readonly IRentalRepository _rentalRepository;
+        private readonly IBookingRepository _bookingRepository;
+        
+        public PostBookingCommandHandler(IBookingRepository bookingRepository,
+            IRentalRepository rentalRepository)
         {
-            _bookings = bookings;
-            _rentals = rentals;
+            _bookingRepository = bookingRepository;
+            _rentalRepository = rentalRepository;
         }
 
         public async Task<ResourceIdViewModel> Handle(PostBookingCommand command, CancellationToken cancellationToken)
         {
             var model = command.Model;
 
-            if (!_rentals.ContainsKey(model.RentalId))
-                return null;
-            
+            var rental = _rentalRepository.Get(model.RentalId);
+
+            if (rental == null)
+                throw new ApplicationException("Rental not found");
+
             for (var i = 0; i < model.Nights; i++)
             {
                 var count = 0;
-                foreach (var booking in _bookings.Values)
+                foreach (var booking in _bookingRepository.GetAll())
                 {
                     if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
+                        && (booking.Start <= model.Start.Date &&
+                            booking.Start.AddDays(booking.Nights) > model.Start.Date)
+                        || (booking.Start < model.Start.AddDays(model.Nights) &&
+                            booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
+                        || (booking.Start > model.Start &&
+                            booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
                     {
                         count++;
                     }
                 }
-                
-                if (count >= _rentals[model.RentalId].Units)
+
+                if (count >= rental.Units)
                     throw new ApplicationException("Not available");
             }
+
+            var lastId = _bookingRepository.GetLastId();
             
-            
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-            
-            _bookings.Add(key.Id, new BookingViewModel
+            var key = _bookingRepository.Save(new BookingModel
             {
-                Id = key.Id,
+                Id = lastId + 1,
                 Nights = model.Nights,
                 RentalId = model.RentalId,
                 Start = model.Start.Date
             });
-            
-            return await Task.FromResult(key);
+
+            return await Task.FromResult(new ResourceIdViewModel() {Id = key});
         }
     }
 }

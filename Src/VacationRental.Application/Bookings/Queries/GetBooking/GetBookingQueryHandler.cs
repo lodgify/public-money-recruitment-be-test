@@ -1,25 +1,34 @@
-using System.Collections.Generic;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using VacationRental.Domain.Bookings;
 
 namespace VacationRental.Application.Bookings.Queries.GetBooking
 {
     public class GetBookingQueryHandler : IRequestHandler<GetBookingQuery, BookingViewModel>
     {
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IBookingRepository _repository;
 
-        public GetBookingQueryHandler(IDictionary<int, BookingViewModel> bookings)
+        public GetBookingQueryHandler(IBookingRepository repository)
         {
-            _bookings = bookings;
+            _repository = repository;
         }
 
         public async Task<BookingViewModel> Handle(GetBookingQuery request, CancellationToken cancellationToken)
         {
-            if (!_bookings.ContainsKey(request.BookingId))
-                return null;
+            var model = _repository.Get(request.BookingId);
+
+            if (model == null)
+                throw new ApplicationException("Booking not found");
     
-            return await Task.FromResult(_bookings[request.BookingId]);
+            return await Task.FromResult(new BookingViewModel()
+            {
+                Id = model.Id,
+                Nights = model.Nights,
+                Start = model.Start,
+                RentalId = model.RentalId
+            });
         }
     }
 }

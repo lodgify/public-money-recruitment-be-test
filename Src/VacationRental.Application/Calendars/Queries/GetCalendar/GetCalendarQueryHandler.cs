@@ -3,27 +3,25 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using VacationRental.Api.Models;
-using VacationRental.Application.Bookings.Queries.GetBooking;
-using VacationRental.Application.Common.ViewModel;
+using VacationRental.Domain.Bookings;
+using VacationRental.Domain.Rentals;
 
 namespace VacationRental.Application.Calendars.Queries.GetCalendar
 {
     public class GetCalendarQueryHandler : IRequestHandler<GetCalendarQuery, CalendarViewModel>
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
-
-        public GetCalendarQueryHandler(IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        private readonly IRentalRepository _rentalRepository;
+        private readonly IBookingRepository _bookingRepository;
+        public GetCalendarQueryHandler(IRentalRepository rentalRepository, IBookingRepository bookingRepository)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _rentalRepository = rentalRepository;
+            _bookingRepository = bookingRepository;
         }
 
         public async Task<CalendarViewModel> Handle(GetCalendarQuery request, CancellationToken cancellationToken)
         {
-            if (!_rentals.ContainsKey(request.RentalId))
+            var rental = _rentalRepository.Get(request.RentalId);
+            if (rental == null)
                 throw new ApplicationException("Rental not found");
 
             var result = new CalendarViewModel
@@ -40,7 +38,7 @@ namespace VacationRental.Application.Calendars.Queries.GetCalendar
                     Bookings = new List<CalendarBookingViewModel>()
                 };
 
-                foreach (var booking in _bookings.Values)
+                foreach (var booking in _bookingRepository.GetAll())
                 {
                     if (booking.RentalId == request.RentalId
                         && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)

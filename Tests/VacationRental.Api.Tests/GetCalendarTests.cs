@@ -2,8 +2,8 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
 using VacationRental.Application.Bookings.Commands.PostBooking;
+using VacationRental.Application.Calendars.Queries.GetCalendar;
 using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
 using Xunit;
