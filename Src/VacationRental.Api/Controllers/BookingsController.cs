@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +14,7 @@ namespace VacationRental.Api.Controllers
     {
      
         private readonly IMediator _mediator;
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals, IMediator mediator, IDictionary<int, BookingViewModel> bookings)
+        public BookingsController(IMediator mediator)
         {
             _mediator = mediator;
         }
