@@ -2,9 +2,9 @@ namespace VacationRental.Domain.Rentals
 {
     public interface IRentalRepository
     {
-        int Save(RentalModel model);
-        RentalModel Get(int id);
+        int Add(RentalModel model);
         
-        int GetLastId();
+        int Update(RentalModel model);
+        RentalModel Get(int id);
     }
 }

@@ -18,9 +18,8 @@ namespace VacationRental.Application.Rentals.Commands.PostRental
 
         public async Task<ResourceIdViewModel> Handle(PostRentalCommand request, CancellationToken cancellationToken)
         {
-            var key = _repository.Save(new RentalModel()
+            var key = _repository.Add(new RentalModel()
             {
-                Id = _repository.GetLastId() + 1,
                 Units = request.Units,
                 PreparationTimeInDays = request.PreparationTimeInDays   
             }); 

@@ -1,7 +1,8 @@
 using System.Reflection;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using VacationRental.Application.Common.Services;
+using VacationRental.Application.Common.Services.BookingSearchService;
+using VacationRental.Application.Common.Services.ReCalculateBookingsService;
 
 namespace VacationRental.Application
 {
@@ -11,6 +12,7 @@ namespace VacationRental.Application
         {
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddScoped<IBookingSearchService, BookingSearchService>();
+            services.AddScoped<IValidateRentalModificationService, ValidateRentalModificationService>();
             return services;
         }
     }

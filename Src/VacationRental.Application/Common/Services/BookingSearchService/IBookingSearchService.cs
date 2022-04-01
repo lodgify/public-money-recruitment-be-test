@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using VacationRental.Domain.Bookings;
 
-namespace VacationRental.Application.Common.Services
+namespace VacationRental.Application.Common.Services.BookingSearchService
 {
     public interface IBookingSearchService
     {
