@@ -34,7 +34,7 @@ namespace VacationRental.Application.Bookings.Commands.PostBooking
 
             var bookings = bookingsByRental.Where(book =>
                 book.Start.Date < newBooking.Start.Date.AddDays(newBooking.Nights) &&
-                book.Start.Date.AddDays(book.Nights) > newBooking.Start.Date);
+                book.Start.Date.AddDays(book.Nights + rental.PreparationTimeInDays) > newBooking.Start.Date);
 
             if (bookings.Count() >= rental.Units)
                 throw new ApplicationException("Not available");

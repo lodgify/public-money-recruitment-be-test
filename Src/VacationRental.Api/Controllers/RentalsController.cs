@@ -37,7 +37,8 @@ namespace VacationRental.Api.Controllers
         {
             var result = await _mediator.Send(new PostRentalCommand()
             {
-                Units = model.Units
+                Units = model.Units,
+                PreparationTimeInDays = model.PreparationTimeInDays
             });
 
             return result;
