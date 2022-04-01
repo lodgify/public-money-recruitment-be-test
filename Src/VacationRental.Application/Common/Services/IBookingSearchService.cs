@@ -6,7 +6,6 @@ namespace VacationRental.Application.Common.Services
     public interface IBookingSearchService
     {
         IEnumerable<BookingModel> GetBookingsByDay(GetBookingsByDayDTO model);
-
         IEnumerable<BookingModel> GetBookingsByRangeOfTime(GetBookingsByRangeOfTimeDTO model);
     }
 }

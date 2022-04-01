@@ -6,6 +6,5 @@ namespace VacationRental.Application.Calendars.Queries.GetCalendar
     {
         public int RentalId { get; set; }
         public List<CalendarDateViewModel> Dates { get; set; }
-        
     }
 }
