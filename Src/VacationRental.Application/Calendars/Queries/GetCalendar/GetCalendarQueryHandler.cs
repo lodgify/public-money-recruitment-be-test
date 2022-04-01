@@ -55,24 +55,42 @@ namespace VacationRental.Application.Calendars.Queries.GetCalendar
                     Day = currentDate
                 });
 
-                var preparationTimes = _bookingSearchService.GetBookingsByDay(new GetBookingsByDayDTO()
+                var preparationTime = _bookingSearchService.GetBookingsByDay(new GetBookingsByDayDTO()
                 {
                     Bookings = bookingsByRental,
                     Day = currentDate,
                     PreparationTime = rental.PreparationTimeInDays
                 }).Where(x => !bookings.Contains(x));
 
-                CompleteCalendarDateViewModel(bookings, date, preparationTimes, cancellationToken);
+                var bookingsTasks = AddBookingsToCalendarDateViewModel(bookings, date, cancellationToken);
+                var preparationTimeTask = AddPreparationTimeToCalendarDateViewModel(date, preparationTime, cancellationToken);
+
+                Task.WaitAll(bookingsTasks, preparationTimeTask);
                 result.Dates.Add(date);
             }
 
             return await Task.FromResult(result);
         }
 
-        private static void CompleteCalendarDateViewModel(IEnumerable<BookingModel> bookings,
-            CalendarDateViewModel date, IEnumerable<BookingModel> preparationTimes, CancellationToken cancellationToken)
+        private static Task AddPreparationTimeToCalendarDateViewModel(CalendarDateViewModel date, IEnumerable<BookingModel> preparationTimes,
+            CancellationToken cancellationToken)
         {
-            var bookingsTasks = Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
+            {
+                foreach (var pT in preparationTimes)
+                {
+                    date.PreparationTime.Add(new PreparationTimeViewModel()
+                    {
+                        Unit = date.PreparationTime.Count + 1
+                    });
+                }
+            }, cancellationToken);
+        }
+
+        private static Task AddBookingsToCalendarDateViewModel(IEnumerable<BookingModel> bookings, CalendarDateViewModel date,
+            CancellationToken cancellationToken)
+        {
+            return Task.Factory.StartNew(() =>
             {
                 foreach (var bookingModel in bookings)
                 {
@@ -83,19 +101,6 @@ namespace VacationRental.Application.Calendars.Queries.GetCalendar
                     });
                 }
             }, cancellationToken);
-
-            var preparationTimeTask = Task.Factory.StartNew(() =>
-            {
-                foreach (var pT in preparationTimes)
-                {
-                    date.PreparationTime.Add(new PreparationTimeViewModel()
-                    {
-                        Unit = date.PreparationTime.Count + 1
-                    });
-                }
-            }, cancellationToken);
-
-            Task.WaitAll(bookingsTasks, preparationTimeTask);
         }
     }
 }
