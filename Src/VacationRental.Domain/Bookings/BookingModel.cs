@@ -14,9 +14,7 @@ namespace VacationRental.Domain.Bookings
         }
 
         private DateTime _startIgnoreTime;
-
         public DateTime End => Start.AddDays(Nights);
-
         public int Nights { get; set; }
     }
 }
