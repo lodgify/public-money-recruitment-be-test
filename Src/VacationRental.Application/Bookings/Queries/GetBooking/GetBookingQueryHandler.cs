@@ -20,7 +20,7 @@ namespace VacationRental.Application.Bookings.Queries.GetBooking
             var model = _repository.Get(request.BookingId);
 
             if (model == null)
-                throw new ApplicationException("Booking not found");
+                return null;
     
             return await Task.FromResult(new BookingViewModel()
             {

@@ -21,8 +21,9 @@ namespace VacationRental.Application.Calendars.Queries.GetCalendar
         public async Task<CalendarViewModel> Handle(GetCalendarQuery request, CancellationToken cancellationToken)
         {
             var rental = _rentalRepository.Get(request.RentalId);
+
             if (rental == null)
-                throw new ApplicationException("Rental not found");
+                return null;
 
             var result = new CalendarViewModel
             {

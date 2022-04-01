@@ -18,10 +18,10 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<CalendarViewModel> Get(int rentalId, DateTime start, int nights)
+        public async Task<ActionResult<CalendarViewModel>> Get(int rentalId, DateTime start, int nights)
         {
             if (nights < 0)
-                throw new ApplicationException("Nights must be positive");
+                return BadRequest("Nights must be positive");
 
             var result = await _mediator.Send(new GetCalendarQuery()
             {
@@ -29,8 +29,11 @@ namespace VacationRental.Api.Controllers
                 Start = start,
                 Nights = nights
             });
+
+            if (result == null)
+                return NotFound("Rental not found");
             
-            return result;
+            return Ok(result);
         }
     }
 }

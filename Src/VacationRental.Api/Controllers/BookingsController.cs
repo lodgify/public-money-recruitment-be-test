@@ -21,25 +21,32 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public async Task<BookingViewModel> Get(int bookingId)
+        public async Task<ActionResult<BookingViewModel>> Get(int bookingId)
         {
             var bookingViewModel = await _mediator.Send(new GetBookingQuery(){BookingId = bookingId});
             
             if(bookingViewModel == null)
-                throw new ApplicationException("Booking not found");
+                return NotFound("Booking not found");
 
-            return bookingViewModel;
+            return Ok(bookingViewModel);
         }
 
         [HttpPost]
-        public async Task<ResourceIdViewModel> Post(BookingBindingModel model)
+        public async Task<ActionResult<ResourceIdViewModel>> Post(BookingBindingModel model)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nights must be positive");
-            
-            var result = await _mediator.Send(new PostBookingCommand() {Model = model});
-            
-            return result;
+            try
+            {
+                if (model.Nights <= 0)
+                    return BadRequest("Nights must be positive");
+
+                var result = await _mediator.Send(new PostBookingCommand() {Model = model});
+                
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
