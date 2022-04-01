@@ -17,6 +17,9 @@ namespace VacationRental.Application.Common.Services.ReCalculateBookingsService
 
         public bool Validate(RentalModel rental, IEnumerable<BookingModel> bookings)
         {
+            if (rental.Units == 0 && bookings.Any())
+                return false;
+
             foreach (var booking in bookings)
             {
                 var bookingsFound = _bookingSearchService.GetBookingsByRangeOfTime(new GetBookingsByRangeOfTimeDTO()

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Application.Bookings.Commands.PostBooking;
 using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
 using Xunit;
 
-namespace VacationRental.Api.Tests
+namespace VacationRental.Api.Tests.Controllers
 {
     [Collection("Integration")]
     public class PostRentalTests

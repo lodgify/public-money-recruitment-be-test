@@ -8,6 +8,7 @@ using Xunit;
 
 namespace VacationRental.Application.Tests.Common.Services
 {
+    [Collection("Unit")]
     public class ValidateRentalModificationServiceTest
     {
         private readonly ValidateRentalModificationService _service;

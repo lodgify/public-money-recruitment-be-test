@@ -8,7 +8,7 @@ using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
 using Xunit;
 
-namespace VacationRental.Api.Tests
+namespace VacationRental.Api.Tests.Controllers
 {
     [Collection("Integration")]
     public class PostBookingTests
