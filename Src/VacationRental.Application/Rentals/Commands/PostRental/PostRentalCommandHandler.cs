@@ -21,7 +21,8 @@ namespace VacationRental.Application.Rentals.Commands.PostRental
             var key = _repository.Save(new RentalModel()
             {
                 Id = _repository.GetLastId() + 1,
-                Units = request.Units
+                Units = request.Units,
+                PreparationTimeInDays = request.PreparationTimeInDays   
             }); 
             
             return await Task.FromResult(new ResourceIdViewModel() {Id = key});

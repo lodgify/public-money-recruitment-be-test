@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using VacationRental.Domain.Bookings;
 
 namespace VacationRental.Infrastructure.Persistence
@@ -27,12 +28,13 @@ namespace VacationRental.Infrastructure.Persistence
 
         public int GetLastId()
         {
-            return _bookings.Count + 1;
+            return _bookings.Count;
         }
 
-        public ICollection<BookingModel> GetAll()
+
+        public IEnumerable<BookingModel> GetByRentalId(int id)
         {
-            return _bookings.Values;
+            return _bookings.Values.Where(x => x.RentalId == id).ToList();
         }
     }
 }

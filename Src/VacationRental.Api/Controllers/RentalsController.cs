@@ -22,25 +22,26 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public async Task<RentalViewModel> Get(int rentalId)
+        public async Task<ActionResult<RentalViewModel>> Get(int rentalId)
         {
             var result = await _mediator.Send(new GetRentalQuery() {RentalId = rentalId});
 
             if (result == null)
-                throw new ApplicationException("Rental not found");
+                return NotFound("Rental not found");
 
-            return result;
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ResourceIdViewModel> Post(RentalBindingModel model)
+        public async Task<ActionResult<ResourceIdViewModel>> Post(RentalBindingModel model)
         {
             var result = await _mediator.Send(new PostRentalCommand()
             {
-                Units = model.Units
+                Units = model.Units,
+                PreparationTimeInDays = model.PreparationTimeInDays
             });
 
-            return result;
+            return Ok(result);
         }
     }
 }

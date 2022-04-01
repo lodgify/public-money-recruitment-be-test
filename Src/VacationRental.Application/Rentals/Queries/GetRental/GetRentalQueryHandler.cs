@@ -19,13 +19,15 @@ namespace VacationRental.Application.Rentals.Queries.GetRental
         public async Task<RentalViewModel> Handle(GetRentalQuery request, CancellationToken cancellationToken)
         {
             var rental = _repository.Get(request.RentalId);
+
             if (rental == null)
-                throw new ApplicationException("Rental not found");
+                return null;
     
             return await Task.FromResult(new RentalViewModel()
             {
                 Id = rental.Id,
-                Units = rental.Units
+                Units = rental.Units,
+                PreparationTimeInDays = rental.PreparationTimeInDays
             });
         }
     }
