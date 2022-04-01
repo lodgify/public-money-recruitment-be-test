@@ -23,19 +23,19 @@ namespace VacationRental.Application.Bookings.Commands.PostBooking
 
         public async Task<ResourceIdViewModel> Handle(PostBookingCommand command, CancellationToken cancellationToken)
         {
-            var model = command.Model;
+            var newBooking = command.Model;
 
-            var rental = _rentalRepository.Get(model.RentalId);
+            var rental = _rentalRepository.Get(newBooking.RentalId);
 
             if (rental == null)
                 throw new ApplicationException("Rental not found");
 
             var bookingsByRental = _bookingRepository.GetByRentalId(rental.Id);
 
-            var bookings = bookingsByRental.Where(book => 
-                (book.Start.Date < model.Start.Date && book.End.Date > model.Start.Date) ||
-                (book.Start.Date > model.Start.Date && book.Start.Date < model.Start.AddDays(model.Nights)));
-            
+            var bookings = bookingsByRental.Where(book =>
+                book.Start.Date < newBooking.Start.Date.AddDays(newBooking.Nights) &&
+                book.Start.Date.AddDays(book.Nights) > newBooking.Start.Date);
+
             if (bookings.Count() >= rental.Units)
                 throw new ApplicationException("Not available");
             
@@ -44,9 +44,9 @@ namespace VacationRental.Application.Bookings.Commands.PostBooking
             var key = _bookingRepository.Save(new BookingModel
             {
                 Id = lastId + 1,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
+                Nights = newBooking.Nights,
+                RentalId = newBooking.RentalId,
+                Start = newBooking.Start.Date
             });
 
             return await Task.FromResult(new ResourceIdViewModel() {Id = key});
