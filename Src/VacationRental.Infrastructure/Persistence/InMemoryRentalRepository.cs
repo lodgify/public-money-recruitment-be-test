@@ -7,20 +7,23 @@ namespace VacationRental.Infrastructure.Persistence
     public class InMemoryRentalRepository : IRentalRepository
     {
         private readonly IDictionary<int, RentalModel> _rentals = new Dictionary<int, RentalModel>();
-        
-        public int Save(RentalModel model)
+
+        public int Add(RentalModel model)
         {
-            if (_rentals.ContainsKey(model.Id))
-                throw new ApplicationException("Rental exist");
-            
-            _rentals.Add(model.Id, model); 
+            model.Id = _rentals.Count + 1;
+
+            _rentals.Add(model.Id, model);
 
             return model.Id;
         }
-        
-        public int GetLastId()
+
+        public int Update(RentalModel model)
         {
-            return _rentals.Count;
+            if (!_rentals.ContainsKey(model.Id))
+                throw new ApplicationException("Rental does not exist");
+            _rentals[model.Id] = model;
+
+            return model.Id;
         }
 
         public RentalModel Get(int id)

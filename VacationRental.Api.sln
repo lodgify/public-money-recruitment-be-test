@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{7DF08EA8-974
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EDC8AC5A-A759-4CED-AD6A-D7BB617DDD0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Application.Tests", "Tests\VacationRental.Application.Tests\VacationRental.Application.Tests.csproj", "{7A1456CE-9A26-4C01-A681-05F8C93E3CF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{77B1A542-92F6-46A0-93F9-D5CFB4EE74A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77B1A542-92F6-46A0-93F9-D5CFB4EE74A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77B1A542-92F6-46A0-93F9-D5CFB4EE74A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A1456CE-9A26-4C01-A681-05F8C93E3CF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A1456CE-9A26-4C01-A681-05F8C93E3CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A1456CE-9A26-4C01-A681-05F8C93E3CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A1456CE-9A26-4C01-A681-05F8C93E3CF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,5 +62,6 @@ Global
 		{4667494E-216A-42E7-82E3-26A8CC5C0926} = {7DF08EA8-9742-4DB5-8E9C-F12F98E409B0}
 		{77B1A542-92F6-46A0-93F9-D5CFB4EE74A0} = {7DF08EA8-9742-4DB5-8E9C-F12F98E409B0}
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE} = {EDC8AC5A-A759-4CED-AD6A-D7BB617DDD0A}
+		{7A1456CE-9A26-4C01-A681-05F8C93E3CF8} = {EDC8AC5A-A759-4CED-AD6A-D7BB617DDD0A}
 	EndGlobalSection
 EndGlobal

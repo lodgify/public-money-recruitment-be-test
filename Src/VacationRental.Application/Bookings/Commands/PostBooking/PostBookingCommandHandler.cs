@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using VacationRental.Application.Common.Services;
+using VacationRental.Application.Common.Services.BookingSearchService;
 using VacationRental.Application.Common.ViewModel;
 using VacationRental.Domain.Bookings;
 using VacationRental.Domain.Rentals;
@@ -44,11 +45,8 @@ namespace VacationRental.Application.Bookings.Commands.PostBooking
             if (bookings.Count() >= rental.Units)
                 throw new ApplicationException("Not available");
             
-            var lastId = _bookingRepository.GetLastId();
-            
-            var key = _bookingRepository.Save(new BookingModel
+            var key = _bookingRepository.Add(new BookingModel
             {
-                Id = lastId + 1,
                 Nights = command.Model.Nights,
                 RentalId = command.Model.RentalId,
                 Start = command.Model.Start.Date

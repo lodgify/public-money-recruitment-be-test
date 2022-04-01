@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using VacationRental.Domain.Bookings;
@@ -8,10 +7,9 @@ namespace VacationRental.Infrastructure.Persistence
     public class InMemoryBookingRepository : IBookingRepository
     {
         private readonly IDictionary<int, BookingModel> _bookings = new Dictionary<int, BookingModel>();
-        public int Save(BookingModel booking)
+        public int Add(BookingModel booking)
         {
-            if (_bookings.ContainsKey(booking.Id))
-                throw new ApplicationException("Booking exist");
+            booking.Id = _bookings.Count + 1;
             
             _bookings.Add(booking.Id, booking); 
 
@@ -25,12 +23,6 @@ namespace VacationRental.Infrastructure.Persistence
 
             return _bookings[id];
         }
-
-        public int GetLastId()
-        {
-            return _bookings.Count;
-        }
-
 
         public IEnumerable<BookingModel> GetByRentalId(int id)
         {

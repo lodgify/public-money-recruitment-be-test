@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using VacationRental.Application.Common.Services;
+using VacationRental.Application.Common.Services.BookingSearchService;
 using VacationRental.Domain.Bookings;
 using VacationRental.Domain.Rentals;
 

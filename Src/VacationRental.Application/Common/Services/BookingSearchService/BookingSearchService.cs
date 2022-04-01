@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using VacationRental.Domain.Bookings;
 
-namespace VacationRental.Application.Common.Services
+namespace VacationRental.Application.Common.Services.BookingSearchService
 {
     public class BookingSearchService : IBookingSearchService
     {
         public IEnumerable<BookingModel> GetBookingsByDay(GetBookingsByDayDTO model)
         {
             return model.Bookings.Where(book => 
-                book.Start.Date <= model.Day && book.End.Date.AddDays(model.PreparationTime) > model.Day);
+                book.Start.Date <= model.Day && book.Start.Date.AddDays(book.Nights + model.PreparationTime) > model.Day);
         }
 
         public IEnumerable<BookingModel> GetBookingsByRangeOfTime(GetBookingsByRangeOfTimeDTO model)
