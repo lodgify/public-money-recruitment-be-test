@@ -7,5 +7,7 @@ namespace VacationRental.Application.Calendars.Queries.GetCalendar
     {
         public DateTime Date { get; set; }
         public List<CalendarBookingViewModel> Bookings { get; set; }
+        
+        public List<PreparationTimeViewModel> PreparationTime { get; set; }
     }
 }

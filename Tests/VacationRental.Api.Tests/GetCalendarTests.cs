@@ -25,7 +25,8 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 2
+                Units = 2,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postRentalResult;
@@ -86,10 +87,13 @@ namespace VacationRental.Api.Tests
                 
                 Assert.Equal(new DateTime(2000, 01, 04), getCalendarResult.Dates[3].Date);
                 Assert.Single(getCalendarResult.Dates[3].Bookings);
+                Assert.Single(getCalendarResult.Dates[3].PreparationTime);
                 Assert.Contains(getCalendarResult.Dates[3].Bookings, x => x.Id == postBooking2Result.Id);
                 
                 Assert.Equal(new DateTime(2000, 01, 05), getCalendarResult.Dates[4].Date);
+                Assert.Single(getCalendarResult.Dates[4].PreparationTime);
                 Assert.Empty(getCalendarResult.Dates[4].Bookings);
+                
             }
         }
     }

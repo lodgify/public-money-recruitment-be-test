@@ -28,13 +28,9 @@ namespace VacationRental.Infrastructure.Persistence
 
         public int GetLastId()
         {
-            return _bookings.Count + 1;
+            return _bookings.Count;
         }
 
-        public ICollection<BookingModel> GetAll()
-        {
-            return _bookings.Values;
-        }
 
         public IEnumerable<BookingModel> GetByRentalId(int id)
         {

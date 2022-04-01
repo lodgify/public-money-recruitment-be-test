@@ -9,9 +9,6 @@ namespace VacationRental.Domain.Bookings
 
         int GetLastId();
 
-        ICollection<BookingModel> GetAll();
-        
         IEnumerable<BookingModel> GetByRentalId(int id);
-
     }
 }
