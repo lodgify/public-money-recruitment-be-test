@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using VacationRental.Api.Tests.ApiRoutes;
 using VacationRental.Application.Bookings.Commands.PostBooking;
 using VacationRental.Application.Calendars.Queries.GetCalendar;
 using VacationRental.Application.Common.ViewModel;
@@ -29,7 +30,7 @@ namespace VacationRental.Api.Tests.Controllers
             };
 
             ResourceIdViewModel postRentalResult;
-            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+            using (var postRentalResponse = await _client.PostAsJsonAsync(RentalApiRoute.Post(), postRentalRequest))
             {
                 Assert.True(postRentalResponse.IsSuccessStatusCode);
                 postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
@@ -43,7 +44,7 @@ namespace VacationRental.Api.Tests.Controllers
             };
 
             ResourceIdViewModel postBooking1Result;
-            using (var postBooking1Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request))
+            using (var postBooking1Response = await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking1Request))
             {
                 Assert.True(postBooking1Response.IsSuccessStatusCode);
                 postBooking1Result = await postBooking1Response.Content.ReadAsAsync<ResourceIdViewModel>();
@@ -57,13 +58,13 @@ namespace VacationRental.Api.Tests.Controllers
             };
 
             ResourceIdViewModel postBooking2Result;
-            using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
+            using (var postBooking2Response = await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking2Request))
             {
                 Assert.True(postBooking2Response.IsSuccessStatusCode);
                 postBooking2Result = await postBooking2Response.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            using (var getCalendarResponse = await _client.GetAsync($"/api/v1/calendar?rentalId={postRentalResult.Id}&start=2000-01-01&nights=5"))
+            using (var getCalendarResponse = await _client.GetAsync(CalendarApiRoute.Get(postRentalResult.Id, "2000-01-01", 5)))
             {
                 Assert.True(getCalendarResponse.IsSuccessStatusCode);
 

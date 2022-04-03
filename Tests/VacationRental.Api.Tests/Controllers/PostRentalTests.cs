@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using VacationRental.Api.Tests.ApiRoutes;
 using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
 using Xunit;
@@ -25,7 +26,7 @@ namespace VacationRental.Api.Tests.Controllers
             };
 
             ResourceIdViewModel postResult;
-            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
+            using (var postResponse = await _client.PostAsJsonAsync(RentalApiRoute.Post(), request))
             {
                 Assert.True(postResponse.IsSuccessStatusCode);
                 postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
