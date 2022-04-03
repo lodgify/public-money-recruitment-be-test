@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using VacationRental.Api.Tests.ApiRoutes;
 using VacationRental.Application.Bookings.Commands.PostBooking;
 using VacationRental.Application.Common.ViewModel;
@@ -32,7 +33,7 @@ namespace VacationRental.Api.Tests.Controllers
             ResourceIdViewModel postResult;
             using (var postResponse = await _client.PostAsJsonAsync(RentalApiRoute.Post(), postRequest))
             {
-                Assert.True(postResponse.IsSuccessStatusCode);
+                postResponse.IsSuccessStatusCode.Should().BeTrue();
                 postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
             
@@ -44,18 +45,17 @@ namespace VacationRental.Api.Tests.Controllers
             
             using (var putResponse = await _client.PutAsJsonAsync(RentalApiRoute.Put(postResult.Id), putRequest))
             {
-                Assert.True(putResponse.IsSuccessStatusCode);
+                putResponse.IsSuccessStatusCode.Should().BeTrue();
                 await putResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
             using (var getResponse = await _client.GetAsync(RentalApiRoute.Get(postResult.Id)))
             {
-                Assert.True(getResponse.IsSuccessStatusCode);
+                getResponse.IsSuccessStatusCode.Should().BeTrue();
 
                 var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(putRequest.Units, getResult.Units);
-                Assert.Equal(putRequest.PreparationTimeInDays, getResult.PreparationTimeInDays);
-
+                getResult.Units.Should().Be(putRequest.Units);
+                getResult.PreparationTimeInDays.Should().Be(putRequest.PreparationTimeInDays);
             }
         }
         
@@ -71,7 +71,7 @@ namespace VacationRental.Api.Tests.Controllers
             ResourceIdViewModel postResult;
             using (var postResponse = await _client.PostAsJsonAsync(RentalApiRoute.Post(), postRequest))
             {
-                Assert.True(postResponse.IsSuccessStatusCode);
+                postResponse.IsSuccessStatusCode.Should().BeTrue();
                 postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
@@ -84,7 +84,7 @@ namespace VacationRental.Api.Tests.Controllers
             
             using (var postBookingResponse = await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking))
             {
-                Assert.True(postBookingResponse.IsSuccessStatusCode);
+                postBookingResponse.IsSuccessStatusCode.Should().BeTrue();
                 postResult = await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
             
@@ -96,7 +96,7 @@ namespace VacationRental.Api.Tests.Controllers
             
             using (var putResponse = await _client.PutAsJsonAsync(RentalApiRoute.Put(postResult.Id), putRequest))
             {
-                Assert.True(putResponse.StatusCode == HttpStatusCode.BadRequest);
+                putResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             }
         }
     }

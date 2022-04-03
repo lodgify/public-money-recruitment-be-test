@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using VacationRental.Api.Tests.ApiRoutes;
 using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
@@ -28,16 +29,16 @@ namespace VacationRental.Api.Tests.Controllers
             ResourceIdViewModel postResult;
             using (var postResponse = await _client.PostAsJsonAsync(RentalApiRoute.Post(), request))
             {
-                Assert.True(postResponse.IsSuccessStatusCode);
+                postResponse.IsSuccessStatusCode.Should().BeTrue();
                 postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
+            using (var getResponse = await _client.GetAsync(RentalApiRoute.Get(postResult.Id)))
             {
-                Assert.True(getResponse.IsSuccessStatusCode);
+                getResponse.IsSuccessStatusCode.Should().BeTrue();
 
                 var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(request.Units, getResult.Units);
+                getResult.Units.Should().Be(request.Units);
             }
         }
     }
