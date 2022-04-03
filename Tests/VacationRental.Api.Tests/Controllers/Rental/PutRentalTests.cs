@@ -2,12 +2,14 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
+using VacationRental.Api.Tests.ApiRoutes;
 using VacationRental.Application.Bookings.Commands.PostBooking;
 using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
 using Xunit;
 
-namespace VacationRental.Api.Tests.Controllers
+namespace VacationRental.Api.Tests.Controllers.Rental
 {
     [Collection("Integration")]
     public class PutRentalTests
@@ -29,35 +31,34 @@ namespace VacationRental.Api.Tests.Controllers
             };
 
             ResourceIdViewModel postResult;
-            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRequest))
+            using (var postResponse = await _client.PostAsJsonAsync(RentalApiRoute.Post(), postRequest))
             {
-                Assert.True(postResponse.IsSuccessStatusCode);
+                postResponse.IsSuccessStatusCode.Should().BeTrue();
                 postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
-            
+
             var putRequest = new RentalBindingModel
             {
                 Units = 5,
                 PreparationTimeInDays = 3
             };
-            
-            using (var putResponse = await _client.PutAsJsonAsync($"/api/v1/rentals/{postResult.Id}", putRequest))
+
+            using (var putResponse = await _client.PutAsJsonAsync(RentalApiRoute.Put(postResult.Id), putRequest))
             {
-                Assert.True(putResponse.IsSuccessStatusCode);
+                putResponse.IsSuccessStatusCode.Should().BeTrue();
                 await putResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
+            using (var getResponse = await _client.GetAsync(RentalApiRoute.Get(postResult.Id)))
             {
-                Assert.True(getResponse.IsSuccessStatusCode);
+                getResponse.IsSuccessStatusCode.Should().BeTrue();
 
                 var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(putRequest.Units, getResult.Units);
-                Assert.Equal(putRequest.PreparationTimeInDays, getResult.PreparationTimeInDays);
-
+                getResult.Units.Should().Be(putRequest.Units);
+                getResult.PreparationTimeInDays.Should().Be(putRequest.PreparationTimeInDays);
             }
         }
-        
+
         [Fact]
         public async Task GivenAExistingRental_WhenPutRentalWithLessUnits_ThenGetABadRequest()
         {
@@ -68,9 +69,9 @@ namespace VacationRental.Api.Tests.Controllers
             };
 
             ResourceIdViewModel postResult;
-            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRequest))
+            using (var postResponse = await _client.PostAsJsonAsync(RentalApiRoute.Post(), postRequest))
             {
-                Assert.True(postResponse.IsSuccessStatusCode);
+                postResponse.IsSuccessStatusCode.Should().BeTrue();
                 postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
@@ -80,22 +81,22 @@ namespace VacationRental.Api.Tests.Controllers
                 Start = DateTime.Now.Date,
                 RentalId = postResult.Id
             };
-            
-            using (var postBookingResponse = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking))
+
+            using (var postBookingResponse = await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking))
             {
-                Assert.True(postBookingResponse.IsSuccessStatusCode);
-                postResult = await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postBookingResponse.IsSuccessStatusCode.Should().BeTrue();
+                await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
-            
+
             var putRequest = new RentalBindingModel
             {
                 Units = 0,
                 PreparationTimeInDays = 1
             };
-            
-            using (var putResponse = await _client.PutAsJsonAsync($"/api/v1/rentals/{postResult.Id}", putRequest))
+
+            using (var putResponse = await _client.PutAsJsonAsync(RentalApiRoute.Put(postResult.Id), putRequest))
             {
-                Assert.True(putResponse.StatusCode == HttpStatusCode.BadRequest);
+                putResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             }
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using VacationRental.Application.Common.Services.BookingSearchService;
 using VacationRental.Application.Common.Services.ReCalculateBookingsService;
 using VacationRental.Domain.Bookings;
@@ -26,7 +27,7 @@ namespace VacationRental.Application.Tests.Common.Services
 
             var bookings = new List<BookingModel>();
 
-            Assert.True(_service.Validate(rental, bookings));
+            _service.Validate(rental, bookings).Should().BeTrue();
         }
 
         [Fact]
@@ -39,7 +40,7 @@ namespace VacationRental.Application.Tests.Common.Services
                 new BookingModel() {Id = 1, RentalId = 1, Nights = 1, Start = new DateTime(2002, 01, 01)}
             };
 
-            Assert.True(_service.Validate(rental, bookings));
+            _service.Validate(rental, bookings).Should().BeTrue();
         }
 
         [Fact]
@@ -53,7 +54,7 @@ namespace VacationRental.Application.Tests.Common.Services
                 new BookingModel() {Id = 2, RentalId = 1, Nights = 2, Start = new DateTime(2002, 01, 03)}
             };
 
-            Assert.False(_service.Validate(rental, bookings));
+            _service.Validate(rental, bookings).Should().BeFalse();
         }
 
         [Fact]
@@ -67,7 +68,7 @@ namespace VacationRental.Application.Tests.Common.Services
                 new BookingModel() {Id = 2, RentalId = 1, Nights = 2, Start = new DateTime(2002, 01, 06)}
             };
 
-            Assert.True(_service.Validate(rental, bookings));
+            _service.Validate(rental, bookings).Should().BeTrue();
         }
 
         [Fact]
@@ -81,7 +82,7 @@ namespace VacationRental.Application.Tests.Common.Services
                 new BookingModel() {Id = 2, RentalId = 1, Nights = 2, Start = new DateTime(2002, 01, 01)},
             };
 
-            Assert.False(_service.Validate(rental, bookings));
+            _service.Validate(rental, bookings).Should().BeFalse();
         }
 
         [Fact]
@@ -96,7 +97,7 @@ namespace VacationRental.Application.Tests.Common.Services
                 new BookingModel() {Id = 2, RentalId = 1, Nights = 2, Start = new DateTime(2002, 01, 01)},
             };
 
-            Assert.True(_service.Validate(rental, bookings));
+            _service.Validate(rental, bookings).Should().BeTrue();
         }
     }
 }
