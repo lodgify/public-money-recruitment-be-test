@@ -7,42 +7,18 @@ using VacationRental.Application.Rentals.Commands.PostRental;
 using VacationRental.Application.Rentals.Commands.PutRental;
 using VacationRental.Application.Rentals.Queries.GetRental;
 
-namespace VacationRental.Api.Controllers
+namespace VacationRental.Api.Controllers.Rentals
 {
     [Route("api/v1/rentals")]
     [ApiController]
-    public class RentalsController : ControllerBase
+    public class PutRentalController : ControllerBase
     {
 
         private readonly IMediator _mediator;
 
-        public RentalsController(IMediator mediator)
+        public PutRentalController(IMediator mediator)
         {
             _mediator = mediator;
-        }
-
-        [HttpGet]
-        [Route("{rentalId:int}")]
-        public async Task<ActionResult<RentalViewModel>> Get(int rentalId)
-        {
-            var result = await _mediator.Send(new GetRentalQuery() {RentalId = rentalId});
-
-            if (result == null)
-                return NotFound("Rental not found");
-
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ResourceIdViewModel>> Post(RentalBindingModel model)
-        {
-            var result = await _mediator.Send(new PostRentalCommand()
-            {
-                Units = model.Units,
-                PreparationTimeInDays = model.PreparationTimeInDays
-            });
-
-            return Ok(result);
         }
 
         [HttpPut]

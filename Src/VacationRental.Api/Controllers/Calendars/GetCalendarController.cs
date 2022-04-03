@@ -4,15 +4,15 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Application.Calendars.Queries.GetCalendar;
 
-namespace VacationRental.Api.Controllers
+namespace VacationRental.Api.Controllers.Calendars
 {
     [Route("api/v1/calendar")]
     [ApiController]
-    public class CalendarController : ControllerBase
+    public class GetCalendarController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public CalendarController(IMediator mediator)
+        public GetCalendarController(IMediator mediator)
         {
             _mediator = mediator;
         }

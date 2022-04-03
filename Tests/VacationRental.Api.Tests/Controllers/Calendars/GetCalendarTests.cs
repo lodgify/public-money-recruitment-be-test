@@ -9,7 +9,7 @@ using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
 using Xunit;
 
-namespace VacationRental.Api.Tests.Controllers
+namespace VacationRental.Api.Tests.Controllers.Calendars
 {
     [Collection("Integration")]
     public class GetCalendarTests
@@ -39,13 +39,14 @@ namespace VacationRental.Api.Tests.Controllers
 
             var postBooking1Request = new BookingBindingModel
             {
-                 RentalId = postRentalResult.Id,
-                 Nights = 2,
-                 Start = new DateTime(2000, 01, 02)
+                RentalId = postRentalResult.Id,
+                Nights = 2,
+                Start = new DateTime(2000, 01, 02)
             };
 
             ResourceIdViewModel postBooking1Result;
-            using (var postBooking1Response = await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking1Request))
+            using (var postBooking1Response =
+                await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking1Request))
             {
                 postBooking1Response.IsSuccessStatusCode.Should().BeTrue();
                 postBooking1Result = await postBooking1Response.Content.ReadAsAsync<ResourceIdViewModel>();
@@ -59,13 +60,15 @@ namespace VacationRental.Api.Tests.Controllers
             };
 
             ResourceIdViewModel postBooking2Result;
-            using (var postBooking2Response = await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking2Request))
+            using (var postBooking2Response =
+                await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking2Request))
             {
                 postBooking2Response.IsSuccessStatusCode.Should().BeTrue();
                 postBooking2Result = await postBooking2Response.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            using (var getCalendarResponse = await _client.GetAsync(CalendarApiRoute.Get(postRentalResult.Id, "2000-01-01", 5)))
+            using (var getCalendarResponse =
+                await _client.GetAsync(CalendarApiRoute.Get(postRentalResult.Id, "2000-01-01", 5)))
             {
                 getCalendarResponse.IsSuccessStatusCode.Should().BeTrue();
 

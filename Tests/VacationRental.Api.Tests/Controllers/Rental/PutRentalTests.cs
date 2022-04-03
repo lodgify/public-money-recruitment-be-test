@@ -9,7 +9,7 @@ using VacationRental.Application.Common.ViewModel;
 using VacationRental.Application.Rentals.Commands.PostRental;
 using Xunit;
 
-namespace VacationRental.Api.Tests.Controllers
+namespace VacationRental.Api.Tests.Controllers.Rental
 {
     [Collection("Integration")]
     public class PutRentalTests
@@ -36,13 +36,13 @@ namespace VacationRental.Api.Tests.Controllers
                 postResponse.IsSuccessStatusCode.Should().BeTrue();
                 postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
-            
+
             var putRequest = new RentalBindingModel
             {
                 Units = 5,
                 PreparationTimeInDays = 3
             };
-            
+
             using (var putResponse = await _client.PutAsJsonAsync(RentalApiRoute.Put(postResult.Id), putRequest))
             {
                 putResponse.IsSuccessStatusCode.Should().BeTrue();
@@ -58,7 +58,7 @@ namespace VacationRental.Api.Tests.Controllers
                 getResult.PreparationTimeInDays.Should().Be(putRequest.PreparationTimeInDays);
             }
         }
-        
+
         [Fact]
         public async Task GivenAExistingRental_WhenPutRentalWithLessUnits_ThenGetABadRequest()
         {
@@ -81,19 +81,19 @@ namespace VacationRental.Api.Tests.Controllers
                 Start = DateTime.Now.Date,
                 RentalId = postResult.Id
             };
-            
+
             using (var postBookingResponse = await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking))
             {
                 postBookingResponse.IsSuccessStatusCode.Should().BeTrue();
                 postResult = await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
-            
+
             var putRequest = new RentalBindingModel
             {
                 Units = 0,
                 PreparationTimeInDays = 1
             };
-            
+
             using (var putResponse = await _client.PutAsJsonAsync(RentalApiRoute.Put(postResult.Id), putRequest))
             {
                 putResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);

@@ -6,29 +6,17 @@ using VacationRental.Application.Bookings.Commands.PostBooking;
 using VacationRental.Application.Bookings.Queries.GetBooking;
 using VacationRental.Application.Common.ViewModel;
 
-namespace VacationRental.Api.Controllers
+namespace VacationRental.Api.Controllers.Bookings
 {
     [Route("api/v1/bookings")]
     [ApiController]
-    public class BookingsController : ControllerBase
+    public class PostBookingController : ControllerBase
     {
-     
         private readonly IMediator _mediator;
-        public BookingsController(IMediator mediator)
+
+        public PostBookingController(IMediator mediator)
         {
             _mediator = mediator;
-        }
-
-        [HttpGet]
-        [Route("{bookingId:int}")]
-        public async Task<ActionResult<BookingViewModel>> Get(int bookingId)
-        {
-            var bookingViewModel = await _mediator.Send(new GetBookingQuery(){BookingId = bookingId});
-            
-            if(bookingViewModel == null)
-                return NotFound("Booking not found");
-
-            return Ok(bookingViewModel);
         }
 
         [HttpPost]
