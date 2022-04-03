@@ -30,10 +30,11 @@ namespace VacationRental.Application.Rentals.Commands.PutRental
             if (rental == null)
                 throw new ApplicationException("Rental not found");
 
-            var bookings = _bookingRepository.GetByRentalId(rental.Id);
             rental.Units = request.Units;
             rental.PreparationTimeInDays = request.PreparationTimeInDays;
             
+            var bookings = _bookingRepository.GetByRentalId(rental.Id);
+
             if (!_service.Validate(rental, bookings))
                 throw new ApplicationException("Update not possible due to dates in conflict");
 

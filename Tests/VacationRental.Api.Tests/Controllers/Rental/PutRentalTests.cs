@@ -85,7 +85,7 @@ namespace VacationRental.Api.Tests.Controllers.Rental
             using (var postBookingResponse = await _client.PostAsJsonAsync(BookingApiRoute.Post(), postBooking))
             {
                 postBookingResponse.IsSuccessStatusCode.Should().BeTrue();
-                postResult = await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
             var putRequest = new RentalBindingModel
