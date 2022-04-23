@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using VacationRental.Api.Models;
+using VacationRental.Data;
+using VacationRental.Domain.Bookings;
+using VacationRental.Domain.Rentals;
 
 namespace VacationRental.Api
 {
@@ -27,6 +30,9 @@ namespace VacationRental.Api
 
             services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
             services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+
+            services.AddSingleton<IEntityRepository<Bookings>>(new EntityRepository<Bookings>(new Dictionary<int, Bookings>()));
+            services.AddSingleton<IEntityRepository<Rentals>>(new EntityRepository<Rentals>(new Dictionary<int, Rentals>()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
