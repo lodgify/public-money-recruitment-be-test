@@ -28,17 +28,20 @@ namespace VacationRental.Api.Controllers
             if (!_rentals.ContainsKey(rentalId))
                 throw new ApplicationException("Rental not found");
 
-            var result = new CalendarViewModel 
+            var rental = _rentals[rentalId];
+
+            var result = new CalendarViewModel
             {
                 RentalId = rentalId,
-                Dates = new List<CalendarDateViewModel>() 
+                Dates = new List<CalendarDateViewModel>()
             };
             for (var i = 0; i < nights; i++)
             {
                 var date = new CalendarDateViewModel
                 {
                     Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingViewModel>()
+                    Bookings = new List<CalendarBookingViewModel>(),
+                    PreparationTimes = new List<CalendarPreparationTimeViewModel>()
                 };
 
                 foreach (var booking in _bookings.Values)
@@ -46,7 +49,12 @@ namespace VacationRental.Api.Controllers
                     if (booking.RentalId == rentalId
                         && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
                     {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
+                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id, Unit = booking.Unit });
+                    }
+                    else if (booking.RentalId == rentalId
+                               && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights + rental.PreparationTime) > date.Date)
+                    {
+                        date.PreparationTimes.Add(new CalendarPreparationTimeViewModel { Unit = booking.Unit });
                     }
                 }
 
