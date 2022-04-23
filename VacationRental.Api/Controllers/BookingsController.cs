@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Controllers
@@ -38,7 +38,7 @@ namespace VacationRental.Api.Controllers
                 throw new ApplicationException("Nigts must be positive");
 
             var rental = _rentals.Values.FirstOrDefault(x => x.Id == model.RentalId);
-            
+
             if (rental == null)
                 throw new ApplicationException("Rental not found");
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
@@ -34,27 +33,25 @@ namespace VacationRental.Api.Tests
 
             var postBookingRequest = new BookingBindingModel
             {
-                 RentalId = postRentalResult.Id,
-                 Nights = 3,
-                 Start = new DateTime(2001, 01, 01)
+                RentalId = postRentalResult.Id,
+                Nights = 3,
+                Start = new DateTime(2001, 01, 01)
             };
 
             ResourceIdViewModel postBookingResult;
-            using (var postBookingResponse = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest))
+            using (HttpResponseMessage postBookingResponse = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest))
             {
                 Assert.True(postBookingResponse.IsSuccessStatusCode);
                 postBookingResult = await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            using (var getBookingResponse = await _client.GetAsync($"/api/v1/bookings/{postBookingResult.Id}"))
-            {
-                Assert.True(getBookingResponse.IsSuccessStatusCode);
+            using var getBookingResponse = await _client.GetAsync($"/api/v1/bookings/{postBookingResult.Id}");
+            Assert.True(getBookingResponse.IsSuccessStatusCode);
 
-                var getBookingResult = await getBookingResponse.Content.ReadAsAsync<BookingViewModel>();
-                Assert.Equal(postBookingRequest.RentalId, getBookingResult.RentalId);
-                Assert.Equal(postBookingRequest.Nights, getBookingResult.Nights);
-                Assert.Equal(postBookingRequest.Start, getBookingResult.Start);
-            }
+            var getBookingResult = await getBookingResponse.Content.ReadAsAsync<BookingViewModel>();
+            Assert.Equal(postBookingRequest.RentalId, getBookingResult.RentalId);
+            Assert.Equal(postBookingRequest.Nights, getBookingResult.Nights);
+            Assert.Equal(postBookingRequest.Start, getBookingResult.Start);
         }
 
         [Fact]
@@ -93,9 +90,7 @@ namespace VacationRental.Api.Tests
 
             await Assert.ThrowsAsync<ApplicationException>(async () =>
             {
-                using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
-                {
-                }
+                using var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request);
             });
         }
     }
