@@ -73,7 +73,7 @@ namespace VacationRental.Infrastructure.Services
                 return availableUnit;
             }
 
-            for (int i = availableUnit; i > rental.Units; i++)
+            for (int i = availableUnit; i <= rental.Units; i++)
             {
                 if (bookings.All(x => x.Unit != i))
                 {
