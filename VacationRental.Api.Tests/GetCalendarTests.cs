@@ -36,7 +36,7 @@ namespace VacationRental.Api.Tests
             {
                 RentalId = postRentalResult.Id,
                 Nights = 2,
-                Start = DateTime.UtcNow.AddDays(1),
+                Start = DateTime.UtcNow.Date.AddDays(1),
             };
 
             BookingsCreateOutputDTO postBooking1Result;
@@ -86,6 +86,12 @@ namespace VacationRental.Api.Tests
 
             Assert.Equal(DateTime.UtcNow.Date.AddDays(4), getCalendarResult.Dates[4].Date);
             Assert.Empty(getCalendarResult.Dates[4].Bookings);
+
+            Assert.Single(getCalendarResult.Dates[3].PreparationTimes);
+            Assert.Equal(1, getCalendarResult.Dates[3].PreparationTimes[0].Unit);
+
+            Assert.Single(getCalendarResult.Dates[4].PreparationTimes);
+            Assert.Equal(2, getCalendarResult.Dates[4].PreparationTimes[0].Unit);
         }
     }
 }
