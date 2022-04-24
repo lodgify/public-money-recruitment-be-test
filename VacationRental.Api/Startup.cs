@@ -45,8 +45,8 @@ namespace VacationRental.Api
 
 
             //Register Mapster
-            TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetAssembly(typeof(RentalCreateDTOMapping)) ??
-                          throw new FileLoadException(nameof(RentalCreateDTOMapping) +
+            TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetAssembly(typeof(RentalCreateInputDTOMapping)) ??
+                          throw new FileLoadException(nameof(RentalCreateInputDTOMapping) +
                                                       ".cs file not found."));
             TypeAdapterConfig.GlobalSettings.AllowImplicitDestinationInheritance = true;
             TypeAdapterConfig.GlobalSettings.AllowImplicitSourceInheritance = true;

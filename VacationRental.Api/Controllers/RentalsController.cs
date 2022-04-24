@@ -14,32 +14,34 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
         private readonly IRentalService _rentalService;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals, IRentalService rentalService = null)
+        public RentalsController(IRentalService rentalService)
         {
-            _rentals = rentals;
             _rentalService = rentalService;
         }
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        public ActionResult<RentalDTO> Get(int rentalId)
         {
             var rental = _rentalService.GetRental(rentalId);
 
-            return new RentalViewModel { Id = rental.Id, PreparationTime = rental.PreparationTime, Units = rental.Units};
+            var result = rental.Adapt<RentalDTO>();
+
+            return result;
         }
 
         [HttpPost]
-        public ActionResult<ResourceIdViewModel> Post(RentalCreateInputDTO model)
+        public ActionResult<RentalCreateOutputDTO> Post(RentalCreateInputDTO model)
         {
             var rentalToCreate = model.Adapt<Rental>();
 
-            var id = _rentalService.CreateRental(new Rental(model.Units, model.PreparationTimeInDays));
+            var id = _rentalService.CreateRental(rentalToCreate);
 
-            return new ResourceIdViewModel { Id = id };
+            var result = id.Adapt<RentalCreateOutputDTO>();
+
+            return result;
         }
     }
 }

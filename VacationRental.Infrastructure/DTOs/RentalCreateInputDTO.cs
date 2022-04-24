@@ -10,7 +10,7 @@ namespace VacationRental.Infrastructure.DTOs
         public int PreparationTimeInDays { get; set; }
     }
 
-    public class RentalCreateDTOMapping : IRegister
+    public class RentalCreateInputDTOMapping : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {

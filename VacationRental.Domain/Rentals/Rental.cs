@@ -5,7 +5,7 @@ namespace VacationRental.Domain.Rentals
 {
     public class Rental : BaseEntity
     {
-        private readonly RentalValidator _rentalValidator = new RentalValidator();
+        private readonly RentalValidator _rentalValidator = new();
 
         public Rental()
         {
@@ -30,8 +30,8 @@ namespace VacationRental.Domain.Rentals
         public RentalValidator()
         {
             RuleFor(x => x.Id).NotNull();
-            RuleFor(x => x.Units).GreaterThan(0).WithMessage("Rental should at least have 1 Unit");
-            RuleFor(x => x.PreparationTime).GreaterThan(0).WithMessage("Preparation Time cannot be less than 1 days");
+            RuleFor(x => x.Units).LessThan(1).WithMessage("Rental should at least have 1 Unit");
+            RuleFor(x => x.PreparationTime).LessThan(1).WithMessage("Preparation Time cannot be less than 1 days");
         }
     }
 }
