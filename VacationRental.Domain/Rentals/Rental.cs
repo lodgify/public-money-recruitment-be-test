@@ -15,6 +15,12 @@ namespace VacationRental.Domain.Rentals
             PreparationTime = preparationTime;
         }
 
+        public void Update(Rental updatedRental)
+        {
+            Units = updatedRental.Units;
+            PreparationTime = updatedRental.PreparationTime;
+        }
+
         public int Units { get; set; }
 
         public int PreparationTime { get; set; }

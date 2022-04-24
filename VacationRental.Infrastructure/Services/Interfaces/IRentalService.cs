@@ -1,4 +1,5 @@
 ﻿using VacationRental.Domain.Rentals;
+using VacationRental.Infrastructure.DTOs;
 
 namespace VacationRental.Infrastructure.Services.Interfaces
 {
@@ -8,6 +9,6 @@ namespace VacationRental.Infrastructure.Services.Interfaces
 
         int CreateRental(Rental rental);
 
-        void UpdateRental(Rental rental, int id);
+        Rental UpdateRental(RentalUpdateInputDTO model, int id);
     }
 }

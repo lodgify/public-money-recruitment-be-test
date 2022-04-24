@@ -39,5 +39,16 @@ namespace VacationRental.Api.Controllers
 
             return result;
         }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public ActionResult<RentalDTO> Put(int rentalId, RentalUpdateInputDTO model)
+        {
+            var rental = _rentalService.UpdateRental(model, rentalId);
+
+            var result = rental.Adapt<RentalDTO>();
+
+            return result;
+        }
     }
 }

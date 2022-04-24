@@ -1,5 +1,7 @@
-﻿using VacationRental.Data;
+﻿using Mapster;
+using VacationRental.Data;
 using VacationRental.Domain.Rentals;
+using VacationRental.Infrastructure.DTOs;
 using VacationRental.Infrastructure.Services.Interfaces;
 
 namespace VacationRental.Infrastructure.Services
@@ -39,9 +41,22 @@ namespace VacationRental.Infrastructure.Services
             }
         }
 
-        public void UpdateRental(Rental rental, int id)
+        public Rental UpdateRental(RentalUpdateInputDTO model, int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var rentalToUpdate = _renatalsRepository.GetEntityById(id);
+
+                rentalToUpdate.Update(model.Adapt<Rental>());
+
+                _renatalsRepository.Update(rentalToUpdate);
+
+                return rentalToUpdate;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
