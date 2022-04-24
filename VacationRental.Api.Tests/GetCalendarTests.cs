@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
+using VacationRental.Infrastructure.DTOs;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -19,7 +20,7 @@ namespace VacationRental.Api.Tests
         [Fact]
         public async Task GivenCompleteRequest_WhenGetCalendar_ThenAGetReturnsTheCalculatedCalendar()
         {
-            var postRentalRequest = new RentalBindingModel
+            var postRentalRequest = new RentalCreateInputDTO
             {
                 Units = 2
             };

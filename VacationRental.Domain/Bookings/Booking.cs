@@ -2,9 +2,9 @@
 
 namespace VacationRental.Domain.Bookings
 {
-    public class Bookings : BaseEntity
+    public class Booking : BaseEntity
     {
-        public Bookings(int rentalId, int unit, DateTime start, int nights)
+        public Booking(int rentalId, int unit, DateTime start, int nights)
         {
             RentalId = rentalId;
             Unit = unit;

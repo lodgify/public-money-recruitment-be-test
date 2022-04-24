@@ -14,8 +14,14 @@ namespace VacationRental.Data
         public TEntity Add(TEntity entity)
         {
             entity.Id = _collection.Count + 1;
-            _collection.Add(entity.Id, entity);
-            return entity;
+            if (_collection.TryAdd(entity.Id, entity))
+            {
+                return entity;
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
 
         public bool Delete(int id)
@@ -30,7 +36,14 @@ namespace VacationRental.Data
 
         public TEntity GetEntityById(int id)
         {
-            return _collection[id];
+            if (_collection.TryGetValue(id, out var entity))
+            {
+                return entity;
+            }
+            else
+            {
+                throw new Exception($"{typeof(TEntity)} Not Found");
+            }
         }
 
         public TEntity Update(TEntity entity)

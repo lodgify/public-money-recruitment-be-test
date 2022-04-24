@@ -2,9 +2,13 @@
 
 namespace VacationRental.Domain.Rentals
 {
-    public class Rentals : BaseEntity
+    public class Rental : BaseEntity
     {
-        public Rentals(int units, int preparationTime)
+        public Rental()
+        {
+        }
+
+        public Rental(int units, int preparationTime)
         {
             Units = units;
             PreparationTime = preparationTime;
