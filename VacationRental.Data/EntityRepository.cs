@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Linq.Expressions;
 
 namespace VacationRental.Data
 {
@@ -20,13 +21,18 @@ namespace VacationRental.Data
             }
             else
             {
-                throw new Exception();
+                throw new ApplicationException("An error occured while inserting the entity.");
             }
         }
 
         public bool Delete(int id)
         {
             return _collection.Remove(id);
+        }
+
+        public IList<TEntity> FindEntities(Expression<Func<TEntity, bool>> expression)
+        {
+            return _collection.Values.Where(expression.Compile()).ToList();
         }
 
         public IDictionary<int, TEntity> GetAllEntities()
@@ -42,7 +48,7 @@ namespace VacationRental.Data
             }
             else
             {
-                throw new Exception($"{typeof(TEntity)} Not Found");
+                throw new ApplicationException($"{typeof(TEntity)} Not Found");
             }
         }
 

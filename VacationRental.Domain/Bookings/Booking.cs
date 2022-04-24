@@ -4,6 +4,10 @@ namespace VacationRental.Domain.Bookings
 {
     public class Booking : BaseEntity
     {
+        public Booking()
+        {
+        }
+
         public Booking(int rentalId, int unit, DateTime start, int nights)
         {
             RentalId = rentalId;

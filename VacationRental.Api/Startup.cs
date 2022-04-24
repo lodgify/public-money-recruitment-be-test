@@ -35,7 +35,8 @@ namespace VacationRental.Api
 
             services.AddMvc().AddFluentValidation(fv =>
             {
-                fv.RegisterValidatorsFromAssemblyContaining<Rental>();
+                fv.RegisterValidatorsFromAssemblyContaining<RentalCreateInputDTOValidator>();
+                fv.AutomaticValidationEnabled = true;
             });
 
             services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new OpenApiInfo { Title = "Vacation rental information", Version = "v1" }));
@@ -56,6 +57,7 @@ namespace VacationRental.Api
             services.AddSingleton<IEntityRepository<Rental>>(new EntityRepository<Rental>(new Dictionary<int, Rental>()));
 
             services.AddScoped<IRentalService, RentalService>();
+            services.AddScoped<IBookingService, BookingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
