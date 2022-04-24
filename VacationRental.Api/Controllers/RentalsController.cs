@@ -1,9 +1,5 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using VacationRental.Api.Models;
-using VacationRental.Data;
 using VacationRental.Domain.Rentals;
 using VacationRental.Infrastructure.DTOs;
 using VacationRental.Infrastructure.Services.Interfaces;

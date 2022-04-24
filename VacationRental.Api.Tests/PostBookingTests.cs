@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
 using VacationRental.Infrastructure.DTOs;
 using Xunit;
 
@@ -22,34 +21,35 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalCreateInputDTO
             {
-                Units = 4
+                Units = 4,
+                PreparationTimeInDays = 1
             };
 
-            ResourceIdViewModel postRentalResult;
+            RentalCreateOutputDTO postRentalResult;
             using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
             {
                 Assert.True(postRentalResponse.IsSuccessStatusCode);
-                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postRentalResult = await postRentalResponse.Content.ReadAsAsync<RentalCreateOutputDTO>();
             }
 
-            var postBookingRequest = new BookingBindingModel
+            var postBookingRequest = new BookingsCreateInputDTO
             {
                 RentalId = postRentalResult.Id,
                 Nights = 3,
-                Start = new DateTime(2001, 01, 01)
+                Start = DateTime.UtcNow
             };
 
-            ResourceIdViewModel postBookingResult;
+            BookingsCreateOutputDTO postBookingResult;
             using (HttpResponseMessage postBookingResponse = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest))
             {
                 Assert.True(postBookingResponse.IsSuccessStatusCode);
-                postBookingResult = await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postBookingResult = await postBookingResponse.Content.ReadAsAsync<BookingsCreateOutputDTO>();
             }
 
             using var getBookingResponse = await _client.GetAsync($"/api/v1/bookings/{postBookingResult.Id}");
             Assert.True(getBookingResponse.IsSuccessStatusCode);
 
-            var getBookingResult = await getBookingResponse.Content.ReadAsAsync<BookingViewModel>();
+            var getBookingResult = await getBookingResponse.Content.ReadAsAsync<BookingDTO>();
             Assert.Equal(postBookingRequest.RentalId, getBookingResult.RentalId);
             Assert.Equal(postBookingRequest.Nights, getBookingResult.Nights);
             Assert.Equal(postBookingRequest.Start, getBookingResult.Start);
@@ -60,21 +60,22 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalCreateInputDTO
             {
-                Units = 1
+                Units = 1,
+                PreparationTimeInDays = 1
             };
 
-            ResourceIdViewModel postRentalResult;
+            RentalCreateOutputDTO postRentalResult;
             using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
             {
                 Assert.True(postRentalResponse.IsSuccessStatusCode);
-                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postRentalResult = await postRentalResponse.Content.ReadAsAsync<RentalCreateOutputDTO>();
             }
 
-            var postBooking1Request = new BookingBindingModel
+            var postBooking1Request = new BookingsCreateInputDTO
             {
                 RentalId = postRentalResult.Id,
                 Nights = 3,
-                Start = new DateTime(2002, 01, 01)
+                Start = DateTime.UtcNow
             };
 
             using (var postBooking1Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request))
@@ -82,11 +83,11 @@ namespace VacationRental.Api.Tests
                 Assert.True(postBooking1Response.IsSuccessStatusCode);
             }
 
-            var postBooking2Request = new BookingBindingModel
+            var postBooking2Request = new BookingsCreateInputDTO
             {
                 RentalId = postRentalResult.Id,
                 Nights = 1,
-                Start = new DateTime(2002, 01, 02)
+                Start = DateTime.UtcNow.AddDays(1)
             };
 
             await Assert.ThrowsAsync<ApplicationException>(async () =>

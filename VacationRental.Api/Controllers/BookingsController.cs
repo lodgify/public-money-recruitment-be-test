@@ -1,9 +1,5 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using VacationRental.Api.Models;
 using VacationRental.Infrastructure.DTOs;
 using VacationRental.Infrastructure.Services.Interfaces;
 
@@ -15,7 +11,7 @@ namespace VacationRental.Api.Controllers
     {
         private readonly IBookingService _bookingService;
 
-        public BookingsController( IBookingService bookingService)
+        public BookingsController(IBookingService bookingService)
         {
             _bookingService = bookingService;
         }

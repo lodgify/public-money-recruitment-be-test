@@ -9,7 +9,6 @@ using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using VacationRental.Api.Models;
 using VacationRental.Data;
 using VacationRental.Domain.Bookings;
 using VacationRental.Domain.Rentals;
@@ -40,10 +39,6 @@ namespace VacationRental.Api
             });
 
             services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new OpenApiInfo { Title = "Vacation rental information", Version = "v1" }));
-
-            services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
-            services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
-
 
             //Register Mapster
             TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetAssembly(typeof(RentalCreateInputDTOMapping)) ??
