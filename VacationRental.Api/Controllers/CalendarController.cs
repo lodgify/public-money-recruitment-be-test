@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
@@ -28,6 +29,8 @@ namespace VacationRental.Api.Controllers
             if (!_rentals.ContainsKey(rentalId))
                 throw new ApplicationException("Rental not found");
 
+            var rental = _rentals[rentalId];
+            var rentalBookings = _bookings.Values.Where(b => b.RentalId == rentalId);
             var result = new CalendarViewModel 
             {
                 RentalId = rentalId,
@@ -38,21 +41,28 @@ namespace VacationRental.Api.Controllers
                 var date = new CalendarDateViewModel
                 {
                     Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingViewModel>()
+                    Bookings = new List<CalendarBookingViewModel>(),
+                    PreparationTimes = new List<PreparationTimeViewModel>()
                 };
 
-                foreach (var booking in _bookings.Values)
+                foreach (var booking in rentalBookings)
                 {
-                    if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
+                    var bookingEnd = booking.Start.AddDays(booking.Nights);
+
+                    if (booking.Start <= date.Date && bookingEnd > date.Date)
                     {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
+                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id, Unit = booking.Unit });
+                    }
+
+                    var preparationEnd = bookingEnd.AddDays(rental.PreparationTimeInDays);
+                    if (bookingEnd <= date.Date && preparationEnd > date.Date)
+                    {
+                        date.PreparationTimes.Add(new PreparationTimeViewModel { Unit = booking.Unit });
                     }
                 }
 
                 result.Dates.Add(date);
             }
-
             return result;
         }
     }
