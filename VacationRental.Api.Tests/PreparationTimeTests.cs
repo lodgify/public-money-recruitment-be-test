@@ -137,34 +137,35 @@ namespace VacationRental.Api.Tests
                 Assert.Equal(new DateTime(2000, 01, 01).AddDays(i), ele.Date);
 
                 // Check The Bookings
+
                 if (i == 0 || i == 12)
                 {
                     Assert.Single(ele.Bookings);
 
-                    Assert.Equal(bookingIds[i == 0 ? 0 : i - 3], ele.Bookings[0].Id);
-                    Assert.Equal(i == 0 ? 0 : (i - 3) % 5, ele.Bookings[0].Unit);
+                    Assert.Equal(bookingIds[i == 0 ? 0 : 9], ele.Bookings[0].Id);
+                    Assert.Equal(i == 0 ? 1 : 5, ele.Bookings[0].Unit);
                 }
                 else if (i == 1 || i == 11)
                 {
                     Assert.Equal(2, ele.Bookings.Count);
 
-                    Assert.Equal(bookingIds[ i == 1 ? 0 : i - 3], ele.Bookings[0].Id);
-                    Assert.Equal(bookingIds[ i == 1 ? 1 : i - 2], ele.Bookings[1].Id);
+                    Assert.Equal(bookingIds[ i == 1 ? 0 : 8], ele.Bookings[0].Id);
+                    Assert.Equal(bookingIds[ i == 1 ? 1 : 9], ele.Bookings[1].Id);
 
-                    Assert.Equal(i == 1 ? 0 : (i - 3) % 5, ele.Bookings[0].Unit);
-                    Assert.Equal(i == 1 ? 1 : (i - 2) % 5, ele.Bookings[1].Unit);
+                    Assert.Equal(i == 1 ? 1 : 4, ele.Bookings[0].Unit);
+                    Assert.Equal(i == 1 ? 2 : 5, ele.Bookings[1].Unit);
                 }
                 else if (i == 2 || i == 10)
                 {
                     Assert.Equal(3, ele.Bookings.Count);
 
-                    Assert.Equal(bookingIds[i == 2 ? 0 : i - 3], ele.Bookings[0].Id);
-                    Assert.Equal(bookingIds[i == 2 ? 1 : i - 2], ele.Bookings[1].Id);
-                    Assert.Equal(bookingIds[i == 2 ? 2 : i - 1], ele.Bookings[2].Id);
+                    Assert.Equal(bookingIds[i == 2 ? 0 : 7], ele.Bookings[0].Id);
+                    Assert.Equal(bookingIds[i == 2 ? 1 : 8], ele.Bookings[1].Id);
+                    Assert.Equal(bookingIds[i == 2 ? 2 : 9], ele.Bookings[2].Id);
 
-                    Assert.Equal(i == 2 ? 0 : (i - 3) % 5, ele.Bookings[0].Unit);
-                    Assert.Equal(i == 2 ? 1 : (i - 2) % 5, ele.Bookings[1].Unit);
-                    Assert.Equal(i == 2 ? 2 : (i - 1) % 5, ele.Bookings[2].Unit);
+                    Assert.Equal(i == 2 ? 1 : 3, ele.Bookings[0].Unit);
+                    Assert.Equal(i == 2 ? 2 : 4, ele.Bookings[1].Unit);
+                    Assert.Equal(i == 2 ? 3 : 5, ele.Bookings[2].Unit);
 
                 }
                 else if (i >= 3 && i < 10)
@@ -176,10 +177,10 @@ namespace VacationRental.Api.Tests
                     Assert.Equal(bookingIds[i - 1], ele.Bookings[2].Id);
                     Assert.Equal(bookingIds[i]    , ele.Bookings[3].Id);
 
-                    Assert.Equal((i - 3) % 5, ele.Bookings[0].Unit);
-                    Assert.Equal((i - 2) % 5, ele.Bookings[1].Unit);
-                    Assert.Equal((i - 1) % 5, ele.Bookings[2].Unit);
-                    Assert.Equal(i % 5, ele.Bookings[3].Unit);
+                    Assert.Equal((i - 2) % 5 == 0 ? 5 : (i - 2) % 5 , ele.Bookings[0].Unit) ;
+                    Assert.Equal((i - 1) % 5 == 0 ? 5 : (i - 1) % 5, ele.Bookings[1].Unit);
+                    Assert.Equal( i      % 5 == 0 ? 5 : i % 5, ele.Bookings[2].Unit);
+                    Assert.Equal((i + 1) % 5 == 0 ? 5 : (i + 1) % 5, ele.Bookings[3].Unit);
 
                 }
                 else if (i >= 13)
@@ -191,7 +192,7 @@ namespace VacationRental.Api.Tests
                 if (i > 3 && i < 14)
                 {
                     Assert.Single(ele.PreparationTimes);
-                    Assert.Equal((i - 4) % 5, ele.PreparationTimes[0].Unit);
+                    Assert.Equal((i - 3) % 5 == 0 ? 5: (i - 3) % 5, ele.PreparationTimes[0].Unit);
                 }
                 else
                 {

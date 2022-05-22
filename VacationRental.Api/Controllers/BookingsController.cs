@@ -39,7 +39,7 @@ namespace VacationRental.Api.Controllers
             if (!_rentals.ContainsKey(model.RentalId))
                 throw new ApplicationException("Rental not found");
 
-            var unit = -1; // Has No Unit
+            var unit = 0; // Has No Unit
             var rental = _rentals[model.RentalId];
 
             var rentalBookingsGroupedByUnit =
@@ -70,13 +70,13 @@ namespace VacationRental.Api.Controllers
                     break;
                 }   
             }
-            if(unit == -1 && rentalBookingsGroupedByUnit.Count() >= rental.Units)
+            if(unit == 0 && rentalBookingsGroupedByUnit.Count() >= rental.Units)
             {
                 throw new ApplicationException("Not available");
             }
-            else if(unit == -1)
+            else if(unit == 0)
             {
-                unit = rentalBookingsGroupedByUnit.Count();
+                unit = rentalBookingsGroupedByUnit.Count() + 1;
             }
 
             var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
