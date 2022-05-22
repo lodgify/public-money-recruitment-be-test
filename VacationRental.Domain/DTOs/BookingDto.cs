@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using VacationRental.Api.Validations;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.Domain.DTOs
 {
-    public class BookingBindingModel
+    public class BookingDto
     {
         public int RentalId { get; set; }
-
         public DateTime Start
         {
             get => _startIgnoreTime;
@@ -14,6 +15,7 @@ namespace VacationRental.Api.Models
         }
 
         private DateTime _startIgnoreTime;
+        [GreaterThanZero(ErrorMessage = "Nights must be positive")]
         public int Nights { get; set; }
         public int Unit { get; set; }
     }

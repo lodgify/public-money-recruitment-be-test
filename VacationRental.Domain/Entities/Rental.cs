@@ -1,6 +1,10 @@
-﻿namespace VacationRental.Api.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace VacationRental.Domain.Entities
 {
-    public class RentalViewModel
+    public class Rental
     {
         public int Id { get; set; }
         public int Units { get; set; }

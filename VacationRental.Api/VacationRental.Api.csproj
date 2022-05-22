@@ -13,4 +13,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VacationRental.Business\VacationRental.Business.csproj" />
+    <ProjectReference Include="..\VacationRental.DataAccess\VacationRental.DataAccess.csproj" />
+    <ProjectReference Include="..\VacationRental.Domain\VacationRental.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

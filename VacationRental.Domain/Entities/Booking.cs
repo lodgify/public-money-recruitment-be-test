@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.Domain.Entities
 {
-    public class BookingViewModel
+    public class Booking
     {
         public int Id { get; set; }
         public int RentalId { get; set; }

@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api", "VacationRental.Api\VacationRental.Api.csproj", "{478C6CBF-6F84-4604-8E31-DEDFDFE10DBC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Tests", "VacationRental.Api.Tests\VacationRental.Api.Tests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Domain", "VacationRental.Domain\VacationRental.Domain.csproj", "{5C0DC33C-60C2-4EDD-8964-CAEC27206B6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Business", "VacationRental.Business\VacationRental.Business.csproj", "{5E33F32B-4C90-41EB-8E01-F48C9A567D6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.DataAccess", "VacationRental.DataAccess\VacationRental.DataAccess.csproj", "{9BDDB225-48FF-4D24-B186-F5D95882E38E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C0DC33C-60C2-4EDD-8964-CAEC27206B6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C0DC33C-60C2-4EDD-8964-CAEC27206B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C0DC33C-60C2-4EDD-8964-CAEC27206B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C0DC33C-60C2-4EDD-8964-CAEC27206B6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E33F32B-4C90-41EB-8E01-F48C9A567D6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E33F32B-4C90-41EB-8E01-F48C9A567D6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E33F32B-4C90-41EB-8E01-F48C9A567D6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E33F32B-4C90-41EB-8E01-F48C9A567D6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BDDB225-48FF-4D24-B186-F5D95882E38E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BDDB225-48FF-4D24-B186-F5D95882E38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BDDB225-48FF-4D24-B186-F5D95882E38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BDDB225-48FF-4D24-B186-F5D95882E38E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Api.Utilities;
+using VacationRental.Business.Abstract;
+using VacationRental.Business.Mapper;
+using VacationRental.Domain.DTOs;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,64 +14,61 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
-
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        private readonly IBookingService bookingService;
+        private readonly IRentalService rentalService;
+        public BookingsController(IBookingService _bookingService,
+                                  IRentalService _rentalService)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            bookingService = _bookingService;
+            rentalService = _rentalService;
         }
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        public IActionResult Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
+            var booking = bookingService.GetById(bookingId);
 
-            return _bookings[bookingId];
+            if (booking is null)
+            {
+                return NotFound("Booking not found");
+            }
+
+            var rental = rentalService.GetById(booking.RentalId);
+
+            return Ok(booking.ToBl(rental));
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
+        public IActionResult Post(BookingDto model)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
+            var rental = rentalService.GetById(model.RentalId);
 
-            for (var i = 0; i < model.Nights; i++)
+            if (rental is null)
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+                return NotFound("Rental not found");
             }
 
+            var bookings = bookingService.GetAll(model.RentalId);
 
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
+            bookings.StartDates.Add(model.Start);
+            bookings.EndDates.Add(model.Start.AddDays(model.Nights));
 
-            _bookings.Add(key.Id, new BookingViewModel
+            int unitNumber = BookingHandler.CheckBookings(
+                               bookings.StartDates.ToList(),
+                               bookings.EndDates.ToList(),
+                               rentalService.GetById(model.RentalId).Units
+                               );
+
+            if (unitNumber > rental.Units)
             {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
+                return BadRequest("Not available");
+            }
 
-            return key;
+            model.Unit = unitNumber;
+
+            bookingService.Create(model.ToDb(rental));
+            return Ok(model);
         }
     }
 }

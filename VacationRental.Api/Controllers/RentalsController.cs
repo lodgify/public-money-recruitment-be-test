@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Business.Abstract;
+using VacationRental.Business.Mapper;
+using VacationRental.Domain.DTOs;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +12,52 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        private readonly IRentalService rentalService;
+        public RentalsController(IRentalService _rentalService)
         {
-            _rentals = rentals;
+            rentalService = _rentalService;
         }
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        public IActionResult Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
+            var rental = rentalService.GetById(rentalId);
+            if (rental is null)
+            {
+                return NotFound("Rental not found");
+            }
 
-            return _rentals[rentalId];
+            return Ok(rental.ToBl());
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        public IActionResult Post([FromBody] RentalDto model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+            rentalService.Create(model.ToDb());
 
-            _rentals.Add(key.Id, new RentalViewModel
+            return Ok(model);
+        }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public IActionResult Put(int rentalId, [FromBody] RentalDto dto)
+        {
+            var rental = rentalService.GetById(rentalId);
+
+            if (rental is null)
             {
-                Id = key.Id,
-                Units = model.Units
-            });
+                return NotFound("Rental not found");
+            }
 
-            return key;
+            var updatedRental = rentalService.Update(rental, dto);
+
+            if (updatedRental is null)
+            {
+                return BadRequest("Overlapping bookings");
+            }
+
+            return Ok(dto);
         }
     }
 }
