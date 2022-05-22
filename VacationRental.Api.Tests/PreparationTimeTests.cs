@@ -29,7 +29,7 @@ namespace VacationRental.Api.Tests
             // 4- Try Update the rental With PrepartionTimeInDays = 2 => Should fails because the calender is full
             // 5- Try Update the rental with PrepartionTimeInDays = 0 => Should Success
             // 6- Get Calender And Assert that PreparationTimes is always empty
-            // 7- Try Update the rental with PrepartionTimeInDays = 7 => Should Success
+            // 7- Try Update the rental with PrepartionTimeInDays = 1 => Should Success
             // 8- Get Calender And Assert on Bookings And PreparationTimes
             
             // 1- Create a Rental with 5 Units and With PrepartionTimeInDays = 1
