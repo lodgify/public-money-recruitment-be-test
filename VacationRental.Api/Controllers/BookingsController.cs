@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
@@ -38,23 +39,45 @@ namespace VacationRental.Api.Controllers
             if (!_rentals.ContainsKey(model.RentalId))
                 throw new ApplicationException("Rental not found");
 
-            for (var i = 0; i < model.Nights; i++)
+            var unit = -1; // Has No Unit
+            var rental = _rentals[model.RentalId];
+
+            var rentalBookingsGroupedByUnit =
+                _bookings.Values.Where(booking => booking.RentalId == model.RentalId)
+                                .GroupBy(booking => booking.Unit);
+            // We check before if We can Put it in an existing used Unit 
+            foreach(var rentalBookingUnit in rentalBookingsGroupedByUnit)
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
+                bool bookingCanBeAddedInCurrentUnit = true;
+                foreach (var booking in rentalBookingUnit)
                 {
+                    // We take into Consideration the preparationTime to check the Availability
+                    var bookingEnd = booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays);
+                    var modelEnd = model.Start.AddDays(model.Nights + rental.PreparationTimeInDays);
+
                     if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
+                        && (booking.Start <= model.Start.Date && bookingEnd > model.Start.Date)
+                        || (booking.Start < modelEnd && bookingEnd >= modelEnd)
+                        || (booking.Start > model.Start && bookingEnd < modelEnd))
                     {
-                        count++;
+                        bookingCanBeAddedInCurrentUnit = false;
+                        break;
                     }
                 }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+                if(bookingCanBeAddedInCurrentUnit)
+                {
+                    unit = rentalBookingUnit.Key;
+                    break;
+                }   
             }
-
+            if(unit == -1 && rentalBookingsGroupedByUnit.Count() >= rental.Units)
+            {
+                throw new ApplicationException("Not available");
+            }
+            else if(unit == -1)
+            {
+                unit = rentalBookingsGroupedByUnit.Count();
+            }
 
             var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
 
@@ -63,7 +86,8 @@ namespace VacationRental.Api.Controllers
                 Id = key.Id,
                 Nights = model.Nights,
                 RentalId = model.RentalId,
-                Start = model.Start.Date
+                Start = model.Start.Date,
+                Unit = unit,
             });
 
             return key;
