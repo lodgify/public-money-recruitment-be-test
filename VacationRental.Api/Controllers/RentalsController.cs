@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using VacationRental.Api.Presenter.Interfaces;
+using VacationRental.Application.Handlers.Rentals;
+using VacationRental.Domain.ViewModels;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +11,35 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IMediator _mediator;
+        private readonly IVacationRentalPresenter _presenter;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(IMediator mediator, IVacationRentalPresenter presenter)
         {
-            _rentals = rentals;
+            _mediator = mediator;
+            _presenter = presenter;
         }
 
+        [ProducesResponseType(200, Type = typeof(RentalViewModel))]
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        public async Task<IActionResult> Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            return _rentals[rentalId];
+            return _presenter.GetResult(await _mediator.Send(new GetRentalRequest(rentalId)));
         }
 
+        [ProducesResponseType(200, Type = typeof(ResourceIdViewModel))]
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        public async Task<IActionResult> Post(RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+            return _presenter.GetResult(await _mediator.Send(new CreateRentalRequest(model.Units, model.PreparationTimeInDays)));
+        }
 
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
-
-            return key;
+        [ProducesResponseType(200, Type = typeof(RentalViewModel))]
+        [HttpPut]
+        public async Task<IActionResult> Put(int id, int units, int preparation)
+        {
+            return _presenter.GetResult(await _mediator.Send(new UpdateRentalRequest(id, units, preparation)));
         }
     }
 }
