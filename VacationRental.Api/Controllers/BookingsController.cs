@@ -54,7 +54,8 @@ namespace VacationRental.Api.Controllers
 			}
 
 			RentalViewModel rental = Helpers.GetRental(model.RentalId, _rentals);
-			bool isRentalAvailable = IsRentalAvailable(rental, model);
+			List<BookingViewModel> bookingsByRental = Helpers.GetBookingsByRental(rental, _bookings);
+			bool isRentalAvailable = Helpers.IsRentalAvailable(rental, bookingsByRental, model.Start, model.Nights);
 			if (!isRentalAvailable)
 			{
 				string errMsg = "Not available";
@@ -67,46 +68,6 @@ namespace VacationRental.Api.Controllers
 			_bookings.Add(key.Id, newBooking);
 
 			return key;
-		}
-
-		private bool IsRentalAvailable(RentalViewModel rental, BookingBindingModel request)
-		{
-			bool result = false;
-			List<BookingViewModel> bookingsByRental = Helpers.GetBookingsByRental(rental, _bookings);
-			for (var i = 0; i < request.Nights; i++)
-			{
-				int additionalUnitRequired = 0;
-				foreach (BookingViewModel booking in bookingsByRental)
-				{
-					DateTime bookingStartDate = booking.Start;
-					DateTime bookingEndDate = bookingStartDate.AddDays(booking.Nights);
-					DateTime bookingAvailableAfter = bookingEndDate.AddDays(rental.PreparationTimeInDays);
-
-					DateTime requestStartTime = request.Start;
-					DateTime requestStartDate = requestStartTime.Date;
-
-					DateTime requestEndDate = requestStartTime.AddDays(request.Nights);
-					DateTime requestCompleteDate = requestEndDate.AddDays(rental.PreparationTimeInDays);
-
-					bool isAdditionalUnitRequired =
-						(bookingStartDate <= requestStartDate && bookingAvailableAfter > requestStartDate) ||
-						(bookingStartDate < requestCompleteDate && bookingAvailableAfter >= requestCompleteDate) ||
-						(bookingStartDate > requestStartTime && bookingAvailableAfter < requestCompleteDate);
-
-					if (isAdditionalUnitRequired)
-					{
-						additionalUnitRequired++;
-					}
-				}
-
-				if (additionalUnitRequired >= rental.Units)
-				{
-					return result;
-				}
-			}
-
-			result = true;
-			return result;
 		}
 	}
 }

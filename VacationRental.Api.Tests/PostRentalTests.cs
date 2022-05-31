@@ -42,5 +42,59 @@ namespace VacationRental.Api.Tests
 				Assert.Equal(request.PreparationTimeInDays, getResult.PreparationTimeInDays);
 			}
 		}
+
+		[Fact]
+		public async Task GivenCompleteRequest_WhenPutBooking_ThenAPutReturnsErrorWhenThereIsOverbooking()
+		{
+			RentalBindingModel postRentalRequest = new RentalBindingModel
+			{
+				Units = 1,
+				PreparationTimeInDays = 1
+			};
+
+			ResourceIdViewModel postRentalResult;
+			using (HttpResponseMessage postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+			{
+				postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+			}
+
+			BookingBindingModel postBooking1Request = new BookingBindingModel
+			{
+				RentalId = postRentalResult.Id,
+				Nights = 3,
+				Start = new DateTime(2002, 01, 01)
+			};
+			await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request);
+			BookingBindingModel postBooking2Request = new BookingBindingModel
+			{
+				RentalId = postRentalResult.Id,
+				Nights = 1,
+				Start = new DateTime(2002, 01, 06)
+			};
+			await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request);
+
+			RentalBindingModel putRentalRequest = new RentalBindingModel
+			{
+				Id = postRentalResult.Id,
+				Units = 1,
+				PreparationTimeInDays = 2
+			};
+
+			await _client.PutAsJsonAsync($"/api/v1/rentals/{putRentalRequest.Id}", putRentalRequest);
+			RentalBindingModel putRentalRequest2 = new RentalBindingModel
+			{
+				Id = postRentalResult.Id,
+				Units = 1,
+				PreparationTimeInDays = 3
+			};
+
+			await Assert.ThrowsAsync<ApplicationException>(async () =>
+			{
+				using (var putRentalResponse = await _client.PutAsJsonAsync($"/api/v1/rentals/{putRentalRequest2.Id}", putRentalRequest2))
+				{
+
+				}
+			});
+		}
 	}
 }

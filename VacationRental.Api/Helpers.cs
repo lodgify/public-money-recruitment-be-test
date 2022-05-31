@@ -28,5 +28,46 @@ namespace VacationRental.Api.Controllers
 
 			return result;
 		}
+
+		public static bool IsRentalAvailable(
+			RentalViewModel rental,
+			List<BookingViewModel> bookingsByRental,
+			DateTime requestStartTime,
+			int requestNights)
+		{
+			bool result = false;
+			for (var i = 0; i < requestNights; i++)
+			{
+				int additionalUnitRequired = 0;
+				foreach (BookingViewModel booking in bookingsByRental)
+				{
+					DateTime bookingStartDate = booking.Start;
+					DateTime bookingEndDate = bookingStartDate.AddDays(booking.Nights);
+					DateTime bookingAvailableAfter = bookingEndDate.AddDays(rental.PreparationTimeInDays);
+
+					DateTime requestStartDate = requestStartTime.Date;
+					DateTime requestEndDate = requestStartTime.AddDays(requestNights);
+					DateTime requestCompleteDate = requestEndDate.AddDays(rental.PreparationTimeInDays);
+
+					bool isAdditionalUnitRequired =
+						(bookingStartDate <= requestStartDate && bookingAvailableAfter > requestStartDate) ||
+						(bookingStartDate < requestCompleteDate && bookingAvailableAfter >= requestCompleteDate) ||
+						(bookingStartDate > requestStartTime && bookingAvailableAfter < requestCompleteDate);
+
+					if (isAdditionalUnitRequired)
+					{
+						additionalUnitRequired++;
+					}
+				}
+
+				if (additionalUnitRequired >= rental.Units)
+				{
+					return result;
+				}
+			}
+
+			result = true;
+			return result;
+		}
 	}
 }

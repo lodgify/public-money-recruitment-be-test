@@ -11,6 +11,11 @@
 			Units = units;
 			PreparationTimeInDays = preparationTimeInDays;
 		}
+		private RentalViewModel(int units, int preparationTimeInDays)
+		{
+			Units = units;
+			PreparationTimeInDays = preparationTimeInDays;
+		}
 		#endregion Contructors
 
 		#region Properties
@@ -25,6 +30,13 @@
 			RentalViewModel result = new RentalViewModel(id, units, preparationTimeInDays);
 			return result;
 		}
+
+		public static RentalViewModel Create(int units, int preparationTimeInDays)
+		{
+			RentalViewModel result = new RentalViewModel(units, preparationTimeInDays);
+			return result;
+		}
+
 		#endregion Static methods
 	}
 }
