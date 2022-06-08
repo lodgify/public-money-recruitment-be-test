@@ -49,14 +49,16 @@ namespace VacationRental.DataAccess.Repositories
             return result;
         }
 
-        public Task<IEnumerable<TEntity>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var result = await _dbContext.Set<TEntity>().Where(x => x.IsActive).ToArrayAsync();
+
+            return result;
         }
 
-        public async Task<TEntity> GetByIdAsync(int id)
+        public async Task<TEntity> GetByIdAsync(int entityId)
         {
-            var result = await _dbContext.Set<TEntity>().FindAsync(id);
+            var result = await _dbContext.Set<TEntity>().FirstOrDefaultAsync(x => x.IsActive && x.Id == entityId);
 
             return result!;
         }

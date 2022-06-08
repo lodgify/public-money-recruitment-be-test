@@ -22,10 +22,12 @@ const string swaggerTitle = "Vacation Rental";
 const string swaggerVersion = "v1";
 const string swaggerUrl = "/swagger/v1/swagger.json";
 const string swaggerName = "VacationRental v1";
+const string swaggerMediaType = "application/json";
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(configure => {
+    configure.Filters.Add(new ProducesAttribute(swaggerMediaType));
     configure.Filters.Add(new ProducesResponseTypeAttribute(typeof(ErrorInfoDto), StatusCodes.Status400BadRequest));
     configure.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status401Unauthorized));
     configure.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status403Forbidden));

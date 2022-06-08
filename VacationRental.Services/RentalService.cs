@@ -11,13 +11,15 @@ namespace VacationRental.Services
 {
     public class RentalService : IRentalService
     {
+        private readonly IGenericRepository<Booking> _bookingRepository;
         private readonly IGenericRepository<Rental> _rentalRepository;
 
         private readonly IMapper _mapper;
         private readonly ILogger<RentalService> _logger;
 
-        public RentalService(IGenericRepository<Rental> rentalRepository, IMapper mapper, ILogger<RentalService> logger) 
+        public RentalService(IGenericRepository<Booking> bookingRepository, IGenericRepository<Rental> rentalRepository, IMapper mapper, ILogger<RentalService> logger) 
         {
+            _bookingRepository = bookingRepository;
             _rentalRepository = rentalRepository;
 
             _mapper = mapper;
@@ -87,7 +89,14 @@ namespace VacationRental.Services
                 throw new RentalNotFoundException(message);
             }
 
-            // TODO: 
+            var count = (await _bookingRepository.FindAsync(x => x.RentalId == rentalId)).Count();
+            if (count > parameters.Units)
+            {
+                var message = $"{nameof(Rental)} is invlaid. Rental Unit: {parameters.Units} less than Count of Bookings: {count}.";
+
+                _logger.LogError(message);
+                throw new RentalInvalidException(message);
+            }
 
             var rental = _mapper.Map<Rental>(parameters);
 
@@ -96,7 +105,7 @@ namespace VacationRental.Services
             entity.Units = rental.Units;
             entity.IsActive = true;
 
-            await _rentalRepository.UpdateAsync(rental);
+            await _rentalRepository.UpdateAsync(entity);
 
             _logger.LogInformation($"{nameof(Rental)} with Id: {rental.Id} was created successfully.");
         }

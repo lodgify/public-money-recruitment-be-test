@@ -14,6 +14,7 @@ namespace VacationRental.Infrastructure.Profiles
             CreateMap<BookingParameters, Booking>()
                 .ForMember(x => x.Start, opt => opt.MapFrom(x => x.Start.HasValue ? x.Start.Value.Date : DateTime.UtcNow))
                 .ForMember(x => x.Created, opt => opt.MapFrom(x => DateTime.UtcNow))
+                .ForMember(x => x.IsActive, opt => opt.MapFrom(x => true))
                 .ReverseMap();
         }
     }

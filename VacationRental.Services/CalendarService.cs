@@ -50,19 +50,28 @@ namespace VacationRental.Services
             };
 
             var dates = new List<CalendarDateDto>();
+            var preparationTimeInDays = rental.PreparationTimeInDays;
 
             for (var i = 0; i < nights; i++)
             {
                 var date = new CalendarDateDto
                 {
                     Date = start.Date.AddDays(i),
-                    Bookings = Array.Empty<CalendarBookingDto>()
+                    Bookings = Array.Empty<CalendarBookingDto>(),
+                    PreparationTimes = Array.Empty<CalendarPreparationTimeDto>()
                 };
 
                 var bookings = await _bookingRepository.FindAsync(x => x.RentalId == rentalId && x.Start <= date.Date && x.Start.AddDays(x.Nights) > date.Date);
 
-                date.Bookings = bookings.Select(x => new CalendarBookingDto { Id = x.Id, Unit = rental.Units }).ToArray();
-                date.PreparationTimes = bookings.Select(x => new CalendarPreparationTimeDto { Unit = rental.PreparationTimeInDays }).ToArray(); 
+                date.Bookings = bookings.Select(x => new CalendarBookingDto { Id = x.Id, Unit = 1 }).ToArray();
+
+                if (date.Bookings.Length == 0 && preparationTimeInDays > 0)
+                {
+                    date.PreparationTimes = new[] {
+                        new CalendarPreparationTimeDto { Unit = 1 }
+                    };
+                    preparationTimeInDays--;
+                }
 
                 dates.Add(date);
             }

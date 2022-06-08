@@ -39,7 +39,8 @@ namespace VacationRental.Infrastructure.Middlewares
             var statusCode = HttpStatusCode.InternalServerError;
             var message = exception.Message;
 
-            if (exception.GetType() == typeof(BookingInvalidException))
+            if (exception.GetType() == typeof(BookingInvalidException) ||
+                exception.GetType() == typeof(RentalInvalidException))
             {
                 statusCode = HttpStatusCode.BadRequest;
             }
