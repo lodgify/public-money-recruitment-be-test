@@ -106,7 +106,7 @@ builder.Services.AddSwaggerGen(configure => {
                     Id=JwtBearerDefaults.AuthenticationScheme
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
     });
 });
