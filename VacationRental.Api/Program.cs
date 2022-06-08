@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +21,7 @@ const string defaultConnectionParamName = "DefaultConnection";
 const string swaggerTitle = "Vacation Rental";
 const string swaggerVersion = "v1";
 const string swaggerUrl = "/swagger/v1/swagger.json";
-const string swaggerName = "VacationRental v1";
+const string swaggerName = "Vacation Rental v1";
 const string swaggerMediaType = "application/json";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,7 +42,7 @@ builder.Services.AddApiVersioning();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Configure FluentValidation
-builder.Services.AddValidatorsFromAssemblyContaining(typeof(BookingParametersValidator));
+builder.Services.AddFluentValidation(configure => configure.RegisterValidatorsFromAssemblyContaining<BookingParametersValidator>());
 
 // Configure Virtual Rentel DB
 var defaultConnection = builder.Configuration.GetConnectionString(defaultConnectionParamName);
@@ -69,7 +69,6 @@ if (!app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-// Configure Error Handling
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
@@ -80,7 +79,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-// Configure Swagger
 app.UseSwagger();
 
 app.UseSwaggerUI(opts => opts.SwaggerEndpoint(swaggerUrl, swaggerName));

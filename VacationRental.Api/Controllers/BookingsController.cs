@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VacationRental.Models.Dtos;
 using VacationRental.Models.Paramaters;
@@ -19,6 +20,19 @@ namespace VacationRental.Api.Controllers
         public BookingsController(IBookingService service)
         {
             _service = service;
+        }
+
+        /// <summary>
+        /// Get bookings
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet,
+         ProducesResponseType(typeof(BookingDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookingsAsync()
+        {
+            var result = await _service.GetBookingsAsync();
+
+            return Ok(result);
         }
 
         /// <summary>
@@ -47,6 +61,32 @@ namespace VacationRental.Api.Controllers
             var result = await _service.AddBookingAsync(parameters);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Update booking
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("{bookingId:int}"),
+         ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateBookingAsync([FromRoute] int bookingId, [FromBody] BookingParameters parameters)
+        {
+            await _service.UpdateBookingAsync(bookingId, parameters);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Delete booking
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("{bookingId:int}"),
+         ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> DeleteBookingAsync([FromRoute] int bookingId)
+        {
+            await _service.DeleteBookingAsync(bookingId);
+
+            return NoContent();
         }
     }
 }
