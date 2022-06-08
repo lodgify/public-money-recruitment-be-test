@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Host.Int
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Host.BDD.Tests", "VacationRental.Api.Host.BDD.Tests\VacationRental.Api.Host.BDD.Tests.csproj", "{DEBFA8AB-7756-4A17-A60B-AD5C57BE2A3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.DataAccess.Seed", "VacationRental.DataAccess.Seed\VacationRental.DataAccess.Seed.csproj", "{E5ABA505-469C-4AE9-BD1B-6F9E5DEB157D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.DataAccess.Seed", "VacationRental.DataAccess.Seed\VacationRental.DataAccess.Seed.csproj", "{E5ABA505-469C-4AE9-BD1B-6F9E5DEB157D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
