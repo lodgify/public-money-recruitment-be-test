@@ -11,13 +11,11 @@ namespace VacationRental.Infrastructure.Profiles
         {
             CreateMap<RentalDto, Rental>()
                 .ForMember(x => x.Created, opt => opt.MapFrom(x => DateTime.UtcNow))
-                .ForMember(x => x.IsActive, opt => opt.MapFrom(x => true))
-                .ReverseMap();
+                .ForMember(x => x.IsActive, opt => opt.MapFrom(x => true));
 
             CreateMap<RentalParameters, Rental>()
                 .ForMember(x => x.Created, opt => opt.MapFrom(x => DateTime.UtcNow))
-                .ForMember(x => x.IsActive, opt => opt.MapFrom(x => true))
-                .ReverseMap();
+                .ForMember(x => x.IsActive, opt => opt.MapFrom(x => true));
         }
     }
 }

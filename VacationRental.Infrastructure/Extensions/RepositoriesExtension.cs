@@ -4,7 +4,7 @@ using VacationRental.DataAccess.Repositories;
 
 namespace VacationRental.Infrastructure.Extensions
 {
-    public static class RepositoriesExtensions
+    public static class RepositoriesExtension
     {
         public static void ConfigureRepositories(this IServiceCollection services)
         {

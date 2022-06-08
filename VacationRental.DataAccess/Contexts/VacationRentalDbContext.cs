@@ -2,7 +2,7 @@
 using System.Reflection;
 using VacationRental.DataAccess.Models.Entities;
 
-namespace VacationRental.DataAccess
+namespace VacationRental.DataAccess.Contexts
 {
     public class VacationRentalDbContext : DbContext
     {

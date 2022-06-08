@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using VacationRental.Services.Interfaces;
 
 namespace VacationRental.Api.Controllers
 {
-    [//Authorize,
+    [Authorize,
      ApiVersion("1.0"),
      Route("api/v{version:apiVersion}/[controller]"),
      ApiController]
