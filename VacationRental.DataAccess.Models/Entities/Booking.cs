@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace VacationRental.Api.Models
+﻿namespace VacationRental.DataAccess.Models.Entities
 {
-    public class BookingViewModel
+    public class Booking : BaseEntity
     {
-        public int Id { get; set; }
         public int RentalId { get; set; }
         public DateTime Start { get; set; }
         public int Nights { get; set; }
