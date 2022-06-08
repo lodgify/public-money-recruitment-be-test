@@ -27,6 +27,8 @@ const string swaggerVersion = "v1";
 const string swaggerUrl = "/swagger/v1/swagger.json";
 const string swaggerName = "Vacation Rental v1";
 const string swaggerMediaType = "application/json";
+const string swaggerAuthorizationName = "Authorization";
+const string swaggerBearerFormat = "JWT";
 
 const string healthzPath = "/healthz";
 const string healthzApiPath = "/api/healthz";
@@ -90,9 +92,9 @@ builder.Services.AddSwaggerGen(configure => {
     configure.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Name = "Authorization",
+        Name = swaggerAuthorizationName,
         Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
+        BearerFormat = swaggerBearerFormat,
         Scheme = JwtBearerDefaults.AuthenticationScheme
     });
     configure.AddSecurityRequirement(new OpenApiSecurityRequirement
