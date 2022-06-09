@@ -19,6 +19,43 @@ namespace VacationRental.Services.UnitTests.Services
 
         public CalendarServiceTests(VacationRentalSeedDataFixture fixture)
         {
+            if (!fixture.VacationRentalDbContext.Rentals.Any())
+            {
+                fixture.VacationRentalDbContext?.Rentals?.Add(new Rental
+                {
+                    Id = 1,
+                    Units = 2,
+                    PreparationTimeInDays = 1,
+                    IsActive = true,
+                    Created = DateTime.UtcNow,
+                    Modified = DateTime.UtcNow
+                });
+            }
+
+            if (!fixture.VacationRentalDbContext.Bookings.Any())
+            {
+                fixture.VacationRentalDbContext?.Bookings?.AddRange(new[] {
+                     new Booking {
+                        Id = 1,
+                        RentalId = 1,
+                        Nights = 2,
+                        Start = new DateTime(2000, 01, 02),
+                        IsActive = true,
+                        Created = DateTime.UtcNow
+                     },
+                     new Booking {
+                        Id = 2,
+                        RentalId = 1,
+                        Nights = 2,
+                        Start = new DateTime(2000, 01, 03),
+                        IsActive = true,
+                        Created = DateTime.UtcNow
+                     }
+                });
+            }
+
+            fixture.VacationRentalDbContext?.SaveChanges();
+
             _bookingRepository = new GenericRepository<Booking>(fixture.VacationRentalDbContext);
             _rentalRepository = new GenericRepository<Rental>(fixture.VacationRentalDbContext);
 

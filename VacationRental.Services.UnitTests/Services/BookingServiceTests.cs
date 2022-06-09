@@ -19,6 +19,43 @@ namespace VacationRental.Services.UnitTests.Services
 
         public BookingServiceTests(VacationRentalSeedDataFixture fixture)
         {
+            if (!fixture.VacationRentalDbContext.Rentals.Any())
+            {
+                fixture.VacationRentalDbContext?.Rentals?.Add(new Rental
+                {
+                    Id = 2,
+                    Units = 2,
+                    PreparationTimeInDays = 1,
+                    IsActive = true,
+                    Created = DateTime.UtcNow,
+                    Modified = DateTime.UtcNow
+                });
+            }
+
+            if (!fixture.VacationRentalDbContext.Bookings.Any())
+            {
+                fixture.VacationRentalDbContext?.Bookings?.AddRange(new[] {
+                     new Booking {
+                        Id = 3,
+                        RentalId = 2,
+                        Nights = 2,
+                        Start = new DateTime(2001, 01, 02),
+                        IsActive = true,
+                        Created = DateTime.UtcNow
+                     },
+                     new Booking {
+                        Id = 4,
+                        RentalId = 2,
+                        Nights = 2,
+                        Start = new DateTime(2001, 01, 03),
+                        IsActive = true,
+                        Created = DateTime.UtcNow
+                     }
+                });
+            }
+
+            fixture.VacationRentalDbContext?.SaveChanges();
+
             _bookingRepository = new GenericRepository<Booking>(fixture.VacationRentalDbContext);
             _rentalRepository = new GenericRepository<Rental>(fixture.VacationRentalDbContext);
 
@@ -53,8 +90,8 @@ namespace VacationRental.Services.UnitTests.Services
         {
             await Assert.ThrowsAsync<BookingInvalidException>(async () => await _bookingService.AddBookingAsync(new Models.Paramaters.BookingParameters { 
                 Nights = 2,
-                RentalId = 1,
-                Start = new DateTime(2000, 01, 02)
+                RentalId = 2,
+                Start = new DateTime(2001, 01, 02)
             }));
         }
     }
