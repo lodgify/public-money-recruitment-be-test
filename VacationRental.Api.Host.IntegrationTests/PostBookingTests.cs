@@ -1,102 +1,104 @@
-﻿//using System;
-//using System.Net;
-//using System.Net.Http;
-//using System.Threading.Tasks;
-//using VacationRental.Api.Models;
-//using Xunit;
+﻿using System.Net.Http.Json;
+using VacationRental.Api.Host.IntegrationTests;
+using VacationRental.Models.Dtos;
+using VacationRental.Models.Paramaters;
+using Xunit;
 
-//namespace VacationRental.Api.Tests
-//{
-//    [Collection("Integration")]
-//    public class PostBookingTests
-//    {
-//        private readonly HttpClient _client;
+namespace VacationRental.Api.Tests
+{
+    [Collection("Integration")]
+    public class PostBookingTests
+    {
+        private readonly HttpClient _client;
 
-//        public PostBookingTests(IntegrationFixture fixture)
-//        {
-//            _client = fixture.Client;
-//        }
+        public PostBookingTests()
+        {
+            var app = new VacationRentalApplication();
 
-//        [Fact]
-//        public async Task GivenCompleteRequest_WhenPostBooking_ThenAGetReturnsTheCreatedBooking()
-//        {
-//            var postRentalRequest = new RentalBindingModel
-//            {
-//                Units = 4
-//            };
+            _client = app.CreateClient();
+            _client.BaseAddress = new Uri("http://localhost:9981");
+        }
 
-//            ResourceIdViewModel postRentalResult;
-//            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
-//            {
-//                Assert.True(postRentalResponse.IsSuccessStatusCode);
-//                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
-//            }
+        [Fact(Skip = "Need to add authorization support")]
+        public async Task GivenCompleteRequest_WhenPostBooking_ThenAGetReturnsTheCreatedBooking()
+        {
+            var postRentalRequest = new RentalParameters
+            {
+                Units = 4
+            };
 
-//            var postBookingRequest = new BookingBindingModel
-//            {
-//                 RentalId = postRentalResult.Id,
-//                 Nights = 3,
-//                 Start = new DateTime(2001, 01, 01)
-//            };
+            BaseEntityDto postRentalResult;
+            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+            {
+                Assert.True(postRentalResponse.IsSuccessStatusCode);
+                postRentalResult = await postRentalResponse.Content.ReadFromJsonAsync<BaseEntityDto>();
+            }
 
-//            ResourceIdViewModel postBookingResult;
-//            using (var postBookingResponse = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest))
-//            {
-//                Assert.True(postBookingResponse.IsSuccessStatusCode);
-//                postBookingResult = await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
-//            }
+            var postBookingRequest = new BookingParameters
+            {
+                RentalId = postRentalResult.Id,
+                Nights = 3,
+                Start = new DateTime(2001, 01, 01)
+            };
 
-//            using (var getBookingResponse = await _client.GetAsync($"/api/v1/bookings/{postBookingResult.Id}"))
-//            {
-//                Assert.True(getBookingResponse.IsSuccessStatusCode);
+            BaseEntityDto postBookingResult;
+            using (var postBookingResponse = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest))
+            {
+                Assert.True(postBookingResponse.IsSuccessStatusCode);
+                postBookingResult = await postBookingResponse.Content.ReadFromJsonAsync<BaseEntityDto>();
+            }
 
-//                var getBookingResult = await getBookingResponse.Content.ReadAsAsync<BookingViewModel>();
-//                Assert.Equal(postBookingRequest.RentalId, getBookingResult.RentalId);
-//                Assert.Equal(postBookingRequest.Nights, getBookingResult.Nights);
-//                Assert.Equal(postBookingRequest.Start, getBookingResult.Start);
-//            }
-//        }
+            using (var getBookingResponse = await _client.GetAsync($"/api/v1/bookings/{postBookingResult.Id}"))
+            {
+                Assert.True(getBookingResponse.IsSuccessStatusCode);
 
-//        [Fact]
-//        public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsErrorWhenThereIsOverbooking()
-//        {
-//            var postRentalRequest = new RentalBindingModel
-//            {
-//                Units = 1
-//            };
+                var getBookingResult = await getBookingResponse.Content.ReadFromJsonAsync<BookingDto>();
+                Assert.Equal(postBookingRequest.RentalId, getBookingResult.RentalId);
+                Assert.Equal(postBookingRequest.Nights, getBookingResult.Nights);
+                Assert.Equal(postBookingRequest.Start, getBookingResult.Start);
+            }
+        }
 
-//            ResourceIdViewModel postRentalResult;
-//            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
-//            {
-//                Assert.True(postRentalResponse.IsSuccessStatusCode);
-//                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
-//            }
+        [Fact(Skip = "Need to add authorization support")]
+        public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsErrorWhenThereIsOverbooking()
+        {
+            var postRentalRequest = new RentalParameters
+            {
+                Units = 1
+            };
 
-//            var postBooking1Request = new BookingBindingModel
-//            {
-//                RentalId = postRentalResult.Id,
-//                Nights = 3,
-//                Start = new DateTime(2002, 01, 01)
-//            };
+            BaseEntityDto postRentalResult;
+            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+            {
+                Assert.True(postRentalResponse.IsSuccessStatusCode);
+                postRentalResult = await postRentalResponse.Content.ReadFromJsonAsync<BaseEntityDto>();
+            }
 
-//            using (var postBooking1Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request))
-//            {
-//                Assert.True(postBooking1Response.IsSuccessStatusCode);
-//            }
+            var postBooking1Request = new BookingParameters
+            {
+                RentalId = postRentalResult.Id,
+                Nights = 3,
+                Start = new DateTime(2002, 01, 01)
+            };
 
-//            var postBooking2Request = new BookingBindingModel
-//            {
-//                RentalId = postRentalResult.Id,
-//                Nights = 1,
-//                Start = new DateTime(2002, 01, 02)
-//            };
+            using (var postBooking1Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request))
+            {
+                Assert.True(postBooking1Response.IsSuccessStatusCode);
+            }
 
-//            await Assert.ThrowsAsync<ApplicationException>(async () =>
-//            {
-//                using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
-//                {
-//                }
-//            });
-//        }
-//    }
-//}
+            var postBooking2Request = new BookingParameters
+            {
+                RentalId = postRentalResult.Id,
+                Nights = 1,
+                Start = new DateTime(2002, 01, 02)
+            };
+
+            await Assert.ThrowsAsync<ApplicationException>(async () =>
+            {
+                using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
+                {
+                }
+            });
+        }
+    }
+}

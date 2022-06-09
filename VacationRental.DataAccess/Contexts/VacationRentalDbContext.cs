@@ -7,9 +7,7 @@ namespace VacationRental.DataAccess.Contexts
     public class VacationRentalDbContext : DbContext
     {
         public VacationRentalDbContext(DbContextOptions<VacationRentalDbContext> options) : base(options)
-        {
-            Database.SetCommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds);
-        }
+        { }
 
         public DbSet<Booking>? Bookings { get; set; }
         public DbSet<Rental>? Rentals { get; set; }
