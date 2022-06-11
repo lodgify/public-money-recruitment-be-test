@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Api.Services.Interfaces;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +9,44 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IRentalsService _rentalsService;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(IRentalsService rentalsService)
         {
-            _rentals = rentals;
+            _rentalsService = rentalsService;
         }
 
-        [HttpGet]
-        [Route("{rentalId:int}")]
+        [HttpGet("{rentalId:int}")]
         public RentalViewModel Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
+            var rental = _rentalsService.Get(rentalId);
+            if (rental == null)
                 throw new ApplicationException("Rental not found");
 
-            return _rentals[rentalId];
+            return rental;
         }
 
         [HttpPost]
         public ResourceIdViewModel Post(RentalBindingModel model)
+            => _rentalsService.AddRental(model);
+
+        [HttpPut("{rentalId:int}")]
+        public RentalViewModel Post(int rentalId, RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+            var rental = _rentalsService.Get(rentalId);
+            if (rental == null)
+                throw new ApplicationException("Rental not found");
 
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
+            rental.PreparationTimeInDays = model.PreparationTimeInDays;
+            rental.Units = model.Units;
 
-            return key;
+            _rentalsService.Update(rentalId, rental);
+
+            var updatedRental = _rentalsService.Get(rentalId);
+            if (updatedRental == null)
+                throw new ApplicationException("Rental not found");
+
+            return updatedRental;
         }
     }
 }
