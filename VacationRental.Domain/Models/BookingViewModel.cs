@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.Domain.Models
 {
     public class BookingViewModel
     {
@@ -8,5 +8,6 @@ namespace VacationRental.Api.Models
         public int RentalId { get; set; }
         public DateTime Start { get; set; }
         public int Nights { get; set; }
+        public DateTime End { get { return Start.AddDays(Nights); } }
     }
 }
