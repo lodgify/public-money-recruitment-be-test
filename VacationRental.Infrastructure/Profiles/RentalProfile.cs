@@ -13,6 +13,8 @@ namespace VacationRental.Infrastructure.Profiles
                 .ForMember(x => x.Created, opt => opt.MapFrom(x => DateTime.UtcNow))
                 .ForMember(x => x.IsActive, opt => opt.MapFrom(x => true));
 
+            CreateMap<Rental, RentalDto>();
+
             CreateMap<RentalParameters, Rental>()
                 .ForMember(x => x.Created, opt => opt.MapFrom(x => DateTime.UtcNow))
                 .ForMember(x => x.IsActive, opt => opt.MapFrom(x => true));

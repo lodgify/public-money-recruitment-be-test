@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Json;
-using VacationRental.Api.Host.IntegrationTests;
-using VacationRental.Models.Dtos;
+﻿using VacationRental.Api.Host.IntegrationTests.Common;
 using VacationRental.Models.Paramaters;
 using Xunit;
 
@@ -9,96 +7,78 @@ namespace VacationRental.Api.Tests
     [Collection("Integration")]
     public class PostBookingTests
     {
-        private readonly HttpClient _client;
+        private readonly VacationRentalApplication _vacationRentalApplication;
 
         public PostBookingTests()
         {
-            var app = new VacationRentalApplication();
-
-            _client = app.CreateClient();
-            _client.BaseAddress = new Uri("http://localhost:9981");
+            _vacationRentalApplication = new VacationRentalApplication();
         }
 
-        [Fact(Skip = "Need to add authorization support")]
+        [Fact]
         public async Task GivenCompleteRequest_WhenPostBooking_ThenAGetReturnsTheCreatedBooking()
         {
-            var postRentalRequest = new RentalParameters
+            // Arrange
+
+            // Get guest token
+            var guestTokenResult = await _vacationRentalApplication.GetGuestTokenAsync();
+
+            // Add rental
+            var rentalParameters = new RentalParameters
             {
-                Units = 4
+                Units = 4,
+                PreparationTimeInDays = 1
             };
+            var rentalResult = await _vacationRentalApplication.AddRentalAsync(guestTokenResult.AccessToken!, rentalParameters);
 
-            BaseEntityDto postRentalResult;
-            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+            // Add booking
+            var bookingParameters = new BookingParameters
             {
-                Assert.True(postRentalResponse.IsSuccessStatusCode);
-                postRentalResult = await postRentalResponse.Content.ReadFromJsonAsync<BaseEntityDto>();
-            }
-
-            var postBookingRequest = new BookingParameters
-            {
-                RentalId = postRentalResult.Id,
+                RentalId = rentalResult.Id,
                 Nights = 3,
                 Start = new DateTime(2001, 01, 01)
             };
+            var bookingResult = await _vacationRentalApplication.AddBookingAsync(guestTokenResult.AccessToken!, bookingParameters);
 
-            BaseEntityDto postBookingResult;
-            using (var postBookingResponse = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest))
-            {
-                Assert.True(postBookingResponse.IsSuccessStatusCode);
-                postBookingResult = await postBookingResponse.Content.ReadFromJsonAsync<BaseEntityDto>();
-            }
-
-            using (var getBookingResponse = await _client.GetAsync($"/api/v1/bookings/{postBookingResult.Id}"))
-            {
-                Assert.True(getBookingResponse.IsSuccessStatusCode);
-
-                var getBookingResult = await getBookingResponse.Content.ReadFromJsonAsync<BookingDto>();
-                Assert.Equal(postBookingRequest.RentalId, getBookingResult.RentalId);
-                Assert.Equal(postBookingRequest.Nights, getBookingResult.Nights);
-                Assert.Equal(postBookingRequest.Start, getBookingResult.Start);
-            }
+            // Get booking
+            var getBookingResult = await _vacationRentalApplication.GetBookingAsync(guestTokenResult.AccessToken!, bookingResult.Id);
+            
+            // Assert
+            Assert.Equal(bookingParameters.RentalId, getBookingResult.RentalId);
+            Assert.Equal(bookingParameters.Nights, getBookingResult.Nights);
+            Assert.Equal(bookingParameters.Start, getBookingResult.Start);
         }
 
-        [Fact(Skip = "Need to add authorization support")]
+        [Fact]
         public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsErrorWhenThereIsOverbooking()
         {
-            var postRentalRequest = new RentalParameters
+            // Get guest token
+            var guestTokenResult = await _vacationRentalApplication.GetGuestTokenAsync();
+
+            // Add rental
+            var rentalParameters = new RentalParameters
             {
-                Units = 1
+                Units = 1,
+                PreparationTimeInDays = 1
             };
+            var rentalResult = await _vacationRentalApplication.AddRentalAsync(guestTokenResult.AccessToken!, rentalParameters);
 
-            BaseEntityDto postRentalResult;
-            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+            // Add booking #1
+            var firstBookingParameters = new BookingParameters
             {
-                Assert.True(postRentalResponse.IsSuccessStatusCode);
-                postRentalResult = await postRentalResponse.Content.ReadFromJsonAsync<BaseEntityDto>();
-            }
-
-            var postBooking1Request = new BookingParameters
-            {
-                RentalId = postRentalResult.Id,
+                RentalId = rentalResult.Id,
                 Nights = 3,
                 Start = new DateTime(2002, 01, 01)
             };
-
-            using (var postBooking1Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request))
+            var firstBookingResult = await _vacationRentalApplication.AddBookingAsync(guestTokenResult.AccessToken!, firstBookingParameters);
+           
+            // Add booking #2
+            var secondBookingParameters = new BookingParameters
             {
-                Assert.True(postBooking1Response.IsSuccessStatusCode);
-            }
-
-            var postBooking2Request = new BookingParameters
-            {
-                RentalId = postRentalResult.Id,
+                RentalId = rentalResult.Id,
                 Nights = 1,
                 Start = new DateTime(2002, 01, 02)
             };
-
-            await Assert.ThrowsAsync<ApplicationException>(async () =>
-            {
-                using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
-                {
-                }
-            });
+            await Assert.ThrowsAsync<ApplicationException>(async () => await _vacationRentalApplication.AddBookingAsync(guestTokenResult.AccessToken!, secondBookingParameters));
         }
     }
 }

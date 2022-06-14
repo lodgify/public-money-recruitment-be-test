@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VacationRental.DataAccess.Contexts;
 
-namespace VacationRental.Services.UnitTests
+namespace VacationRental.Services.UnitTests.Common
 {
     public class VacationRentalSeedDataFixture : IDisposable
     {

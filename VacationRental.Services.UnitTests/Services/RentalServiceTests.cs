@@ -6,6 +6,7 @@ using VacationRental.DataAccess.Models.Entities;
 using VacationRental.DataAccess.Repositories;
 using VacationRental.Infrastructure.Profiles;
 using VacationRental.Models.Exceptions;
+using VacationRental.Services.UnitTests.Common;
 using Xunit;
 
 namespace VacationRental.Services.UnitTests.Services
@@ -59,8 +60,8 @@ namespace VacationRental.Services.UnitTests.Services
 
             fixture.VacationRentalDbContext?.SaveChanges();
 
-            _bookingRepository = new GenericRepository<Booking>(fixture.VacationRentalDbContext);
-            _rentalRepository = new GenericRepository<Rental>(fixture.VacationRentalDbContext);
+            _bookingRepository = new GenericRepository<Booking>(fixture.VacationRentalDbContext!);
+            _rentalRepository = new GenericRepository<Rental>(fixture.VacationRentalDbContext!);
 
             var configuration = new MapperConfiguration(configure => {
                 configure.AddProfile<BookingProfile>();

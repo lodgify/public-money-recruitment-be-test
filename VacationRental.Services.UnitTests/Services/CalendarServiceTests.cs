@@ -6,6 +6,7 @@ using VacationRental.DataAccess.Models.Entities;
 using VacationRental.DataAccess.Repositories;
 using VacationRental.Infrastructure.Profiles;
 using VacationRental.Services.Interfaces;
+using VacationRental.Services.UnitTests.Common;
 using Xunit;
 
 namespace VacationRental.Services.UnitTests.Services
@@ -25,7 +26,7 @@ namespace VacationRental.Services.UnitTests.Services
                 {
                     Id = 1,
                     Units = 2,
-                    PreparationTimeInDays = 1,
+                    PreparationTimeInDays = 2,
                     IsActive = true,
                     Created = DateTime.UtcNow,
                     Modified = DateTime.UtcNow
@@ -56,8 +57,8 @@ namespace VacationRental.Services.UnitTests.Services
 
             fixture.VacationRentalDbContext?.SaveChanges();
 
-            _bookingRepository = new GenericRepository<Booking>(fixture.VacationRentalDbContext);
-            _rentalRepository = new GenericRepository<Rental>(fixture.VacationRentalDbContext);
+            _bookingRepository = new GenericRepository<Booking>(fixture.VacationRentalDbContext!);
+            _rentalRepository = new GenericRepository<Rental>(fixture.VacationRentalDbContext!);
 
             var configuration = new MapperConfiguration(configure => {
                 configure.AddProfile<BookingProfile>();
@@ -75,7 +76,7 @@ namespace VacationRental.Services.UnitTests.Services
         {
             // Arrange
             const int rentalId = 1;
-            const int nights = 5;
+            const int nights = 6;
             var start = new DateTime(2000, 01, 01);
             
             // Action
@@ -84,11 +85,11 @@ namespace VacationRental.Services.UnitTests.Services
             // Assert
             Assert.NotNull(result);
 
-            Assert.Equal(5, result?.Dates?.Length);
+            Assert.Equal(6, result.Dates.Length);
 
-            Assert.Equal(new DateTime(2000, 01, 01), result?.Dates[0]?.Date);
-            Assert.Empty(result?.Dates[0]?.Bookings);
-            Assert.Single(result?.Dates[0]?.PreparationTimes);
+            Assert.Equal(new DateTime(2000, 01, 01), result.Dates[0].Date);
+            Assert.Empty(result.Dates[0].Bookings);
+            Assert.Empty(result?.Dates[0]?.PreparationTimes);
 
             Assert.Equal(new DateTime(2000, 01, 02), result?.Dates[1]?.Date);
             Assert.Single(result?.Dates[1]?.Bookings);
@@ -100,6 +101,10 @@ namespace VacationRental.Services.UnitTests.Services
             Assert.Single(result.Dates[3].Bookings);
             
             Assert.Equal(new DateTime(2000, 01, 05), result.Dates[4].Date);
+            Assert.Single(result.Dates[4].PreparationTimes);
+
+            Assert.Equal(new DateTime(2000, 01, 06), result.Dates[5].Date);
+            Assert.Single(result.Dates[5].PreparationTimes);
         }
     }
 }

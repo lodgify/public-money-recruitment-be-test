@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Json;
-using VacationRental.Api.Host.IntegrationTests;
-using VacationRental.Models.Dtos;
+﻿using VacationRental.Api.Host.IntegrationTests.Common;
 using VacationRental.Models.Paramaters;
 using Xunit;
 
@@ -9,38 +7,32 @@ namespace VacationRental.Api.Tests
     [Collection("Integration")]
     public class PostRentalTests
     {
-        private readonly HttpClient _client;
+        private readonly VacationRentalApplication _vacationRentalApplication;
 
         public PostRentalTests()
         {
-            var app = new VacationRentalApplication();
-
-            _client = app.CreateClient();
-            _client.BaseAddress = new Uri("http://localhost:9981");
+            _vacationRentalApplication = new VacationRentalApplication();
         }
 
-        [Fact(Skip = "Need to add authorization support")]
+        [Fact]
         public async Task GivenCompleteRequest_WhenPostRental_ThenAGetReturnsTheCreatedRental()
         {
-            var request = new RentalParameters
+            // Get access token
+            var guestTokenResult = await _vacationRentalApplication.GetGuestTokenAsync();
+            
+            // Add rental
+            var rentalParameters = new RentalParameters
             {
-                Units = 25
+                Units = 25,
+                PreparationTimeInDays = 1
             };
+            var rentalResult = await _vacationRentalApplication.AddRentalAsync(guestTokenResult.AccessToken!, rentalParameters);
 
-            BaseEntityDto postResult;
-            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-            {
-                Assert.True(postResponse.IsSuccessStatusCode);
-                postResult = await postResponse.Content.ReadFromJsonAsync<BaseEntityDto>();
-            }
-
-            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
-            {
-                Assert.True(getResponse.IsSuccessStatusCode);
-
-                var getResult = await getResponse.Content.ReadFromJsonAsync<RentalDto>();
-                Assert.Equal(request.Units, getResult.Units);
-            }
+            // Get rental
+            var getRentalResult = await _vacationRentalApplication.GetRentalAsync(guestTokenResult.AccessToken!, rentalResult.Id);
+            
+            // Assert
+            Assert.Equal(rentalParameters.Units, getRentalResult.Units);
         }
     }
 }
