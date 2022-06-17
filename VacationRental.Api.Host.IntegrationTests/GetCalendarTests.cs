@@ -17,16 +17,13 @@ namespace VacationRental.Api.Tests
         [Fact]
         public async Task GivenCompleteRequest_WhenGetCalendar_ThenAGetReturnsTheCalculatedCalendar()
         {
-            // Get guest token
-            var guestTokenResult = await _vacationRentalApplication.GetGuestTokenAsync();
-
             // Add rental
             var rentalParameters = new RentalParameters
             {
                 Units = 2,
                 PreparationTimeInDays = 2
             };
-            var rentalResult = await _vacationRentalApplication.AddRentalAsync(guestTokenResult.AccessToken!, rentalParameters);
+            var rentalResult = await _vacationRentalApplication.AddRentalAsync(rentalParameters);
 
             // Add Booking #1
             var firstBookingParameters = new BookingParameters
@@ -35,7 +32,7 @@ namespace VacationRental.Api.Tests
                 Nights = 2,
                 Start = new DateTime(2002, 01, 02)
             };
-            var firstBookingResult = await _vacationRentalApplication.AddBookingAsync(guestTokenResult.AccessToken!, firstBookingParameters);
+            var firstBookingResult = await _vacationRentalApplication.AddBookingAsync(firstBookingParameters);
 
             // Add Booking #2
             var secondBookingParameters = new BookingParameters
@@ -44,13 +41,16 @@ namespace VacationRental.Api.Tests
                 Nights = 2,
                 Start = new DateTime(2002, 01, 03)
             };
-            var secondBookingResult = await _vacationRentalApplication.AddBookingAsync(guestTokenResult.AccessToken!, secondBookingParameters);
+            var secondBookingResult = await _vacationRentalApplication.AddBookingAsync(secondBookingParameters);
 
             // Get calendar
-            var calendarResult = await _vacationRentalApplication.GetCalendarAsync(guestTokenResult.AccessToken!, rentalResult.Id);
+            var start = new DateTime(2002, 01, 01);
+            const int nights = 5;
+
+            var calendarResult = await _vacationRentalApplication.GetCalendarAsync(rentalResult.Id, start, nights);
 
             Assert.Equal(rentalResult.Id, calendarResult.RentalId);
-            Assert.Equal(5, calendarResult.Dates?.Length);
+            Assert.Equal(nights, calendarResult.Dates?.Length);
 
             Assert.Equal(new DateTime(2002, 01, 01), calendarResult.Dates[0].Date);
             Assert.Empty(calendarResult.Dates[0].Bookings);
@@ -60,13 +60,12 @@ namespace VacationRental.Api.Tests
             Assert.Contains(calendarResult.Dates[1].Bookings, x => x.Id == firstBookingResult.Id);
 
             Assert.Equal(new DateTime(2002, 01, 03), calendarResult.Dates[2].Date);
-            Assert.Equal(2, calendarResult.Dates[2].Bookings?.Length);
-            Assert.Contains(calendarResult.Dates[2].Bookings, x => x.Id == firstBookingResult.Id);
+            Assert.Equal(1, calendarResult.Dates[2].Bookings?.Length);
             Assert.Contains(calendarResult.Dates[2].Bookings, x => x.Id == secondBookingResult.Id);
 
             Assert.Equal(new DateTime(2002, 01, 04), calendarResult.Dates[3].Date);
-            Assert.Single(calendarResult.Dates[3].Bookings);
-            Assert.Contains(calendarResult.Dates[3].Bookings, x => x.Id == secondBookingResult.Id);
+            Assert.Empty(calendarResult.Dates[3].Bookings);
+            Assert.Single(calendarResult.Dates[3].PreparationTimes);
 
             Assert.Equal(new DateTime(2002, 01, 05), calendarResult.Dates[4].Date);
             Assert.Empty(calendarResult.Dates[4].Bookings);

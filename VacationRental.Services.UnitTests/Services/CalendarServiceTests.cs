@@ -71,21 +71,19 @@ namespace VacationRental.Services.UnitTests.Services
             _service = new CalendarService(_bookingRepository, _rentalRepository, mapper, logger.Object);
         }
 
-        [Fact]
         public async Task Calendar_ShouldGetCalendar_Success()
         {
             // Arrange
             const int rentalId = 1;
             const int nights = 6;
             var start = new DateTime(2000, 01, 01);
-            
+
             // Action
             var result = await _service.GetCalendarAsync(rentalId, nights, start);
 
             // Assert
             Assert.NotNull(result);
-
-            Assert.Equal(6, result.Dates.Length);
+            Assert.Equal(nights, result.Dates?.Length);
 
             Assert.Equal(new DateTime(2000, 01, 01), result.Dates[0].Date);
             Assert.Empty(result.Dates[0].Bookings);
@@ -105,6 +103,30 @@ namespace VacationRental.Services.UnitTests.Services
 
             Assert.Equal(new DateTime(2000, 01, 06), result.Dates[5].Date);
             Assert.Single(result.Dates[5].PreparationTimes);
+        }
+
+        [Theory]
+        [InlineData(1, 1, "2000-01-01")]
+        [InlineData(1, 2, "2000-01-02")]
+        [InlineData(1, 3, "2000-01-03")]
+        [InlineData(1, 4, "2000-01-04")]
+        [InlineData(1, 5, "2000-01-05")]
+        [InlineData(1, 6, "2000-01-06")]
+        public async Task Calendar_ShouldGetCalendarWithTestCases_Success(int rentalId, int nights, DateTime start)
+        {
+            // Arrange
+
+            // Action
+            var result = await _service.GetCalendarAsync(rentalId, nights, start);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(nights, result.Dates?.Length);
+
+            var rental = await _rentalRepository.GetByIdAsync(rentalId);
+            Assert.NotNull(rental);
+            Assert.True(rental.Units >= result.Dates?.Sum(x => x.Bookings?.Length));
+            Assert.True(rental.PreparationTimeInDays >= result.Dates?.Sum(x => x.PreparationTimes?.Length));
         }
     }
 }

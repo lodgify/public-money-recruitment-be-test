@@ -89,11 +89,16 @@ namespace VacationRental.Services.UnitTests.Services
         [Fact]
         public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsErrorWhenThereIsOverbooking()
         {
-            await Assert.ThrowsAsync<BookingInvalidException>(async () => await _bookingService.AddBookingAsync(new Models.Paramaters.BookingParameters { 
+            // Arrange
+            var parameters = new Models.Paramaters.BookingParameters
+            {
                 Nights = 2,
                 RentalId = 2,
                 Start = new DateTime(2001, 01, 02)
-            }));
+            };
+
+            // Action & Assert
+            await Assert.ThrowsAsync<BookingInvalidException>(async () => await _bookingService.AddBookingAsync(parameters));
         }
     }
 }

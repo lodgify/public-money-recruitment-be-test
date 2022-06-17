@@ -9,7 +9,9 @@ namespace VacationRental.Services.UnitTests.Common
 
         public VacationRentalSeedDataFixture()
         {
-            var options = new DbContextOptionsBuilder<VacationRentalDbContext>().UseInMemoryDatabase("VacationRentalDbContext").Options;
+            const string databaseName = "VacationRentalDb";
+
+            var options = new DbContextOptionsBuilder<VacationRentalDbContext>().UseInMemoryDatabase(databaseName).Options;
 
             VacationRentalDbContext = new VacationRentalDbContext(options);
         }

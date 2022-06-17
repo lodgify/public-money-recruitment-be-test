@@ -15,12 +15,9 @@ namespace VacationRental.Api.Tests
         }
 
         [Fact]
-        public async Task GivenCompleteRequest_WhenPostBooking_ThenAGetReturnsTheCreatedBooking()
+        public async Task Booking_WhenAddBooking_ThenAGetReturnsTheCreatedBooking()
         {
             // Arrange
-
-            // Get guest token
-            var guestTokenResult = await _vacationRentalApplication.GetGuestTokenAsync();
 
             // Add rental
             var rentalParameters = new RentalParameters
@@ -28,7 +25,7 @@ namespace VacationRental.Api.Tests
                 Units = 4,
                 PreparationTimeInDays = 1
             };
-            var rentalResult = await _vacationRentalApplication.AddRentalAsync(guestTokenResult.AccessToken!, rentalParameters);
+            var rentalResult = await _vacationRentalApplication.AddRentalAsync(rentalParameters);
 
             // Add booking
             var bookingParameters = new BookingParameters
@@ -37,22 +34,21 @@ namespace VacationRental.Api.Tests
                 Nights = 3,
                 Start = new DateTime(2001, 01, 01)
             };
-            var bookingResult = await _vacationRentalApplication.AddBookingAsync(guestTokenResult.AccessToken!, bookingParameters);
+            var bookingResult = await _vacationRentalApplication.AddBookingAsync(bookingParameters);
 
             // Get booking
-            var getBookingResult = await _vacationRentalApplication.GetBookingAsync(guestTokenResult.AccessToken!, bookingResult.Id);
+            var getBookingResult = await _vacationRentalApplication.GetBookingAsync(bookingResult.Id);
             
-            // Assert
+            // Action & Assert 
             Assert.Equal(bookingParameters.RentalId, getBookingResult.RentalId);
             Assert.Equal(bookingParameters.Nights, getBookingResult.Nights);
             Assert.Equal(bookingParameters.Start, getBookingResult.Start);
         }
 
         [Fact]
-        public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsErrorWhenThereIsOverbooking()
+        public async Task Booking_ShouldAddBookingWithOneUnit_ThenAPostReturnsErrorWhenThereIsOverbooking()
         {
-            // Get guest token
-            var guestTokenResult = await _vacationRentalApplication.GetGuestTokenAsync();
+            // Arrange
 
             // Add rental
             var rentalParameters = new RentalParameters
@@ -60,7 +56,7 @@ namespace VacationRental.Api.Tests
                 Units = 1,
                 PreparationTimeInDays = 1
             };
-            var rentalResult = await _vacationRentalApplication.AddRentalAsync(guestTokenResult.AccessToken!, rentalParameters);
+            var rentalResult = await _vacationRentalApplication.AddRentalAsync(rentalParameters);
 
             // Add booking #1
             var firstBookingParameters = new BookingParameters
@@ -69,7 +65,7 @@ namespace VacationRental.Api.Tests
                 Nights = 3,
                 Start = new DateTime(2002, 01, 01)
             };
-            var firstBookingResult = await _vacationRentalApplication.AddBookingAsync(guestTokenResult.AccessToken!, firstBookingParameters);
+            var firstBookingResult = await _vacationRentalApplication.AddBookingAsync(firstBookingParameters);
            
             // Add booking #2
             var secondBookingParameters = new BookingParameters
@@ -78,7 +74,9 @@ namespace VacationRental.Api.Tests
                 Nights = 1,
                 Start = new DateTime(2002, 01, 02)
             };
-            await Assert.ThrowsAsync<ApplicationException>(async () => await _vacationRentalApplication.AddBookingAsync(guestTokenResult.AccessToken!, secondBookingParameters));
+            
+            // Action & Assert
+            await Assert.ThrowsAsync<ApplicationException>(async () => await _vacationRentalApplication.AddBookingAsync(secondBookingParameters));
         }
     }
 }

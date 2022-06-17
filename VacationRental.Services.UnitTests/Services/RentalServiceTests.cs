@@ -78,9 +78,16 @@ namespace VacationRental.Services.UnitTests.Services
         public async Task Rental_ShouldUpdateRentalToDecreaseUnitsWithBookings_Fail()
         {
             // Arrange
+            const int rentalId = 1;
+
+            var parameters = new Models.Paramaters.RentalParameters 
+            { 
+                Units = 1, 
+                PreparationTimeInDays = 0 
+            };
 
             // Action & Assert
-            await Assert.ThrowsAsync<RentalInvalidException>(async() => await _rentalService.UpdateRentalAsync(1, new Models.Paramaters.RentalParameters { Units = 1, PreparationTimeInDays = 0 }));
+            await Assert.ThrowsAsync<RentalInvalidException>(async() => await _rentalService.UpdateRentalAsync(rentalId, parameters));
         }
     }
 }
