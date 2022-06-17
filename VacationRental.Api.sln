@@ -1,11 +1,33 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api", "VacationRental.Api\VacationRental.Api.csproj", "{478C6CBF-6F84-4604-8E31-DEDFDFE10DBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Host", "VacationRental.Api\VacationRental.Api.Host.csproj", "{478C6CBF-6F84-4604-8E31-DEDFDFE10DBC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Tests", "VacationRental.Api.Tests\VacationRental.Api.Tests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Host.UnitTests", "VacationRental.Api.Tests\VacationRental.Api.Host.UnitTests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Models", "VacationRental.Models\VacationRental.Models.csproj", "{51022702-0A34-4AAE-BB0B-4A1667870F9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{11104F8D-61BC-42CE-99CE-589CB3DB9727}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.DataAccess", "VacationRental.DataAccess\VacationRental.DataAccess.csproj", "{91AECBC5-B2F9-4E0D-9AFD-2E70A36420CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.DataAccess.Models", "VacationRental.DataAccess.Models\VacationRental.DataAccess.Models.csproj", "{A2E8DD14-485B-4D44-8C77-D70FB981531F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Infrastructure", "VacationRental.Infrastructure\VacationRental.Infrastructure.csproj", "{A0638C86-AD62-49E1-A36A-816CF46122AB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Services", "VacationRental.Services\VacationRental.Services.csproj", "{A2D4B7BA-C1CC-4241-9198-BAD5CBB4C93B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{2E4C5363-3230-4931-BCB3-E51978CA2F9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Services.UnitTests", "VacationRental.Services.UnitTests\VacationRental.Services.UnitTests.csproj", "{C7ADC2F3-DF44-4A3E-B3D4-7E8C7A029616}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration Tests", "Integration Tests", "{E692DCAA-C23C-432D-B9B8-020C88343FD0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Host.IntegrationTests", "VacationRental.Api.Host.IntegrationTests\VacationRental.Api.Host.IntegrationTests.csproj", "{0F7F41A5-93BF-4DF6-BB2A-F68115B2E29D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.DataAccess.Seed", "VacationRental.DataAccess.Seed\VacationRental.DataAccess.Seed.csproj", "{E5ABA505-469C-4AE9-BD1B-6F9E5DEB157D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +43,48 @@ Global
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57FE6E13-7144-459F-BCA8-431087D3DAEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51022702-0A34-4AAE-BB0B-4A1667870F9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51022702-0A34-4AAE-BB0B-4A1667870F9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51022702-0A34-4AAE-BB0B-4A1667870F9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51022702-0A34-4AAE-BB0B-4A1667870F9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91AECBC5-B2F9-4E0D-9AFD-2E70A36420CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91AECBC5-B2F9-4E0D-9AFD-2E70A36420CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91AECBC5-B2F9-4E0D-9AFD-2E70A36420CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91AECBC5-B2F9-4E0D-9AFD-2E70A36420CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E8DD14-485B-4D44-8C77-D70FB981531F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E8DD14-485B-4D44-8C77-D70FB981531F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E8DD14-485B-4D44-8C77-D70FB981531F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E8DD14-485B-4D44-8C77-D70FB981531F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0638C86-AD62-49E1-A36A-816CF46122AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0638C86-AD62-49E1-A36A-816CF46122AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0638C86-AD62-49E1-A36A-816CF46122AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0638C86-AD62-49E1-A36A-816CF46122AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2D4B7BA-C1CC-4241-9198-BAD5CBB4C93B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2D4B7BA-C1CC-4241-9198-BAD5CBB4C93B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2D4B7BA-C1CC-4241-9198-BAD5CBB4C93B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2D4B7BA-C1CC-4241-9198-BAD5CBB4C93B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7ADC2F3-DF44-4A3E-B3D4-7E8C7A029616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7ADC2F3-DF44-4A3E-B3D4-7E8C7A029616}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7ADC2F3-DF44-4A3E-B3D4-7E8C7A029616}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7ADC2F3-DF44-4A3E-B3D4-7E8C7A029616}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F7F41A5-93BF-4DF6-BB2A-F68115B2E29D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F7F41A5-93BF-4DF6-BB2A-F68115B2E29D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F7F41A5-93BF-4DF6-BB2A-F68115B2E29D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F7F41A5-93BF-4DF6-BB2A-F68115B2E29D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5ABA505-469C-4AE9-BD1B-6F9E5DEB157D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5ABA505-469C-4AE9-BD1B-6F9E5DEB157D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5ABA505-469C-4AE9-BD1B-6F9E5DEB157D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5ABA505-469C-4AE9-BD1B-6F9E5DEB157D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{57FE6E13-7144-459F-BCA8-431087D3DAEE} = {2E4C5363-3230-4931-BCB3-E51978CA2F9E}
+		{2E4C5363-3230-4931-BCB3-E51978CA2F9E} = {11104F8D-61BC-42CE-99CE-589CB3DB9727}
+		{C7ADC2F3-DF44-4A3E-B3D4-7E8C7A029616} = {2E4C5363-3230-4931-BCB3-E51978CA2F9E}
+		{E692DCAA-C23C-432D-B9B8-020C88343FD0} = {11104F8D-61BC-42CE-99CE-589CB3DB9727}
+		{0F7F41A5-93BF-4DF6-BB2A-F68115B2E29D} = {E692DCAA-C23C-432D-B9B8-020C88343FD0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A5319C5-4F21-41BF-B8A7-BC45868FEC89}
