@@ -2,23 +2,35 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5"><IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+<PrivateAssets>all</PrivateAssets>
+</PackageReference>
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.6" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\VacationRental.Api\VacationRental.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="System.Net.Http" />
+    <None Remove="Microsoft.AspNet.WebApi.Client" />
+    <None Remove="Microsoft.NET.Test.Sdk" />
+    <None Remove="Microsoft.AspNetCore.TestHost" />
+    <None Remove="Microsoft.AspNetCore.Mvc.Core" />
+    <None Remove="Microsoft.AspNetCore.Mvc.Formatters.Json" />
+    <None Remove="Microsoft.AspNetCore.Mvc" />
+  </ItemGroup>
 </Project>

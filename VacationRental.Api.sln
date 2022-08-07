@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api", "VacationRental.Api\VacationRental.Api.csproj", "{478C6CBF-6F84-4604-8E31-DEDFDFE10DBC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Tests", "VacationRental.Api.Tests\VacationRental.Api.Tests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Api.Tests", "VacationRental.Api.Tests\VacationRental.Api.Tests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,5 +6,6 @@ namespace VacationRental.Api.Models
     {
         public int RentalId { get; set; }
         public List<CalendarDateViewModel> Dates { get; set; }
+        public List<CalendarPreparationTimeViewModel> PreparationTimes { get; set; }
     }
 }
