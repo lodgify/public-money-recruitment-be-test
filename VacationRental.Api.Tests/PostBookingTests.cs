@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
@@ -89,6 +88,50 @@ namespace VacationRental.Api.Tests
                 RentalId = postRentalResult.Id,
                 Nights = 1,
                 Start = new DateTime(2002, 01, 02)
+            };
+
+            await Assert.ThrowsAsync<ApplicationException>(async () =>
+            {
+                using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
+                {
+                }
+            });
+        }
+
+
+        [Fact]
+        public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsErrorWhenThereIsOverbookingWithPreparationTime()
+        {
+            var postRentalRequest = new RentalBindingModel
+            {
+                Units = 1,
+                PreparationTimeInDays = 2
+            };
+
+            ResourceIdViewModel postRentalResult;
+            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+            {
+                Assert.True(postRentalResponse.IsSuccessStatusCode);
+                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+            }
+
+            var postBooking1Request = new BookingBindingModel
+            {
+                RentalId = postRentalResult.Id,
+                Nights = 3,
+                Start = new DateTime(2002, 01, 01)
+            };
+
+            using (var postBooking1Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request))
+            {
+                Assert.True(postBooking1Response.IsSuccessStatusCode);
+            }
+
+            var postBooking2Request = new BookingBindingModel
+            {
+                RentalId = postRentalResult.Id,
+                Nights = 1,
+                Start = new DateTime(2002, 01, 05)
             };
 
             await Assert.ThrowsAsync<ApplicationException>(async () =>
