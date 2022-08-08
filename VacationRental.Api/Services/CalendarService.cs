@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using VacationRental.Api.DAL.Interfaces;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Services
 {
     public class CalendarService : ICalendarService
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IRentalRepository _rentalRepository;
+        private readonly IBookingRepository _bookingRepository;
 
         public CalendarService(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+            IRentalRepository rentalRepository,
+            IBookingRepository bookingRepository)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _rentalRepository = rentalRepository;
+            _bookingRepository = bookingRepository;
         }
 
         public CalendarViewModel GetCalendar(int rentalId, DateTime start, int nights)
@@ -23,10 +24,10 @@ namespace VacationRental.Api.Services
             if (nights <= 0)
                 throw new ApplicationException("Nights must be positive");
 
-            if (!_rentals.ContainsKey(rentalId))
+            if (!_rentalRepository.HasValue(rentalId))
                 throw new ApplicationException("Rental not found");
 
-            var bookings = _bookings.Values.Where(x => x.RentalId == rentalId);
+            var bookings = _bookingRepository.GetBookingByRentalId(rentalId);
 
             var result = GenerateCalendar(rentalId, start, nights, bookings);
 
@@ -41,7 +42,7 @@ namespace VacationRental.Api.Services
                 Dates = new List<CalendarDateViewModel>()
             };
 
-            var preparationDays = _rentals.Values.FirstOrDefault(p => p.Id == rentalId).PreparationTimeInDays;
+            var preparationDays = _rentalRepository.Get(rentalId).PreparationTimeInDays;
 
             for (var i = 0; i < nights; i++)
             {

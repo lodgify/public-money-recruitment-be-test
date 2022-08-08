@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using VacationRental.Api.DAL.Interfaces;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Services
 {
     public class BookingService : IBookingService
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IRentalRepository _rentalRepository;
 
         public BookingService(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+            IBookingRepository bookingRepository,
+            IRentalRepository rentalRepository)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _rentalRepository = rentalRepository;
+            _bookingRepository = bookingRepository;
         }
 
         public ResourceIdViewModel AddBooking(BookingBindingModel currentBooking)
@@ -26,20 +26,20 @@ namespace VacationRental.Api.Services
             if (currentBooking.Start < DateTime.Now)
                 throw new ApplicationException("Booking must be in future");
 
-            if (!_rentals.ContainsKey(currentBooking.RentalId))
+            if (!_rentalRepository.HasValue(currentBooking.RentalId))
                 throw new ApplicationException("Rental not found");
 
-            var existingBookings = _bookings.Values.Where(p => p.RentalId == currentBooking.RentalId);
-            var units = _rentals[currentBooking.RentalId].Units;
+            var existingBookings = _bookingRepository.GetBookingByRentalId(currentBooking.RentalId);
+            var units = _rentalRepository.Get(currentBooking.RentalId).Units;
 
             var blockedUnits = GetAvailableUnits(existingBookings, currentBooking, units);
 
             if (blockedUnits >= units)
                 throw new ApplicationException("Not available");
 
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
+            var key = new ResourceIdViewModel { Id = _bookingRepository.Count + 1 };
 
-            _bookings.Add(key.Id, new BookingViewModel
+            _bookingRepository.Add(key.Id, new BookingViewModel
             {
                 Id = key.Id,
                 Nights = currentBooking.Nights,
@@ -53,10 +53,10 @@ namespace VacationRental.Api.Services
 
         public BookingViewModel GetBooking(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
+            if (!_bookingRepository.HasValue(bookingId))
                 throw new ApplicationException("Booking not found");
 
-            return _bookings[bookingId];
+            return _bookingRepository.Get(bookingId);
         }
 
         private int GetAvailableUnits(IEnumerable<BookingViewModel> bookings, BookingBindingModel currentBooking, int rentalUnits)

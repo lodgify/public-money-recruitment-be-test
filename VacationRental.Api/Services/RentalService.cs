@@ -1,22 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
+using VacationRental.Api.DAL.Interfaces;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Services
 {
     public class RentalService : IRentalService
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IRentalRepository _rentalRepository;
 
-        public RentalService(IDictionary<int, RentalViewModel> rentals)
+        public RentalService(IRentalRepository rentalRepository)
         {
-            _rentals = rentals;
+            _rentalRepository = rentalRepository;
         }
         public ResourceIdViewModel Create(RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+            var key = new ResourceIdViewModel { Id = _rentalRepository.Count + 1 };
 
-            _rentals.Add(key.Id, new RentalViewModel
+            _rentalRepository.Add(key.Id, new RentalViewModel
             {
                 Id = key.Id,
                 Units = model.Units,
@@ -28,18 +28,18 @@ namespace VacationRental.Api.Services
 
         public RentalViewModel Get(int id)
         {
-            if (!_rentals.ContainsKey(id))
+            if (!_rentalRepository.HasValue(id))
                 throw new ApplicationException("Rental not found");
 
-            return _rentals[id];
+            return _rentalRepository.Get(id);
         }
 
         public void Update(int id, RentalBindingModel model)
         {
-            if (!_rentals.ContainsKey(id))
+            if (!_rentalRepository.HasValue(id))
                 throw new ApplicationException("Rental not found");
 
-            var rental = _rentals[id];
+            var rental = _rentalRepository.Get(id);
 
             // TODO check is crossing will appear if we change it
 
