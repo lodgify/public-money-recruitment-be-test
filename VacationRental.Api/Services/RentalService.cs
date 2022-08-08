@@ -12,25 +12,39 @@ namespace VacationRental.Api.Services
         {
             _rentals = rentals;
         }
-        public ResourceIdViewModel AddRental(RentalBindingModel model)
+        public ResourceIdViewModel Create(RentalBindingModel model)
         {
             var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
 
             _rentals.Add(key.Id, new RentalViewModel
             {
                 Id = key.Id,
-                Units = model.Units
+                Units = model.Units,
+                PreparationTimeInDays = model.PreparationTimeInDays,
             });
 
             return key;
         }
 
-        public RentalViewModel GetRental(int rentalId)
+        public RentalViewModel Get(int id)
         {
-            if (!_rentals.ContainsKey(rentalId))
+            if (!_rentals.ContainsKey(id))
                 throw new ApplicationException("Rental not found");
 
-            return _rentals[rentalId];
+            return _rentals[id];
+        }
+
+        public void Update(int id, RentalBindingModel model)
+        {
+            if (!_rentals.ContainsKey(id))
+                throw new ApplicationException("Rental not found");
+
+            var rental = _rentals[id];
+
+            // TODO check is crossing will appear if we change it
+
+            rental.Units = model.Units;
+            rental.PreparationTimeInDays = model.PreparationTimeInDays;
         }
     }
 }

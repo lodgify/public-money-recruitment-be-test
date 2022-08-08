@@ -19,13 +19,20 @@ namespace VacationRental.Api.Controllers
         [Route("{rentalId:int}")]
         public RentalViewModel Get(int rentalId)
         {
-            return _rentalService.GetRental(rentalId);
+            return _rentalService.Get(rentalId);
         }
 
         [HttpPost]
         public ResourceIdViewModel Post(RentalBindingModel model)
         {
-            return _rentalService.AddRental(model);
+            return _rentalService.Create(model);
+        }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public void Put(int id, RentalBindingModel model)
+        {
+            _rentalService.Update(id, model);
         }
     }
 }
