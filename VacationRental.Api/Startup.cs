@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +7,6 @@ using Swashbuckle.AspNetCore.Swagger;
 using VacationRental.Api.DAL;
 using VacationRental.Api.DAL.Interfaces;
 using VacationRental.Api.DAL.Repositories;
-using VacationRental.Api.Models;
 using VacationRental.Api.Services;
 
 namespace VacationRental.Api
