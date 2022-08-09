@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using VacationRental.Api.Middleware;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api
@@ -22,6 +23,7 @@ namespace VacationRental.Api
         
         public void ConfigureServices(IServiceCollection services)
         {
+           
             services.AddControllers();
 
             services.AddSwaggerGen(opts =>
@@ -42,7 +44,9 @@ namespace VacationRental.Api
 
             app.UseSwagger();
             app.UseSwaggerUI(opts => opts.SwaggerEndpoint("/swagger/v1/swagger.json", "VacationRental v1"));
-
+            
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
