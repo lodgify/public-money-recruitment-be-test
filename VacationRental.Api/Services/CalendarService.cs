@@ -27,7 +27,7 @@ namespace VacationRental.Api.Services
             if (!_rentalRepository.HasValue(rentalId))
                 throw new ApplicationException("Rental not found");
 
-            var bookings = _bookingRepository.GetBookingByRentalId(rentalId);
+            var bookings = _bookingRepository.GetBookingsByRentalId(rentalId);
 
             var result = GenerateCalendar(rentalId, start, nights, bookings);
 

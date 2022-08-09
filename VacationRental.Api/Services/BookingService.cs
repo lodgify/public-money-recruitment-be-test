@@ -29,7 +29,7 @@ namespace VacationRental.Api.Services
             if (!_rentalRepository.HasValue(currentBooking.RentalId))
                 throw new ApplicationException("Rental not found");
 
-            var existingBookings = _bookingRepository.GetBookingByRentalId(currentBooking.RentalId);
+            var existingBookings = _bookingRepository.GetBookingsByRentalId(currentBooking.RentalId);
             var units = _rentalRepository.Get(currentBooking.RentalId).Units;
 
             var blockedUnits = GetAvailableUnits(existingBookings, currentBooking, units);

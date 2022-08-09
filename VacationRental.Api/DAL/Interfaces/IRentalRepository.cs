@@ -4,6 +4,6 @@ namespace VacationRental.Api.DAL.Interfaces
 {
     public interface IRentalRepository : IRepository<RentalViewModel>
     {
-        void Update(int id, RentalViewModel model);
+        void Update(int id, RentalBindingModel model);
     }
 }

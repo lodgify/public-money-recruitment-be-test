@@ -23,9 +23,7 @@ namespace VacationRental.Api.DAL.Repositories
 
         public BookingViewModel Get(int id) => _dataContext.Bookings[id];
 
-        public IDictionary<int, BookingViewModel> GetAll() => _dataContext.Bookings;
-
-        public IEnumerable<BookingViewModel> GetBookingByRentalId(int id)
+        public IEnumerable<BookingViewModel> GetBookingsByRentalId(int id)
         {
             return _dataContext.Bookings.Values.Where(p => p.RentalId == id).ToList();
         }

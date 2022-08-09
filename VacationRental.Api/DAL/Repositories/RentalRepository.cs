@@ -24,7 +24,7 @@ namespace VacationRental.Api.DAL.Repositories
             return _dataContext.Rentals.ContainsKey(id);
         }
 
-        public void Update(int id, RentalViewModel model)
+        public void Update(int id, RentalBindingModel model)
         {
             var rental = Get(id);
 
