@@ -2,7 +2,7 @@
 
 
 
-GET {{baseUrl}}/api/v1/rentals/3
+GET {{baseUrl}}/api/v1/rentals/1
 Content-Type: application/json
 
 
@@ -29,4 +29,11 @@ Content-Type: application/json
     "start":"2020-01-01",
     "nights":3
 }
+
+
+###
+Get {{baseUrl}}/api/v1/calendar?rentalId=1&start=2020-01-01&nights=3
+Content-Type: application/json
+
+
 

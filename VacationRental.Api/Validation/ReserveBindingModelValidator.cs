@@ -19,11 +19,15 @@ namespace VacationRental.Api.Validation
             
             RuleFor(dto=>dto.RentalId)
                 .Cascade(CascadeMode.Stop)
-                .Must(CheckRentalExists)
+                .Must(RentalExists)
                 .WithMessage("Rental not Found");
+
+            RuleFor(dto=>dto.Start)
+            .NotEmpty().WithMessage("Start date is required")
+            .NotNull().WithMessage("Start date is required");
         }
         
-        private bool CheckRentalExists(int rentalId)
+        private bool RentalExists(int rentalId)
             => _rentalRepository.Get(rentalId) != null;
     }
 }

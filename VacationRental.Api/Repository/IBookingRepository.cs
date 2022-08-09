@@ -11,6 +11,8 @@ namespace VacationRental.Api.Repository
 
         bool HasRentalAvailable(int rentalId, DateTime date);
 
+        bool HasRentalAvailable(int rentalId, DateTime date, int nights);
+
         BookingViewModel GetBooking(int id);
 
         BookingViewModel[] GetAll();

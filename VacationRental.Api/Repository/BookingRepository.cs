@@ -32,5 +32,12 @@ namespace VacationRental.Api.Repository
             );
 
         public BookingViewModel[] GetAll() => _bookings.Values.ToArray();
+
+        public bool HasRentalAvailable(int rentalId, DateTime date, int nights)
+        => _bookings.Values.Any(
+                x => x.RentalId == rentalId && (x.Start <= date && x.Start.AddDays(x.Nights) > date) ||
+                     (x.Start < date.AddDays(nights) && x.Start.AddDays(x.Nights) >= date.AddDays(nights)) ||
+                     (x.Start >= date && x.Start.AddDays(x.Nights) < date.AddDays(nights))
+            );
     }
 }
