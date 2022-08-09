@@ -16,7 +16,12 @@ namespace VacationRental.Api.Repository
         public int BookingCount() => _bookings.Keys.Count;
 
         public BookingViewModel GetBooking(int id) => _bookings.FirstOrDefault(x => x.Key == id).Value;
-        
-        public void CreateBooking(BookingViewModel model) => _bookings.Add(model.Id, model);
+
+        public int CreateBooking(BookingViewModel model)
+        {
+            _bookings.Add(model.Id, model);
+
+            return model.Id;
+        }
     }
 }

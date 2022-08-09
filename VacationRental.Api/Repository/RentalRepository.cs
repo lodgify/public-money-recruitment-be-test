@@ -16,6 +16,11 @@ namespace VacationRental.Api.Repository
         public int RentalsCount() => _rentals.Keys.Count;
         public RentalViewModel GetRental(int id) => _rentals.FirstOrDefault(x => x.Key == id).Value;
 
-        public void CreateRental(RentalViewModel model) => _rentals.Add(model.Id, model);
+        public int CreateRental(RentalViewModel model)
+        {
+            _rentals.Add(model.Id, model);
+            
+            return model.Id;
+        }
     }
 }

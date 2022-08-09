@@ -7,6 +7,6 @@ namespace VacationRental.Api.Repository
         int BookingCount();
         BookingViewModel GetBooking(int id);
         
-        void CreateBooking(BookingViewModel booking);
+        int CreateBooking(BookingViewModel booking);
     }
 }
