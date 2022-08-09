@@ -3,7 +3,7 @@ using VacationRental.Api.Contracts.Request;
 using VacationRental.Api.Contracts.Response;
 using VacationRental.Api.Models;
 
-namespace VacationRental.Api.Services
+namespace VacationRental.Api.Interfaces
 {
     public interface IRentalService
     {

@@ -24,6 +24,6 @@ namespace VacationRental.Api.Validation
         }
         
         private bool CheckRentalExists(int rentalId)
-            => _rentalRepository.GetRental(rentalId) != null;
+            => _rentalRepository.Get(rentalId) != null;
     }
 }

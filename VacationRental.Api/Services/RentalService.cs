@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using VacationRental.Api.Contracts.Request;
 using VacationRental.Api.Contracts.Response;
+using VacationRental.Api.Interfaces;
 using VacationRental.Api.Models;
 using VacationRental.Api.Repository;
 
@@ -23,7 +21,7 @@ namespace VacationRental.Api.Services
 
         public RentalViewModel GetRental(int id)
         {
-            var rental = _rentalRepository.GetRental(id);
+            var rental = _rentalRepository.Get(id);
 
             if (rental is null)
                 throw new ApplicationException("Rental not found");
@@ -36,7 +34,7 @@ namespace VacationRental.Api.Services
             var newRental =
                 _mapper.Map<RentalViewModel>(model, opt => opt.Items["Id"] = _rentalRepository.RentalsCount() + 1);
 
-            var id = _rentalRepository.CreateRental(newRental);
+            var id = _rentalRepository.Create(newRental);
 
             return new ResourceIdViewModel {Id = id};
         }

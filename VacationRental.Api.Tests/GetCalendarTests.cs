@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using VacationRental.Api.Contracts.Request;
+using VacationRental.Api.Contracts.Response;
 using VacationRental.Api.Models;
 using Xunit;
 

@@ -1,0 +1,32 @@
+@baseUrl=http://localhost:9981
+
+
+
+GET {{baseUrl}}/api/v1/rentals/3
+Content-Type: application/json
+
+
+###
+POST {{baseUrl}}/api/v1/rentals
+Content-Type: application/json
+
+{
+    "units":2
+}
+
+
+###
+GET {{baseUrl}}/api/v1/bookings/1
+Content-Type: application/json
+
+
+###
+POST {{baseUrl}}/api/v1/bookings
+Content-Type: application/json
+
+{
+    "rentalId":1,
+    "start":"2020-01-01",
+    "nights":3
+}
+

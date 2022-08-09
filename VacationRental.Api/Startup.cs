@@ -2,22 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
+using VacationRental.Api.Interfaces;
 using VacationRental.Api.Mapping;
 using VacationRental.Api.Middleware;
 using VacationRental.Api.Models;
 using VacationRental.Api.Repository;
 using VacationRental.Api.Services;
-using VacationRental.Api.Validation;
 
 namespace VacationRental.Api
 {
@@ -45,13 +42,14 @@ namespace VacationRental.Api
             services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
             services.AddSingleton<IRentalRepository, RentalRepository>();
             services.AddSingleton<IBookingRepository, BookingRepository>();
-            services.AddSingleton<IBookingService, BookingService>();
-            services.AddSingleton<IRentalService, RentalService>();
+            services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IRentalService, RentalService>();
+            services.AddScoped<ICalendarService,CalendarService>();
 
 
             services.AddAutoMapper(typeof(MappingProfile));
 
-            services.AddValidatorsFromAssemblyContaining<BookingBindingModelValidator>();
+            services.AddValidatorsFromAssemblyContaining(typeof(IBookingRepository));
         }
 
 

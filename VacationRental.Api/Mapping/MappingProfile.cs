@@ -1,4 +1,5 @@
 using AutoMapper;
+using VacationRental.Api.Contracts.Request;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Mapping
@@ -12,7 +13,9 @@ namespace VacationRental.Api.Mapping
 
             CreateMap<RentalBindingModel, RentalViewModel>()
                 .ForMember(src => src.Id, opt => opt.MapFrom((_, _, _, context) => context.Items["Id"]));
-            ;
+            
+            
+            
         }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Repository
@@ -5,8 +7,12 @@ namespace VacationRental.Api.Repository
     public interface IBookingRepository
     {
         int BookingCount();
-        BookingViewModel GetBooking(int id);
-        
         int CreateBooking(BookingViewModel booking);
+
+        bool HasRentalAvailable(int rentalId, DateTime date);
+
+        BookingViewModel GetBooking(int id);
+
+        BookingViewModel[] GetAll();
     }
 }

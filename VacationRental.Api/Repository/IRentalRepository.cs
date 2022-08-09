@@ -5,8 +5,8 @@ namespace VacationRental.Api.Repository
     public interface IRentalRepository
     {
         int RentalsCount();
-        RentalViewModel GetRental(int id);
+        RentalViewModel Get(int id);
         
-        int CreateRental(RentalViewModel model);
+        int Create(RentalViewModel model);
     }
 }

@@ -5,6 +5,7 @@ using AutoMapper;
 using FluentValidation;
 using VacationRental.Api.Contracts.Request;
 using VacationRental.Api.Contracts.Response;
+using VacationRental.Api.Interfaces;
 using VacationRental.Api.Models;
 using VacationRental.Api.Repository;
 
@@ -16,8 +17,11 @@ namespace VacationRental.Api.Services
         private readonly IMapper _mapper;
         private readonly IValidator<BookingBindingModel> _validator;
 
-        public BookingService(IBookingRepository bookingRepository, IMapper mapper,
-            IValidator<BookingBindingModel> validator)
+        public BookingService(
+            IBookingRepository bookingRepository,
+            IMapper mapper,
+            IValidator<BookingBindingModel> validator
+        )
         {
             _bookingRepository = bookingRepository;
             _mapper = mapper;
@@ -33,16 +37,22 @@ namespace VacationRental.Api.Services
 
             return booking;
         }
-        
 
-        public  ResourceIdViewModel Create(BookingBindingModel model)
+        public async Task<ResourceIdViewModel> CreateAsync(BookingBindingModel model)
         {
-            var newBooking =
-                _mapper.Map<BookingViewModel>(model, opt => opt.Items["Id"] = _bookingRepository.BookingCount() + 1);
+            var validationResult = await _validator.ValidateAsync(model);
+
+            if (!validationResult.IsValid)
+                throw new ApplicationException(validationResult.Errors.First().ErrorMessage);
+
+            var newBooking = _mapper.Map<BookingViewModel>(
+                model,
+                opt => opt.Items["Id"] = _bookingRepository.BookingCount() + 1
+            );
 
             var bookingId = _bookingRepository.CreateBooking(newBooking);
 
-            return new ResourceIdViewModel {Id = bookingId};
+            return new ResourceIdViewModel { Id = bookingId };
         }
     }
 }
