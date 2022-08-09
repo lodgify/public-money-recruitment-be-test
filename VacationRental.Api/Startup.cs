@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using VacationRental.Api.Mapping;
 using VacationRental.Api.Middleware;
 using VacationRental.Api.Models;
+using VacationRental.Api.Repository;
 
 namespace VacationRental.Api
 {
@@ -31,6 +34,12 @@ namespace VacationRental.Api
 
             services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
             services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+            services.AddSingleton<IRentalRepository, RentalRepository>();
+            services.AddSingleton<IBookingRepository, BookingRepository>();
+            
+            
+            services.AddAutoMapper(typeof(MappingProfile));
+           
         }
 
 
