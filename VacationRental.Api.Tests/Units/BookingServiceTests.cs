@@ -111,7 +111,7 @@ namespace VacationRental.Api.Tests.Units
             };
 
             A.CallTo(() => RentalRepository.HasValue(A<int>._)).Returns(true);
-            A.CallTo(() => BookingRepository.GetBookingsByRentalId(booking.RentalId)).Returns(BookingStubs.BookingWithCrossDays());
+            A.CallTo(() => BookingRepository.GetBookingsByRentalId(booking.RentalId)).Returns(Stubs.BookingStubs.BookingWithCrossDays());
             A.CallTo(() => RentalRepository.Get(booking.RentalId)).Returns(rental);
 
 
@@ -139,7 +139,7 @@ namespace VacationRental.Api.Tests.Units
                 Id = 1
             };
 
-            var bookings = BookingStubs.BookingsWithoutCrossDays();
+            var bookings = Stubs.BookingStubs.BookingsWithoutCrossDays();
 
             A.CallTo(() => RentalRepository.HasValue(A<int>._)).Returns(true);
             A.CallTo(() => BookingRepository.GetBookingsByRentalId(booking.RentalId)).Returns(bookings);

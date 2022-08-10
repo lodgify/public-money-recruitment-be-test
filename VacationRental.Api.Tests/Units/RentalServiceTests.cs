@@ -99,9 +99,9 @@ namespace VacationRental.Api.Tests.Units
         {
             get
             {
-                yield return new TestCaseData(BookingStubs.BookingsWithoutCrossDays());
-                yield return new TestCaseData(BookingStubs.EmptyBookingList());
-                yield return new TestCaseData(BookingStubs.BookingWithCrossDays());
+                yield return new TestCaseData(Stubs.BookingStubs.BookingsWithoutCrossDays());
+                yield return new TestCaseData(Stubs.BookingStubs.EmptyBookingList());
+                yield return new TestCaseData(Stubs.BookingStubs.BookingWithCrossDays());
             }
         }
 
@@ -109,8 +109,8 @@ namespace VacationRental.Api.Tests.Units
         {
             get
             {
-                yield return new TestCaseData(1, new RentalBindingModel { PreparationTimeInDays = 2, Units = 2 }, BookingStubs.BookingWithCrossDays());
-                yield return new TestCaseData(1, new RentalBindingModel { PreparationTimeInDays = 15, Units = 2 }, BookingStubs.BookingsWithoutCrossDays());
+                yield return new TestCaseData(1, new RentalBindingModel { PreparationTimeInDays = 2, Units = 2 }, Stubs.BookingStubs.BookingWithCrossDays());
+                yield return new TestCaseData(1, new RentalBindingModel { PreparationTimeInDays = 15, Units = 2 }, Stubs.BookingStubs.BookingsWithoutCrossDays());
             }
         }
     }

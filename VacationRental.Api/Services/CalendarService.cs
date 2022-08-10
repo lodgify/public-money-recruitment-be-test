@@ -63,15 +63,16 @@ namespace VacationRental.Api.Services
 
         private List<CalendarBookingViewModel> GetCalendarBookings(IEnumerable<BookingViewModel> bookings, DateTime date)
         {
-            return bookings
-                    .Where(
-                        p => p.Start <= date.Date &&
-                        p.End > date.Date)
-                    .Select(p => new CalendarBookingViewModel
-                    {
-                        Id = p.Id,
-                        Unit = p.Unit,
-                    }).ToList();
+            var result = bookings
+                .Where(
+                    p => p.Start <= date.Date &&
+                         p.End > date.Date)
+                .Select(p => new CalendarBookingViewModel
+                {
+                    Id = p.Id,
+                    Unit = p.Unit,
+                }).ToList();
+            return result;
         }
         private List<CalendarPreparationTimeViewModel> GetCalendarPreparationTimes(IEnumerable<BookingViewModel> bookings, DateTime date, int preparationDays)
         {
