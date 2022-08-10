@@ -18,13 +18,13 @@ namespace VacationRental.Api.Tests.Units
                 Units = 3
             };
 
-            A.CallTo(() => RentalRepository.Count).Returns(5);
+            A.CallTo(() => RentalRepository.Add(A<RentalViewModel>._)).Returns(6);
 
             var rentalId = RentalService.Create(model);
 
             Assert.That(rentalId, Is.Not.Null);
-            Assert.AreEqual(6, rentalId.Id);
-            A.CallTo(() => RentalRepository.Add(A<int>._, A<RentalViewModel>._)).MustHaveHappened();
+            Assert.AreEqual(6, rentalId);
+            
         }
 
         [Test]

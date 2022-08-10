@@ -52,7 +52,7 @@ namespace VacationRental.Api.Tests.Units
         [Test]
         public void ShouldReturn500StatusCodeIfRentalWasNotCreatedOnPost()
         {
-            A.CallTo(() => _rentalService.Create(A<RentalBindingModel>._)).Returns(null);
+            A.CallTo(() => _rentalService.Create(A<RentalBindingModel>._)).Returns(0);
 
             var result = _rentalsController.Post(RentalStubs.RentalBindingModel()) as StatusCodeResult;
 
@@ -64,7 +64,7 @@ namespace VacationRental.Api.Tests.Units
         [Test]
         public void ShouldReturnResourceIdViewModelIfRentalCreateSuccessfullyOnPost()
         {
-            var expectedResult = new ResourceIdViewModel { Id = 1 };
+            var expectedResult = 1;
             A.CallTo(() => _rentalService.Create(A<RentalBindingModel>._)).Returns(expectedResult);
 
             var result = _rentalsController.Post(RentalStubs.RentalBindingModel()) as ObjectResult;

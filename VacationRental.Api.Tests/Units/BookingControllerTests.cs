@@ -49,7 +49,7 @@ namespace VacationRental.Api.Tests.Units
         [Test]
         public void ShouldReturn500StatusCodeIfBookingWasNotCreatedOnPost()
         {
-            A.CallTo(() => _bookingService.Create(A<BookingBindingModel>._)).Returns(null);
+            A.CallTo(() => _bookingService.Create(A<BookingBindingModel>._)).Returns(0);
 
             var result = _bookingsController.Post(BookingStubs.BindingBookingModel()) as StatusCodeResult;
 
@@ -59,9 +59,9 @@ namespace VacationRental.Api.Tests.Units
         }
 
         [Test]
-        public void ShouldReturnResourceIdViewModelIfBookingCreateSuccessfullyOnPost()
+        public void ShouldReturnIdIfBookingCreateSuccessfullyOnPost()
         {
-            var expectedResult = new ResourceIdViewModel { Id = 1 };
+            var expectedResult = 1;
             A.CallTo(() => _bookingService.Create(A<BookingBindingModel>._)).Returns(expectedResult);
 
             var result = _bookingsController.Post(BookingStubs.BindingBookingModel()) as ObjectResult;

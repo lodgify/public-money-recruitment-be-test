@@ -5,7 +5,7 @@ namespace VacationRental.Api.Services
     public interface IRentalService
     {
         RentalViewModel Get(int rentalId);
-        ResourceIdViewModel Create(RentalBindingModel model);
+        int Create(RentalBindingModel model);
         void Update(int id, RentalBindingModel model);
     }
 }

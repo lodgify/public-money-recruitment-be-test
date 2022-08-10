@@ -15,19 +15,15 @@ namespace VacationRental.Api.Services
             _rentalRepository = rentalRepository;
             _bookingRepository = bookingRepository;
         }
-        public ResourceIdViewModel Create(RentalBindingModel model)
+        public int Create(RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentalRepository.Count + 1 };
             var rental = new RentalViewModel
             {
-                Id = key.Id,
                 Units = model.Units,
                 PreparationTimeInDays = model.PreparationTimeInDays,
             };
 
-            _rentalRepository.Add(key.Id, rental);
-
-            return key;
+            return _rentalRepository.Add(rental);
         }
 
         public RentalViewModel Get(int id)

@@ -37,7 +37,7 @@ namespace VacationRental.Api.Controllers
         {
             var result = _rentalService.Create(model);
 
-            if (result == null)
+            if (result <= 0)
                 return StatusCode(500);
 
             return Ok(result);
@@ -45,9 +45,9 @@ namespace VacationRental.Api.Controllers
 
         [HttpPut]
         [Route("{rentalId:int}")]
-        public IActionResult Put(int id, RentalBindingModel model)
+        public IActionResult Put(int rentalId, RentalBindingModel model)
         {
-            _rentalService.Update(id, model);
+            _rentalService.Update(rentalId, model);
 
             return NoContent();
         }

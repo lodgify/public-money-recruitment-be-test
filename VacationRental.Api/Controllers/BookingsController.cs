@@ -37,7 +37,7 @@ namespace VacationRental.Api.Controllers
         {
             var result = _bookingService.Create(model);
 
-            if (result == null)
+            if (result <= 0)
                 return StatusCode(500);
 
             return Ok(result);

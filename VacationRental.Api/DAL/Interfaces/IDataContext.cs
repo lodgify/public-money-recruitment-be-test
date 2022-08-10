@@ -7,5 +7,8 @@ namespace VacationRental.Api.DAL.Interfaces
     {
         Dictionary<int, RentalViewModel> Rentals { get; }
         Dictionary<int, BookingViewModel> Bookings { get; }
+
+        int RentalId { get; }
+        int BookingId { get; }
     }
 }

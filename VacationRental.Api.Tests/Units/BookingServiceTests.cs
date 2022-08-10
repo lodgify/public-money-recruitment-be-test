@@ -53,7 +53,7 @@ namespace VacationRental.Api.Tests.Units
 
             var ex = Assert.Throws<ApplicationException>(() => BookingService.Create(booking));
 
-            A.CallTo(() => BookingRepository.Add(A<int>._, A<BookingViewModel>._)).MustNotHaveHappened();
+            A.CallTo(() => BookingRepository.Add(A<BookingViewModel>._)).MustNotHaveHappened();
             Assert.That(ex, Is.Not.Null);
             Assert.That(ex.Message, Is.EqualTo("Nights must be positive"));
         }
@@ -70,7 +70,7 @@ namespace VacationRental.Api.Tests.Units
 
             var ex = Assert.Throws<ApplicationException>(() => BookingService.Create(booking));
 
-            A.CallTo(() => BookingRepository.Add(A<int>._, A<BookingViewModel>._)).MustNotHaveHappened();
+            A.CallTo(() => BookingRepository.Add(A<BookingViewModel>._)).MustNotHaveHappened();
             Assert.That(ex, Is.Not.Null);
             Assert.That(ex.Message, Is.EqualTo("Booking must be in future"));
         }
@@ -116,7 +116,7 @@ namespace VacationRental.Api.Tests.Units
 
             var ex = Assert.Throws<ApplicationException>(() => BookingService.Create(booking));
 
-            A.CallTo(() => BookingRepository.Add(A<int>._, A<BookingViewModel>._)).MustNotHaveHappened();
+            A.CallTo(() => BookingRepository.Add(A<BookingViewModel>._)).MustNotHaveHappened();
             Assert.That(ex, Is.Not.Null);
             Assert.That(ex.Message, Is.EqualTo("Not available"));
         }
@@ -143,13 +143,13 @@ namespace VacationRental.Api.Tests.Units
             A.CallTo(() => RentalRepository.HasValue(A<int>._)).Returns(true);
             A.CallTo(() => BookingRepository.GetBookingsByRentalId(booking.RentalId)).Returns(bookings);
             A.CallTo(() => RentalRepository.Get(booking.RentalId)).Returns(rental);
-            A.CallTo(() => BookingRepository.Count).Returns(3);
+            A.CallTo(() => BookingRepository.Add(A<BookingViewModel>._)).Returns(4);
 
-            var key = BookingService.Create(booking);
+            var id = BookingService.Create(booking);
 
-            A.CallTo(() => BookingRepository.Add(A<int>._, A<BookingViewModel>._)).MustHaveHappened();
-            Assert.That(key, Is.Not.Null);
-            Assert.AreEqual(4, key.Id);
+            
+            Assert.That(id, Is.Not.Null);
+            Assert.AreEqual(4, id);
         }
     }
 }

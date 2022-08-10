@@ -19,7 +19,7 @@ namespace VacationRental.Api.Services
             _bookingRepository = bookingRepository;
         }
 
-        public ResourceIdViewModel Create(BookingBindingModel currentBooking)
+        public int Create(BookingBindingModel currentBooking)
         {
             if (currentBooking.Nights <= 0)
                 throw new ApplicationException("Nights must be positive");
@@ -38,18 +38,13 @@ namespace VacationRental.Api.Services
             if (blockedUnits >= units)
                 throw new ApplicationException("Not available");
 
-            var key = new ResourceIdViewModel { Id = _bookingRepository.Count + 1 };
-
-            _bookingRepository.Add(key.Id, new BookingViewModel
+            return _bookingRepository.Add(new BookingViewModel
             {
-                Id = key.Id,
                 Nights = currentBooking.Nights,
                 RentalId = currentBooking.RentalId,
                 Start = currentBooking.Start.Date,
                 Unit = blockedUnits + 1,
             });
-
-            return key;
         }
 
         public BookingViewModel Get(int bookingId)

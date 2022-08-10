@@ -14,12 +14,13 @@ namespace VacationRental.Api.DAL.Repositories
             _dataContext = dataContext;
         }
 
-        public void Add(int key, BookingViewModel model)
+        public int Add(BookingViewModel model)
         {
-            _dataContext.Bookings.Add(key, model);
-        }
+            model.Id = _dataContext.BookingId;
+            _dataContext.Bookings.Add(model.Id, model);
 
-        public int Count => _dataContext.Bookings.Keys.Count;
+            return model.Id;
+        }
 
         public BookingViewModel Get(int id) => _dataContext.Bookings[id];
 

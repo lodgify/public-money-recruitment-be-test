@@ -6,16 +6,20 @@ namespace VacationRental.Api.DAL
 {
     public class DataContext : IDataContext
     {
-        private readonly Dictionary<int, RentalViewModel> _rentals;
-        private readonly Dictionary<int, BookingViewModel> _bookings;
+        private int _bookingId;
+        private int _rentalId;
 
         public DataContext()
         {
-            _rentals = new Dictionary<int, RentalViewModel>();
-            _bookings = new Dictionary<int, BookingViewModel>();
+            Rentals = new Dictionary<int, RentalViewModel>();
+            Bookings = new Dictionary<int, BookingViewModel>();
+            _rentalId = 1;
+            _bookingId = 1;
         }
 
-        public Dictionary<int, RentalViewModel> Rentals => _rentals;
-        public Dictionary<int, BookingViewModel> Bookings => _bookings;
+        public Dictionary<int, RentalViewModel> Rentals { get; }
+        public Dictionary<int, BookingViewModel> Bookings { get; }
+        public int RentalId => _rentalId++;
+        public int BookingId => _bookingId++;
     }
 }

@@ -12,9 +12,12 @@ namespace VacationRental.Api.DAL.Repositories
             _dataContext = dataContext;
         }
 
-        public void Add(int key, RentalViewModel model)
+        public int Add(RentalViewModel model)
         {
-            _dataContext.Rentals.Add(key, model);
+            model.Id = _dataContext.RentalId;
+            _dataContext.Rentals.Add(model.Id, model);
+
+            return model.Id;
         }
 
         public RentalViewModel Get(int id) => _dataContext.Rentals[id];
@@ -33,7 +36,5 @@ namespace VacationRental.Api.DAL.Repositories
 
             _dataContext.Rentals[id] = rental;
         }
-
-        public int Count { get => _dataContext.Rentals.Keys.Count; }
     }
 }
