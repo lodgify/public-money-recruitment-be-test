@@ -19,13 +19,13 @@ namespace VacationRental.Api.Controllers
         [Route("{bookingId:int}")]
         public BookingViewModel Get(int bookingId)
         {
-            return _bookingService.GetBooking(bookingId);
+            return _bookingService.Get(bookingId);
         }
 
         [HttpPost]
         public ResourceIdViewModel Post(BookingBindingModel model)
         {
-            return _bookingService.AddBooking(model);
+            return _bookingService.Create(model);
         }
     }
 }

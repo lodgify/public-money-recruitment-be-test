@@ -4,7 +4,7 @@ namespace VacationRental.Api.Services
 {
     public interface IBookingService
     {
-        BookingViewModel GetBooking(int bookingId);
-        ResourceIdViewModel AddBooking(BookingBindingModel model);
+        BookingViewModel Get(int bookingId);
+        ResourceIdViewModel Create(BookingBindingModel model);
     }
 }

@@ -18,13 +18,14 @@ namespace VacationRental.Api.Services
         public ResourceIdViewModel Create(RentalBindingModel model)
         {
             var key = new ResourceIdViewModel { Id = _rentalRepository.Count + 1 };
-
-            _rentalRepository.Add(key.Id, new RentalViewModel
+            var rental = new RentalViewModel
             {
                 Id = key.Id,
                 Units = model.Units,
                 PreparationTimeInDays = model.PreparationTimeInDays,
-            });
+            };
+
+            _rentalRepository.Add(key.Id, rental);
 
             return key;
         }
@@ -61,11 +62,11 @@ namespace VacationRental.Api.Services
             {
                 var date = startDate.AddDays(i);
 
-                var bookingCount = bookings.Count(
+                var bookingCount = bookings.Where(
                     p => p.Start <= date &&
                     p.End.AddDays(model.PreparationTimeInDays) >= date);
 
-                if (bookingCount > model.Units)
+                if (bookingCount.Count() > model.Units)
                 {
                     return true;
                 }

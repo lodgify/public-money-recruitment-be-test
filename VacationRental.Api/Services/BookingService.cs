@@ -11,17 +11,17 @@ namespace VacationRental.Api.Services
         private readonly IRentalRepository _rentalRepository;
 
         public BookingService(
-            IBookingRepository bookingRepository,
-            IRentalRepository rentalRepository)
+            IRentalRepository rentalRepository,
+            IBookingRepository bookingRepository)
         {
             _rentalRepository = rentalRepository;
             _bookingRepository = bookingRepository;
         }
 
-        public ResourceIdViewModel AddBooking(BookingBindingModel currentBooking)
+        public ResourceIdViewModel Create(BookingBindingModel currentBooking)
         {
             if (currentBooking.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
+                throw new ApplicationException("Nights must be positive");
 
             if (currentBooking.Start < DateTime.Now)
                 throw new ApplicationException("Booking must be in future");
@@ -51,7 +51,7 @@ namespace VacationRental.Api.Services
             return key;
         }
 
-        public BookingViewModel GetBooking(int bookingId)
+        public BookingViewModel Get(int bookingId)
         {
             if (!_bookingRepository.HasValue(bookingId))
                 throw new ApplicationException("Booking not found");

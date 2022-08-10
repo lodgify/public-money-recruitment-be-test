@@ -19,7 +19,7 @@ namespace VacationRental.Api.DAL.Repositories
             _dataContext.Bookings.Add(key, model);
         }
 
-        public int Count { get => _dataContext.Bookings.Keys.Count; }
+        public int Count => _dataContext.Bookings.Keys.Count;
 
         public BookingViewModel Get(int id) => _dataContext.Bookings[id];
 
