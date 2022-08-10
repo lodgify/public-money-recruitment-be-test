@@ -30,7 +30,7 @@ namespace VacationRental.Api.Tests.Units
             var result = _calendarController.Get(3, DateTime.Today, 3) as StatusCodeResult;
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
         }
 
         [Test]

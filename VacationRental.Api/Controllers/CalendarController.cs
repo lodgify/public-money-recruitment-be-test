@@ -20,13 +20,13 @@ namespace VacationRental.Api.Controllers
         [HttpGet]
         [Route("{rentalId:int}&{start:datetime}&{nights:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CalendarViewModel))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Get(int rentalId, DateTime start, int nights)
         {
             var result = _calendarService.GetCalendar(rentalId, start, nights);
 
             if (result == null)
-                return StatusCode(500);
+                return NotFound();
 
             return Ok(result);
         }
