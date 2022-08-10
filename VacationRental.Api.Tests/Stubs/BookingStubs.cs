@@ -72,5 +72,27 @@ namespace VacationRental.Api.Tests.Stubs
         {
             return new List<BookingViewModel>();
         }
+
+        public static BookingViewModel SingleBooking()
+        {
+            return new BookingViewModel()
+            {
+                Id = 1,
+                Unit = 1,
+                Nights = 3,
+                RentalId = 3,
+                Start = DateTime.Today
+            };
+        }
+
+        public static BookingBindingModel BindingBookingModel()
+        {
+            return new BookingBindingModel()
+            {
+                Nights = 3,
+                RentalId = 3,
+                Start = DateTime.Today,
+            };
+        }
     }
 }

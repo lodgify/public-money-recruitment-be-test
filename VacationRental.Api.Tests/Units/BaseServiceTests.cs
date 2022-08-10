@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using FakeItEasy;
 using NUnit.Framework;
 using VacationRental.Api.DAL.Interfaces;
-using VacationRental.Api.Models;
 using VacationRental.Api.Services;
 
 namespace VacationRental.Api.Tests.Units

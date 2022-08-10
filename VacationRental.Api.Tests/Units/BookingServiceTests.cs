@@ -2,7 +2,6 @@
 using FakeItEasy;
 using NUnit.Framework;
 using VacationRental.Api.Models;
-using VacationRental.Api.Tests.Stubs;
 
 namespace VacationRental.Api.Tests.Units
 {
