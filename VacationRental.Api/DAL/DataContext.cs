@@ -16,7 +16,6 @@ namespace VacationRental.Api.DAL
         }
 
         public Dictionary<int, RentalViewModel> Rentals => _rentals;
-
         public Dictionary<int, BookingViewModel> Bookings => _bookings;
     }
 }

@@ -6,6 +6,5 @@ namespace VacationRental.Api.DAL.Interfaces
     public interface IBookingRepository : IRepository<BookingViewModel>
     {
         IEnumerable<BookingViewModel> GetBookingsByRentalId(int id);
-        
     }
 }

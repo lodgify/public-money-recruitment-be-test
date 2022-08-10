@@ -6,8 +6,6 @@ namespace VacationRental.Api.Tests.Stubs
 {
     public class BookingStubs
     {
-        
-
         public static List<BookingViewModel> BookingWithCrossDays()
         {
             return new List<BookingViewModel>()
@@ -74,7 +72,5 @@ namespace VacationRental.Api.Tests.Stubs
         {
             return new List<BookingViewModel>();
         }
-
-        
     }
 }

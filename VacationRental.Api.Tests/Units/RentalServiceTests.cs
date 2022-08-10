@@ -92,9 +92,6 @@ namespace VacationRental.Api.Tests.Units
             Assert.That(ex.Message, Is.EqualTo("Cannot update because of booking conflicts"));
         }
 
-
-        
-
         public static IEnumerable<TestCaseData> UpdateRentalModelHappyPathCases
         {
             get
