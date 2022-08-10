@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VacationRental.Api.DAL.Interfaces;
 using VacationRental.Api.Models;
 
@@ -61,14 +62,10 @@ namespace VacationRental.Api.Services
 
         private int GetAvailableUnits(IEnumerable<BookingViewModel> bookings, BookingBindingModel currentBooking, int rentalUnits)
         {
-            int count = 0;
-            foreach (var booking in bookings)
-            {
-                if ((currentBooking.Start < booking.Start && currentBooking.End >= booking.Start) ||
-                    currentBooking.Start > booking.Start && currentBooking.Start < booking.End)
-                    count++;
-            }
-            return count;
+            return bookings.Count(
+                    p => currentBooking.Start < p.Start &&
+                    currentBooking.End >= p.Start ||
+                    currentBooking.Start > p.Start && currentBooking.Start < p.End);
         }
     }
 }

@@ -62,14 +62,12 @@ namespace VacationRental.Api.Services
             {
                 var date = startDate.AddDays(i);
 
-                var bookingCount = bookings.Where(
+                var bookingCount = bookings.Count(
                     p => p.Start <= date &&
                     p.End.AddDays(model.PreparationTimeInDays) >= date);
 
-                if (bookingCount.Count() > model.Units)
-                {
+                if (bookingCount > model.Units)
                     return true;
-                }
             }
 
             return false;
