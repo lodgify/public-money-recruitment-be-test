@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 using VacationRental.Api.Services;
@@ -17,9 +18,17 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpGet]
-        public CalendarViewModel Get(int rentalId, DateTime start, int nights)
+        [Route("{rentalId:int}&{start:datetime}&{nights:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CalendarViewModel))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Get(int rentalId, DateTime start, int nights)
         {
-            return _calendarService.GetCalendar(rentalId, start, nights);
+            var result = _calendarService.GetCalendar(rentalId, start, nights);
+
+            if (result == null)
+                return StatusCode(500);
+
+            return Ok(result);
         }
     }
 }

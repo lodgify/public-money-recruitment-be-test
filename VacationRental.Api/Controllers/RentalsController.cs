@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 using VacationRental.Api.Services;
 
@@ -17,22 +18,38 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BookingViewModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get(int rentalId)
         {
-            return _rentalService.Get(rentalId);
+            var result = _rentalService.Get(rentalId);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResourceIdViewModel))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Post(RentalBindingModel model)
         {
-            return _rentalService.Create(model);
+            var result = _rentalService.Create(model);
+
+            if (result == null)
+                return StatusCode(500);
+
+            return Ok(result);
         }
 
         [HttpPut]
         [Route("{rentalId:int}")]
-        public void Put(int id, RentalBindingModel model)
+        public IActionResult Put(int id, RentalBindingModel model)
         {
             _rentalService.Update(id, model);
+
+            return NoContent();
         }
     }
 }
