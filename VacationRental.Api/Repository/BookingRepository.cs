@@ -37,7 +37,7 @@ namespace VacationRental.Api.Repository
         => _bookings.Values.Any(
                 x => x.RentalId == rentalId && (x.Start <= date && x.Start.AddDays(x.Nights) > date) ||
                      (x.Start < date.AddDays(nights) && x.Start.AddDays(x.Nights) >= date.AddDays(nights)) ||
-                     (x.Start >= date && x.Start.AddDays(x.Nights) < date.AddDays(nights))
+                     (x.Start >= date && x.Start.AddDays(x.Nights) <= date.AddDays(nights))
             );
     }
 }

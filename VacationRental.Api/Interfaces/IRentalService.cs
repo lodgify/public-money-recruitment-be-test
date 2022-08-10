@@ -9,6 +9,6 @@ namespace VacationRental.Api.Interfaces
     {
         RentalViewModel GetRental(int id);
 
-        ResourceIdViewModel Create(RentalBindingModel model);
+        Task<ResourceIdViewModel> CreateAsync(RentalBindingModel model);
     }
 }

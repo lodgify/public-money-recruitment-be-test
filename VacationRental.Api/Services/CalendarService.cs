@@ -41,7 +41,7 @@ namespace VacationRental.Api.Services
             {
                 var date = new CalendarDateViewModel { Date = model.Start.Date.AddDays(i) };
 
-                date.Bookings = AddAvailableBookings(model.RentalId, date.Date);
+                date.Bookings = AddBookings(model.RentalId, date.Date);
 
                 calendar.Dates.Add(date);
             }
@@ -49,13 +49,14 @@ namespace VacationRental.Api.Services
             return calendar;
         }
 
-        private List<CalendarBookingViewModel> AddAvailableBookings(int rentalId, DateTime date)
+        private List<CalendarBookingViewModel> AddBookings(int rentalId, DateTime date)
         {
             var CalenderBookingList = new List<CalendarBookingViewModel>();
 
             foreach (var booking in _bookingRepository.GetAll())
             {
-                if (_bookingRepository.HasRentalAvailable(rentalId, date))
+             if (booking.RentalId == rentalId
+                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
                     CalenderBookingList.Add(new CalendarBookingViewModel { Id = booking.Id });
             }
 

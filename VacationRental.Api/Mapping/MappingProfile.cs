@@ -12,10 +12,7 @@ namespace VacationRental.Api.Mapping
                 .ForMember(src => src.Id, opt => opt.MapFrom((_, _, _, context) => context.Items["Id"]));
 
             CreateMap<RentalBindingModel, RentalViewModel>()
-                .ForMember(src => src.Id, opt => opt.MapFrom((_, _, _, context) => context.Items["Id"]));
-            
-            
-            
+                .ForMember(src => src.Id, opt => opt.MapFrom((_, _, _, context) => context.Items["Id"]));     
         }
     }
 }

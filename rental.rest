@@ -26,13 +26,13 @@ Content-Type: application/json
 
 {
     "rentalId":1,
-    "start":"2020-01-01",
-    "nights":3
+    "start":"2020-01-05",
+    "nights":2
 }
 
 
 ###
-Get {{baseUrl}}/api/v1/calendar?rentalId=1&start=2020-01-01&nights=3
+Get {{baseUrl}}/api/v1/calendar?rentalId=1&start=2020-01-01&nights=5
 Content-Type: application/json
 
 

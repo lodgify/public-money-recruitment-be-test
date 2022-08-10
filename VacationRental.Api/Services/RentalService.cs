@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using FluentValidation;
 using VacationRental.Api.Contracts.Request;
 using VacationRental.Api.Contracts.Response;
 using VacationRental.Api.Interfaces;
@@ -12,11 +15,14 @@ namespace VacationRental.Api.Services
     {
         private readonly IRentalRepository _rentalRepository;
         private readonly IMapper _mapper;
+        private readonly IValidator<RentalBindingModel> _validator;
 
-        public RentalService(IRentalRepository rentalRepository, IMapper mapper)
+        public RentalService(IRentalRepository rentalRepository, IMapper mapper,
+            IValidator<RentalBindingModel> validator)
         {
             _rentalRepository = rentalRepository;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public RentalViewModel GetRental(int id)
@@ -29,10 +35,17 @@ namespace VacationRental.Api.Services
             return rental;
         }
 
-        public ResourceIdViewModel Create(RentalBindingModel model)
+        public async Task<ResourceIdViewModel> CreateAsync(RentalBindingModel model)
         {
-            var newRental =
-                _mapper.Map<RentalViewModel>(model, opt => opt.Items["Id"] = _rentalRepository.RentalsCount() + 1);
+            var validation = await _validator.ValidateAsync(model);
+
+            if (!validation.IsValid)
+                throw new ApplicationException(validation.Errors.First().ErrorMessage);
+
+            var newRental = _mapper.Map<RentalViewModel>(
+                model,
+                opt => opt.Items["Id"] = _rentalRepository.RentalsCount() + 1
+            );
 
             var id = _rentalRepository.Create(newRental);
 

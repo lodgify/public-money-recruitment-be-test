@@ -28,11 +28,17 @@ namespace VacationRental.Api.Validation
                 .Must(RentalExists)
                 .WithMessage("Rental not Found");
 
-            RuleFor(dto=>dto.Start)
-                .NotEmpty().WithMessage("Start date is required")
-                .NotNull().WithMessage("Start date is required");
+            RuleFor(dto => dto.Start)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .WithMessage("Start date is required")
+                .NotNull()
+                .WithMessage("Start date is required");
 
-            RuleFor(dto => dto).Must(CheckAvailability).WithMessage("Rental is not available");
+            RuleFor(dto => dto)
+                .Cascade(CascadeMode.Stop)
+                .Must(CheckAvailability)
+                .WithMessage("Rental is not available");
         }
 
         private bool RentalExists(int rentalId) => _rentalRepository.Get(rentalId) != null;
@@ -48,11 +54,13 @@ namespace VacationRental.Api.Validation
 
             var rental = _rentalRepository.Get(model.RentalId);
 
+            if (rental is null)
+                return false;
+        
             if (count >= rental.Units)
                 return false;
 
             return true;
         }
-
     }
 }

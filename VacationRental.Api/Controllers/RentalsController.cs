@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Contracts.Request;
 using VacationRental.Api.Contracts.Response;
 using VacationRental.Api.Interfaces;
@@ -43,6 +44,6 @@ namespace VacationRental.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPost]
-        public IActionResult Post(RentalBindingModel model) => Ok(_rentalService.Create(model));
+        public async Task<IActionResult> Post(RentalBindingModel model) => Ok(await _rentalService.CreateAsync(model));
     }
 }
