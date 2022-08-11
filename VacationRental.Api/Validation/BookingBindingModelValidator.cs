@@ -45,19 +45,14 @@ namespace VacationRental.Api.Validation
 
         private bool CheckAvailability(BookingBindingModel model)
         {
-            int count = 0;
-            for (int i = 0; i < model.Nights; i++)
-            {
-                if (_bookingRepository.HasRentalAvailable(model.RentalId, model.Start, i))
-                    count++;
-            }
-
             var rental = _rentalRepository.Get(model.RentalId);
 
             if (rental is null)
                 return false;
-        
-            if (count >= rental.Units)
+
+            if (_bookingRepository.HasRentalBooking(rental.Id, model.Start,
+                    model.Start.Date.AddDays(model.Nights + rental.PreparationTimeInDays),
+                    rental.PreparationTimeInDays))
                 return false;
 
             return true;

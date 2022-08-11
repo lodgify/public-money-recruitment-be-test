@@ -9,12 +9,14 @@ namespace VacationRental.Api.Repository
         int BookingCount();
         int CreateBooking(BookingViewModel booking);
 
-        bool HasRentalAvailable(int rentalId, DateTime date);
-
-        bool HasRentalAvailable(int rentalId, DateTime date, int nights);
+        bool HasRentalBooking(int rentalId, DateTime date ,DateTime endDate,int preparationTimesDays);
 
         BookingViewModel GetBooking(int id);
 
-        BookingViewModel[] GetAll();
+        BookingViewModel GetBooking(int rentalId, DateTime date);
+
+        List<DateTime> GetPreparationTimes(int rentalId, DateTime startDate,DateTime endDate, int preparationTime);
+
+
     }
 }

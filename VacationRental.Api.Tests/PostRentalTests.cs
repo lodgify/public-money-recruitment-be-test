@@ -25,7 +25,8 @@ namespace VacationRental.Api.Tests
         {
             var request = new RentalBindingModel
             {
-                Units = 25
+                Units = 25,
+                PreparationTimeInDays = 2
             };
 
             using var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request);
@@ -43,5 +44,20 @@ namespace VacationRental.Api.Tests
             getResult.Units.Should().Be(request.Units);
         
         }
+
+        [Fact]
+        public async Task GivenIncompleteRequest_WhenPostRental_ThenAGetReturnsBadRequest()
+        {
+            var request = new RentalBindingModel
+            {
+                Units = 25,
+                PreparationTimeInDays = -2
+            };
+            using var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request);
+    
+            postResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+        }
+
+        
     }
 }

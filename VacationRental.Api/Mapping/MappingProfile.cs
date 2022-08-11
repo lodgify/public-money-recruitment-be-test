@@ -13,6 +13,8 @@ namespace VacationRental.Api.Mapping
 
             CreateMap<RentalBindingModel, RentalViewModel>()
                 .ForMember(src => src.Id, opt => opt.MapFrom((_, _, _, context) => context.Items["Id"]));     
+            
+            CreateMap<UpdateRentalBindingModel, RentalViewModel>();
         }
     }
 }

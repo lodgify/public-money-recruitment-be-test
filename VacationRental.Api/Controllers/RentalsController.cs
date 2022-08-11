@@ -19,19 +19,18 @@ namespace VacationRental.Api.Controllers
         }
 
         /// <summary>
-        /// Returns a single rental by id 
+        /// Returns a single rental by id
         /// </summary>
         /// <param name="rentalId"></param>
         /// <response code="200">Successfully found and returned the rental </response>
         /// <response code="400">The rental does not exist in the system  </response>
         /// <response code="500">If an unexpected error happen</response>
         [ProducesResponseType(typeof(RentalViewModel), 200)]
-        [ProducesResponseType(typeof(string),400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(500)]
         [HttpGet]
         [Route("{rentalId:int}")]
         public IActionResult Get(int rentalId) => Ok(_rentalService.GetRental(rentalId));
-
 
         /// <summary>
         /// Creates a new rental in the system
@@ -44,6 +43,26 @@ namespace VacationRental.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPost]
-        public async Task<IActionResult> Post(RentalBindingModel model) => Ok(await _rentalService.CreateAsync(model));
+        public async Task<IActionResult> Post(RentalBindingModel model) =>
+            Ok(await _rentalService.CreateAsync(model));
+
+        /// <summary>
+        /// Update a new rental in the system
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <response code="204">Rental was successfully Updated </response>
+        /// <response code="400">The request did not pass validation checks </response>
+        /// <response code="500">If an unexpected error happen</response>
+        [ProducesResponseType(typeof(ResourceIdViewModel), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Put(int id, UpdateRentalBindingModel model)
+        {
+            model.Id = id;
+            await _rentalService.UpdateAsync(model);
+            return NoContent();
+        }
     }
 }

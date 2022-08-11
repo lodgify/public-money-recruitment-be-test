@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using VacationRental.Api.Contracts.Request;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Repository
@@ -14,13 +15,16 @@ namespace VacationRental.Api.Repository
         }
 
         public int RentalsCount() => _rentals.Keys.Count;
+
         public RentalViewModel Get(int id) => _rentals.FirstOrDefault(x => x.Key == id).Value;
 
         public int Create(RentalViewModel model)
         {
             _rentals.Add(model.Id, model);
-            
+
             return model.Id;
         }
+
+        public void Update(RentalViewModel model) => _rentals[model.Id] = model;
     }
 }

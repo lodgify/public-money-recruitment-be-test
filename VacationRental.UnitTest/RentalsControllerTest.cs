@@ -60,6 +60,10 @@ namespace VacationRental.UnitTest
             result.Should().BeOfType<ApplicationException>().Which.Message.Should().Be("unit must not empty");
             
         }
+
+        
+
+
         
         
         
@@ -81,8 +85,9 @@ namespace VacationRental.UnitTest
              result.Should().BeOfType<OkObjectResult>()
                  .Which.Value.Should().BeOfType<ResourceIdViewModel>()
                  .Which.Id.Should().Be(1);
-            
-
         }
+
+
+
     }
 }

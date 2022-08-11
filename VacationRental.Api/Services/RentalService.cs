@@ -16,13 +16,19 @@ namespace VacationRental.Api.Services
         private readonly IRentalRepository _rentalRepository;
         private readonly IMapper _mapper;
         private readonly IValidator<RentalBindingModel> _validator;
+        private readonly IValidator<UpdateRentalBindingModel> _updateValidator;
 
-        public RentalService(IRentalRepository rentalRepository, IMapper mapper,
-            IValidator<RentalBindingModel> validator)
+        public RentalService(
+            IRentalRepository rentalRepository,
+            IMapper mapper,
+            IValidator<RentalBindingModel> validator,
+            IValidator<UpdateRentalBindingModel> updateValidator
+        )
         {
             _rentalRepository = rentalRepository;
             _mapper = mapper;
             _validator = validator;
+            _updateValidator = updateValidator;
         }
 
         public RentalViewModel GetRental(int id)
@@ -49,7 +55,21 @@ namespace VacationRental.Api.Services
 
             var id = _rentalRepository.Create(newRental);
 
-            return new ResourceIdViewModel {Id = id};
+            return new ResourceIdViewModel { Id = id };
+        }
+
+        public async Task UpdateAsync(UpdateRentalBindingModel model)
+        {
+            var validation = await _updateValidator.ValidateAsync(model);
+
+            if (!validation.IsValid)
+                throw new ApplicationException(validation.Errors.First().ErrorMessage);
+
+            var rental = _rentalRepository.Get(model.Id);
+            
+            _mapper.Map(model, rental);
+
+            _rentalRepository.Update(rental);
         }
     }
 }

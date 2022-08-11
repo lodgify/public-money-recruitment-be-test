@@ -14,18 +14,21 @@ namespace VacationRental.Api.Services
     public class CalendarService : ICalendarService
     {
         private readonly IBookingRepository _bookingRepository;
+        private readonly IRentalRepository _rentalRepository;
         private readonly IMapper _mapper;
         private readonly IValidator<ReserveBindingModel> _validator;
 
         public CalendarService(
             IBookingRepository bookingRepository,
             IMapper mapper,
-            IValidator<ReserveBindingModel> validator
+            IValidator<ReserveBindingModel> validator,
+            IRentalRepository rentalRepository
         )
         {
             _bookingRepository = bookingRepository;
             _mapper = mapper;
             _validator = validator;
+            _rentalRepository = rentalRepository;
         }
 
         public async Task<CalendarViewModel> GetCalendar(ReserveBindingModel model)
@@ -35,32 +38,49 @@ namespace VacationRental.Api.Services
             if (!validationResult.IsValid)
                 throw new ApplicationException(validationResult.Errors.First().ErrorMessage);
 
+            var rental = _rentalRepository.Get(model.RentalId);
+
+            List<DateTime> postPreparationTime = new();
+            
+           
+            if (rental.PreparationTimeInDays > 0)
+            {
+                postPreparationTime = _bookingRepository.GetPreparationTimes(
+                    model.RentalId,
+                    model.Start,
+                    model.Start.Date.AddDays(model.Nights),
+                    rental.PreparationTimeInDays
+                );
+            }
+
             var calendar = new CalendarViewModel { RentalId = model.RentalId };
 
             for (int i = 0; i < model.Nights; i++)
             {
                 var date = new CalendarDateViewModel { Date = model.Start.Date.AddDays(i) };
 
-                date.Bookings = AddBookings(model.RentalId, date.Date);
+                var booking = _bookingRepository.GetBooking(model.RentalId, date.Date);
+
+                if (booking is not null)
+                {
+                    date.Bookings = new List<CalendarBookingViewModel>()
+                    {
+                        new() { Id = booking.Id, Unit = rental.Units }
+                    };
+                }
+
+                if (postPreparationTime.Any(pt => pt == date.Date))
+                {
+                    date.PreparationTimes = new List<CalendarPreparationTimeViewModel>()
+                    {
+                        new() { Unit = rental.Units }
+                    };
+                }
 
                 calendar.Dates.Add(date);
             }
 
             return calendar;
-        }
-
-        private List<CalendarBookingViewModel> AddBookings(int rentalId, DateTime date)
-        {
-            var CalenderBookingList = new List<CalendarBookingViewModel>();
-
-            foreach (var booking in _bookingRepository.GetAll())
-            {
-             if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
-                    CalenderBookingList.Add(new CalendarBookingViewModel { Id = booking.Id });
-            }
-
-            return CalenderBookingList;
         }
     }
 }

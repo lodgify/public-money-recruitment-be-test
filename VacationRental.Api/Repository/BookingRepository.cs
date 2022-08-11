@@ -26,18 +26,61 @@ namespace VacationRental.Api.Repository
             return model.Id;
         }
 
-        public bool HasRentalAvailable(int rentalId, DateTime date) =>
-            _bookings.Values.Any(
+        public bool HasRentalBooking(
+            int rentalId,
+            DateTime startDate,
+            DateTime endDate,
+            int PreparationTimeInDays
+        )
+        {
+            return _bookings.Values.Any(
+                x =>
+                    x.RentalId == rentalId
+                    && (
+                        (
+                            x.Start >= startDate
+                            || x.Start.AddDays(x.Nights + (PreparationTimeInDays - 1)) >= startDate
+                        )
+                        && x.Start.AddDays(x.Nights) <= endDate
+                    )
+            );
+        }
+
+        public BookingViewModel GetBooking(int rentalId, DateTime date)
+            => _bookings.Values.FirstOrDefault(
                 x => x.RentalId == rentalId && x.Start <= date && x.Start.AddDays(x.Nights) > date
             );
+        
 
-        public BookingViewModel[] GetAll() => _bookings.Values.ToArray();
+        public List<DateTime> GetPreparationTimes(
+            int rentalId,
+            DateTime startDate,
+            DateTime endDate,
+            int preparationTimesDays
+        )
+        {
+            List<DateTime> preparationTimes = new List<DateTime>();
+            var bookingsEndDate = _bookings.Values
+                .Where(
+                    x =>
+                        x.RentalId == rentalId
+                        && x.Start >= startDate
+                        && x.Start.AddDays(x.Nights) > startDate
+                        && x.Start <= endDate
+                )
+                .Select(x => x.Start.Date.AddDays(x.Nights))
+                .ToList();
 
-        public bool HasRentalAvailable(int rentalId, DateTime date, int nights)
-        => _bookings.Values.Any(
-                x => x.RentalId == rentalId && (x.Start <= date && x.Start.AddDays(x.Nights) > date) ||
-                     (x.Start < date.AddDays(nights) && x.Start.AddDays(x.Nights) >= date.AddDays(nights)) ||
-                     (x.Start >= date && x.Start.AddDays(x.Nights) <= date.AddDays(nights))
-            );
+            if (bookingsEndDate.Count == 0)
+                return preparationTimes;
+
+            bookingsEndDate.ForEach(date =>
+            {
+                for (int i = 0; i < preparationTimesDays; i++)
+                    preparationTimes.Add(date.AddDays(i));
+            });
+
+            return preparationTimes;
+        }
     }
 }
