@@ -1,0 +1,49 @@
+@baseUrl=http://localhost:9981
+
+
+
+GET {{baseUrl}}/api/v1/rentals/1
+Content-Type: application/json
+
+
+###
+POST {{baseUrl}}/api/v1/rentals
+Content-Type: application/json
+
+{
+    "units":2,
+    "preparationTimeInDays":2
+}
+
+###
+put {{baseUrl}}/api/v1/rentals/1
+Content-Type: application/json
+
+{
+    "units":4,
+    "preparationTimeInDays":3
+}
+
+
+###
+GET {{baseUrl}}/api/v1/bookings/2
+Content-Type: application/json
+
+
+###
+POST {{baseUrl}}/api/v1/bookings
+Content-Type: application/json
+
+{
+    "rentalId":1,
+    "start":"2020-01-02",
+    "nights":1
+}
+
+
+###
+Get {{baseUrl}}/api/v1/calendar?rentalId=1&start=2020-01-07&nights=5
+Content-Type: application/json
+
+
+

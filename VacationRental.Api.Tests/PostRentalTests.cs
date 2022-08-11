@@ -2,6 +2,9 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
+using VacationRental.Api.Contracts.Request;
+using VacationRental.Api.Contracts.Response;
 using VacationRental.Api.Models;
 using Xunit;
 
@@ -22,23 +25,39 @@ namespace VacationRental.Api.Tests
         {
             var request = new RentalBindingModel
             {
-                Units = 25
+                Units = 25,
+                PreparationTimeInDays = 2
             };
 
-            ResourceIdViewModel postResult;
-            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-            {
-                Assert.True(postResponse.IsSuccessStatusCode);
-                postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
-            }
+            using var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request);
 
-            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
-            {
-                Assert.True(getResponse.IsSuccessStatusCode);
+            postResponse.Should().HaveStatusCode(HttpStatusCode.OK);
+           
+            var postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
 
-                var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(request.Units, getResult.Units);
-            }
+            using var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}");
+            
+            getResponse.Should().HaveStatusCode(HttpStatusCode.OK);
+
+            var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
+
+            getResult.Units.Should().Be(request.Units);
+        
         }
+
+        [Fact]
+        public async Task GivenIncompleteRequest_WhenPostRental_ThenAGetReturnsBadRequest()
+        {
+            var request = new RentalBindingModel
+            {
+                Units = 25,
+                PreparationTimeInDays = -2
+            };
+            using var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request);
+    
+            postResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+        }
+
+        
     }
 }
