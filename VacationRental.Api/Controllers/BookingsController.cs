@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using VacationRental.Services.Bookings;
+using VacationRental.Services.Models;
+using VacationRental.Services.Models.Booking;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,64 +12,63 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IBookingsService _bookingsService;
 
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        public BookingsController(IBookingsService bookingsService)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _bookingsService = bookingsService;
         }
 
-        [HttpGet]
-        [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        /// <summary>
+        /// Get booking by id
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
+        [HttpGet("{bookingId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public ActionResult<BookingResponse> Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
-
-            return _bookings[bookingId];
-        }
-
-        [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
-        {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
-
-            for (var i = 0; i < model.Nights; i++)
+            try
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
+                var booking = _bookingsService.Get(bookingId);
+                if (booking == null)
                 {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
+                    return NotFound();
                 }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+
+                return Ok(booking);
             }
-
-
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
+            catch (Exception e)
             {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
+                Trace.TraceError($"{e.Message}. {e}");
+                return StatusCode(StatusCodes.Status500InternalServerError, e);
+            }
+        }
 
-            return key;
+        /// <summary>
+        /// Add booking
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult<ResourceIdViewModel> Post(CreateBookingRequest request)
+        {
+            try
+            {
+                var bookingEntity = _bookingsService.Book(request);
+                var resourceId = new ResourceIdViewModel
+                {
+                    Id = bookingEntity.Id
+                };
+
+                return Ok(resourceId);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError($"{e.Message}. {e}");
+                return StatusCode(StatusCodes.Status500InternalServerError, e);
+            }
         }
     }
 }

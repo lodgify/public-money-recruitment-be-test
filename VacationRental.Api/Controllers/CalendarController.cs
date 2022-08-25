@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using VacationRental.Services.Calendar;
+using VacationRental.Services.Models;
+using VacationRental.Services.Models.Calendar;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,51 +12,31 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class CalendarController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly ICalendarService _calendarService;
 
-        public CalendarController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        public CalendarController(ICalendarService calendarService)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _calendarService = calendarService;
         }
 
         [HttpGet]
-        public CalendarViewModel Get(int rentalId, DateTime start, int nights)
+        public ActionResult<CalendarViewModel> Get(int rentalId, DateTime start, int nights)
         {
-            if (nights < 0)
-                throw new ApplicationException("Nights must be positive");
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            var result = new CalendarViewModel 
+            try
             {
-                RentalId = rentalId,
-                Dates = new List<CalendarDateViewModel>() 
-            };
-            for (var i = 0; i < nights; i++)
-            {
-                var date = new CalendarDateViewModel
+                var calendar = _calendarService.GetCalendar(rentalId, start, nights);
+                if (calendar == null)
                 {
-                    Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingViewModel>()
-                };
-
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
-                    {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
-                    }
+                    return NotFound();
                 }
 
-                result.Dates.Add(date);
+                return Ok(calendar);
             }
-
-            return result;
+            catch (Exception e)
+            {
+                Trace.TraceError($"{e.Message}. {e}");
+                return StatusCode(StatusCodes.Status500InternalServerError, e);
+            }
         }
     }
 }

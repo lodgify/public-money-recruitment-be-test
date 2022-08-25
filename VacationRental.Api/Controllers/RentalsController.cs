@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using VacationRental.Services.Models;
+using VacationRental.Services.Models.Rental;
+using VacationRental.Services.Rentals;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +12,52 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IRentalService _rentalService;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(IRentalService rentalService)
         {
-            _rentals = rentals;
+            _rentalService = rentalService;
         }
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        public ActionResult<RentalViewModel> Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
+            try
+            {
+                var rental = _rentalService.Get(rentalId);
+                if (rental == null)
+                {
+                    return NotFound();
+                }
 
-            return _rentals[rentalId];
+                return Ok(rental);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError($"{e.Message}. {e}");
+                return StatusCode(StatusCodes.Status500InternalServerError, e);
+            }
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        public ActionResult<ResourceIdViewModel> Post(RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
-
-            _rentals.Add(key.Id, new RentalViewModel
+            try
             {
-                Id = key.Id,
-                Units = model.Units
-            });
+                var rental = _rentalService.Add(model);
+                var result = new ResourceIdViewModel
+                {
+                    Id = rental.Id
+                };
 
-            return key;
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError($"{e.Message}. {e}");
+                return StatusCode(StatusCodes.Status500InternalServerError, e);
+            }
         }
     }
 }

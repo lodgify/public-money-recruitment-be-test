@@ -2,7 +2,10 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
+using VacationRental.Services.Models;
+using VacationRental.Services.Models.Booking;
+using VacationRental.Services.Models.Calendar;
+using VacationRental.Services.Models.Rental;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -32,7 +35,7 @@ namespace VacationRental.Api.Tests
                 postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            var postBooking1Request = new BookingBindingModel
+            var postBooking1Request = new CreateBookingRequest
             {
                  RentalId = postRentalResult.Id,
                  Nights = 2,
@@ -46,7 +49,7 @@ namespace VacationRental.Api.Tests
                 postBooking1Result = await postBooking1Response.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
-            var postBooking2Request = new BookingBindingModel
+            var postBooking2Request = new CreateBookingRequest
             {
                 RentalId = postRentalResult.Id,
                 Nights = 2,
