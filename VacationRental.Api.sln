@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api", "Vacat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Tests", "VacationRental.Api.Tests\VacationRental.Api.Tests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Core", "VacationRental.Core\VacationRental.Core.csproj", "{493D9CD3-F75C-4360-B05F-16409131A05A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Core", "VacationRental.Core\VacationRental.Core.csproj", "{493D9CD3-F75C-4360-B05F-16409131A05A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{AC746F54-4624-419A-84E2-2A7E0A8054FB}"
 EndProject
@@ -15,15 +15,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D0C10174-ADBD-46CF-884D-F5282C8238C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Data", "VacationRental.Data\VacationRental.Data.csproj", "{93DA077B-0872-47B8-99F7-4201F4261DE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Data", "VacationRental.Data\VacationRental.Data.csproj", "{93DA077B-0872-47B8-99F7-4201F4261DE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Services", "VacationRental.Services\VacationRental.Services.csproj", "{217FEAD2-5EC6-4F8E-8A9E-3BB18B88CAEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Services", "VacationRental.Services\VacationRental.Services.csproj", "{217FEAD2-5EC6-4F8E-8A9E-3BB18B88CAEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Core.Tests", "VacationRental.Core.Tests\VacationRental.Core.Tests.csproj", "{96599372-45B0-4DAB-862D-D05BD092D842}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Core.Tests", "VacationRental.Core.Tests\VacationRental.Core.Tests.csproj", "{96599372-45B0-4DAB-862D-D05BD092D842}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Data.Tests", "VacationRental.Data.Tests\VacationRental.Data.Tests.csproj", "{34CE105A-7B31-4305-9AC8-098AC2E71B21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Data.Tests", "VacationRental.Data.Tests\VacationRental.Data.Tests.csproj", "{34CE105A-7B31-4305-9AC8-098AC2E71B21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Services.Tests", "VacationRental.Services.Tests\VacationRental.Services.Tests.csproj", "{2ED5B18B-DD1E-4C59-AC27-367A60ECC7CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Services.Tests", "VacationRental.Services.Tests\VacationRental.Services.Tests.csproj", "{2ED5B18B-DD1E-4C59-AC27-367A60ECC7CE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F5DE1960-959D-4B51-81FE-AB6069498DA4}"
+	ProjectSection(SolutionItems) = preProject
+		VacationRental API [SECURE].postman_environment.json = VacationRental API [SECURE].postman_environment.json
+		VacationRental API.postman_collection.json = VacationRental API.postman_collection.json
+		VacationRental API.postman_environment.json = VacationRental API.postman_environment.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

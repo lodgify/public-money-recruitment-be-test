@@ -101,22 +101,24 @@ namespace VacationRental.Api
         {
             services.AddScoped<DbContext, VacationRentalObjectContext>();
 
-            //services.AddDbContext<VacationRentalObjectContext>(options =>
-            //{
-            //    options.UseInMemoryDatabase("VacationRentalDB");
-            //});
-
             services.AddDbContext<VacationRentalObjectContext>(options =>
             {
-                var connectionString = Configuration.GetConnectionString("DefaultConnection");
-                options.UseSqlServer(connectionString, builder =>
-                {
-                    builder.EnableRetryOnFailure(
-                        maxRetryCount: 3,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null);
-                });
+                options.UseInMemoryDatabase("InMemoryVacationRentalDB");
             });
+
+
+
+            //services.AddDbContext<VacationRentalObjectContext>(options =>
+            //{
+            //    var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            //    options.UseSqlServer(connectionString, builder =>
+            //    {
+            //        builder.EnableRetryOnFailure(
+            //            maxRetryCount: 3,
+            //            maxRetryDelay: TimeSpan.FromSeconds(30),
+            //            errorNumbersToAdd: null);
+            //    });
+            //});
 
             services.AddScoped(typeof(IRepository<,>), typeof(EfRepository<,>));
         }

@@ -31,7 +31,7 @@ namespace VacationRental.Api.Tests
 
                 services.AddDbContext<VacationRentalObjectContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryEmployeeTest");
+                    options.UseInMemoryDatabase("InMemoryTestVacationRentalDB");
                 });
 
                 var sp = services.BuildServiceProvider();
