@@ -1,44 +1,89 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
+using VacationRental.Services.Models.Rental;
 using Xunit;
 
 namespace VacationRental.Api.Tests
 {
     [Collection("Integration")]
-    public class PostRentalTests
+    public class PostRentalTests : IClassFixture<VacationRentalWebApplicationFactory<Program>>
     {
-        private readonly HttpClient _client;
+        private readonly VacationRentalWebApplicationFactory<Program> _applicationFactory;
 
-        public PostRentalTests(IntegrationFixture fixture)
+        public PostRentalTests(VacationRentalWebApplicationFactory<Program> applicationFactory)
         {
-            _client = fixture.Client;
+            _applicationFactory = applicationFactory;
         }
+
+        #region Tests
 
         [Fact]
         public async Task GivenCompleteRequest_WhenPostRental_ThenAGetReturnsTheCreatedRental()
         {
-            var request = new RentalBindingModel
-            {
-                Units = 25
-            };
+            // ARRANGE
+            var request = CreateRequest(25, 1);
 
-            ResourceIdViewModel postResult;
-            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-            {
-                Assert.True(postResponse.IsSuccessStatusCode);
-                postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
-            }
+            // ACT
+            // ASSERT
 
-            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
-            {
-                Assert.True(getResponse.IsSuccessStatusCode);
+            var postResult = await _applicationFactory.AddRentalAsync(request);
+            Assert.Null(postResult.Error);
 
-                var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(request.Units, getResult.Units);
-            }
+            var response = await _applicationFactory.GetRentalByAsync(postResult.Content.Id);
+            Assert.Null(response.Error);
+            Assert.Equal(request.Units, response.Content.Units);
         }
+
+        [Fact]
+        public async Task Rental_ShouldAddRental_ThenReturnsValidationErrorWhenThereIsUnitsZero()
+        {
+            // ARRANGE
+            var request = CreateRequest(0, 1);
+
+            // ACT
+            // ASSERT
+            await Assert.ThrowsAsync<ApplicationException>(async () => await _applicationFactory.AddRentalAsync(request));
+        }
+
+        //[Fact]
+        //public async Task Rental_UpdateRentalWithDecreasingUnits_Fail()
+        //{
+        //    // Arrange
+        //    var request = CreateRequest(1, 1);
+        //    var rentalResult = await _applicationFactory.AddRentalAsync(request);
+
+        //    // Add booking
+        //    var bookingParameters = new BookingParameters
+        //    {
+        //        RentalId = rentalResult.Id,
+        //        Nights = 3,
+        //        Start = new DateTime(2002, 01, 01)
+        //    };
+        //    var bookingResult = await _vacationRentalApplication.AddBookingAsync(bookingParameters);
+
+        //    // Action & Assert
+        //    var updateRentalParameters = new RentalParameters
+        //    {
+        //        Units = 0,
+        //        PreparationTimeInDays = 1
+        //    };
+        //    await Assert.ThrowsAsync<ApplicationException>(async () => await _vacationRentalApplication.UpdateRentalAsync(rentalResult.Id, updateRentalParameters));
+        //}
+
+        #endregion
+
+        #region Private Methods
+
+        private static CreateRentalRequest CreateRequest(int units, int preparationTime)
+        {
+            var request = new CreateRentalRequest
+            {
+                Units = units,
+                PreparationTime = preparationTime
+            };
+            return request;
+        }
+
+        #endregion
     }
 }

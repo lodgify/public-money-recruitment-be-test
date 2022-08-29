@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.Services.Models.Calendar
 {
-    public class BookingViewModel
+    public class GetCalendarRequest
     {
-        public int Id { get; set; }
         public int RentalId { get; set; }
         public DateTime Start { get; set; }
         public int Nights { get; set; }

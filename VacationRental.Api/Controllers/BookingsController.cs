@@ -1,72 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using VacationRental.Services.Bookings;
+using VacationRental.Services.Models.Booking;
 
 namespace VacationRental.Api.Controllers
 {
-    [Route("api/v1/bookings")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class BookingsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IBookingsService _bookingsService;
 
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="bookingsService"></param>
+        public BookingsController(IBookingsService bookingsService)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _bookingsService = bookingsService;
         }
 
+        /// <summary>
+        /// Retrieve all available booking information
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<BookingDto> GetBookings()
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
+            var bookings = _bookingsService.GetBookings();
 
-            return _bookings[bookingId];
+            return Ok(bookings);
         }
 
-        [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
+        /// <summary>
+        /// Retrieve the booking information for the given booking id
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
+        [HttpGet("{bookingId:int}", Name = nameof(GetBookingById))]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public ActionResult<BookingDto> GetBookingById(int bookingId)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
+            var booking = _bookingsService.GetBookingById(bookingId);
+            
+            return Ok(booking);
+        }
 
-            for (var i = 0; i < model.Nights; i++)
+        /// <summary>
+        /// Create new booking for the existing rental 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult<BookingDto> AddBooking(CreateBookingRequest request)
+        {
+            var booking = _bookingsService.AddBooking(request);
+
+            return Created(Url.Link(nameof(GetBookingById), new { bookingId = booking.Id }), booking);
+        }
+
+        /// <summary>
+        /// Update existing booking for the existing rental
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("{bookingId:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<BookingDto> UpdateBooking([FromRoute] int bookingId, [FromBody] CreateBookingRequest request)
+        {
+            var booking = _bookingsService.UpdateBooking(bookingId, request);
+
+            return Created(Url.Link(nameof(GetBookingById), new { bookingId = booking.Id }), booking);
+        }
+
+        /// <summary>
+        /// Delete existing booking
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("{bookingId:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public ActionResult DeleteBooking([FromRoute] int bookingId)
+        {
+            if (_bookingsService.DeleteBooking(bookingId))
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+                return NoContent();
             }
 
-
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
-            {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
-
-            return key;
+            return Conflict();
         }
     }
 }
