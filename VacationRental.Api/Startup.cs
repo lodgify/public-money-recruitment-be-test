@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,10 +55,19 @@ namespace VacationRental.Api
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ApiVersionReader = new MediaTypeApiVersionReader();
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
+            });
+
             services.AddAutoMapper(options =>
                 {
                     options.AddProfile<BookingProfile>();
-                    options.AddProfile<BookingProfile>();
+                    options.AddProfile<RentalProfile>();
                 });
 
             RegisterRepositories(services);
@@ -98,7 +108,8 @@ namespace VacationRental.Api
 
             services.AddDbContext<VacationRentalObjectContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), builder =>
+                var connectionString = Configuration.GetConnectionString("DefaultConnection");
+                options.UseSqlServer(connectionString, builder =>
                 {
                     builder.EnableRetryOnFailure(
                         maxRetryCount: 3,
@@ -117,6 +128,8 @@ namespace VacationRental.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 

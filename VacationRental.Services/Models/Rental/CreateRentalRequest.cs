@@ -1,8 +1,9 @@
 ﻿namespace VacationRental.Services.Models.Rental
 {
-    public class RentalViewModel
+    public class CreateRentalRequest
     {
-        public int Id { get; set; }
         public int Units { get; set; }
+
+        public int PreparationTime { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using VacationRental.Core.Domain.Rentals;
-using VacationRental.Services.Models;
 using VacationRental.Services.Models.Rental;
 
 namespace VacationRental.Api.Infrastructure
@@ -9,7 +8,7 @@ namespace VacationRental.Api.Infrastructure
     {
         public RentalProfile()
         {
-            CreateMap<RentalEntity, RentalViewModel>();
+            CreateMap<RentalEntity, RentalDto>().ReverseMap();
         }
     }
 }

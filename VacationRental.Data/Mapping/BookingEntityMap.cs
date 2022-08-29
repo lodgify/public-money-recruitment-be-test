@@ -13,6 +13,7 @@ namespace VacationRental.Data.Mapping
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id)
                 .ValueGeneratedOnAdd();
+            builder.Ignore(x => x.End);
 
             builder.HasOne(x => x.Rental)
                 .WithMany(x => x.Bookings)

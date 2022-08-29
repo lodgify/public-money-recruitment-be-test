@@ -2,7 +2,7 @@
 
 namespace VacationRental.Services.Models.Booking
 {
-    public class BookingResponse
+    public class BookingDto
     {
         public int Id { get; set; }
         public int RentalId { get; set; }

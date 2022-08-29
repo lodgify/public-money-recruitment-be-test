@@ -1,42 +1,42 @@
 ﻿using System;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Services.Calendar;
-using VacationRental.Services.Models;
 using VacationRental.Services.Models.Calendar;
 
 namespace VacationRental.Api.Controllers
 {
-    [Route("api/v1/calendar")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class CalendarController : ControllerBase
     {
         private readonly ICalendarService _calendarService;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="calendarService"></param>
         public CalendarController(ICalendarService calendarService)
         {
             _calendarService = calendarService;
         }
 
+        /// <summary>
+        /// Retrieve the booking information for the given rental id, start date, number of nights
+        /// </summary>
+        /// <param name="rentalId"></param>
+        /// <param name="start"></param>
+        /// <param name="nights"></param>
+        /// <returns></returns>
         [HttpGet]
-        public ActionResult<CalendarViewModel> Get(int rentalId, DateTime start, int nights)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<CalendarDto> Get(int rentalId, DateTime start, int nights)
         {
-            try
-            {
-                var calendar = _calendarService.GetCalendar(rentalId, start, nights);
-                if (calendar == null)
-                {
-                    return NotFound();
-                }
+            var calendar = _calendarService.GetCalendar(rentalId, start, nights);
 
-                return Ok(calendar);
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError($"{e.Message}. {e}");
-                return StatusCode(StatusCodes.Status500InternalServerError, e);
-            }
+            return Ok(calendar);
         }
     }
 }

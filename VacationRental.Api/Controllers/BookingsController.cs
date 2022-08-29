@@ -1,74 +1,95 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Services.Bookings;
-using VacationRental.Services.Models;
 using VacationRental.Services.Models.Booking;
 
 namespace VacationRental.Api.Controllers
 {
-    [Route("api/v1/bookings")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class BookingsController : ControllerBase
     {
         private readonly IBookingsService _bookingsService;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="bookingsService"></param>
         public BookingsController(IBookingsService bookingsService)
         {
             _bookingsService = bookingsService;
         }
 
         /// <summary>
-        /// Get booking by id
+        /// Retrieve all available booking information
         /// </summary>
-        /// <param name="bookingId"></param>
         /// <returns></returns>
-        [HttpGet("{bookingId:int}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        public ActionResult<BookingResponse> Get(int bookingId)
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<BookingDto> GetBookings()
         {
-            try
-            {
-                var booking = _bookingsService.Get(bookingId);
-                if (booking == null)
-                {
-                    return NotFound();
-                }
+            var bookings = _bookingsService.GetBookings();
 
-                return Ok(booking);
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError($"{e.Message}. {e}");
-                return StatusCode(StatusCodes.Status500InternalServerError, e);
-            }
+            return Ok(bookings);
         }
 
         /// <summary>
-        /// Add booking
+        /// Retrieve the booking information for the given booking id
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
+        [HttpGet("{bookingId:int}", Name = nameof(GetBookingById))]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public ActionResult<BookingDto> GetBookingById(int bookingId)
+        {
+            var booking = _bookingsService.GetBookingById(bookingId);
+            
+            return Ok(booking);
+        }
+
+        /// <summary>
+        /// Create new booking for the existing rental 
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult<ResourceIdViewModel> Post(CreateBookingRequest request)
+        public ActionResult<BookingDto> AddBooking(CreateBookingRequest request)
         {
-            try
-            {
-                var bookingEntity = _bookingsService.Book(request);
-                var resourceId = new ResourceIdViewModel
-                {
-                    Id = bookingEntity.Id
-                };
+            var booking = _bookingsService.AddBooking(request);
 
-                return Ok(resourceId);
-            }
-            catch (Exception e)
+            return Created(Url.Link(nameof(GetBookingById), new { bookingId = booking.Id }), booking);
+        }
+
+        /// <summary>
+        /// Update existing booking for the existing rental
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("{bookingId:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<BookingDto> UpdateBooking([FromRoute] int bookingId, [FromBody] CreateBookingRequest request)
+        {
+            var booking = _bookingsService.UpdateBooking(bookingId, request);
+
+            return Created(Url.Link(nameof(GetBookingById), new { bookingId = booking.Id }), booking);
+        }
+
+        /// <summary>
+        /// Delete existing booking
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("{bookingId:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public ActionResult DeleteBooking([FromRoute] int bookingId)
+        {
+            if (_bookingsService.DeleteBooking(bookingId))
             {
-                Trace.TraceError($"{e.Message}. {e}");
-                return StatusCode(StatusCodes.Status500InternalServerError, e);
+                return NoContent();
             }
+
+            return Conflict();
         }
     }
 }

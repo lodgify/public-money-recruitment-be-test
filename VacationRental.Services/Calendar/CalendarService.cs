@@ -22,7 +22,7 @@ namespace VacationRental.Services.Calendar
             _rentalRepository = rentalRepository;
         }
 
-        public CalendarViewModel GetCalendar(int rentalId, DateTime start, int nights)
+        public CalendarDto GetCalendar(int rentalId, DateTime start, int nights)
         {
             if (nights <= 0)
             {
@@ -35,36 +35,70 @@ namespace VacationRental.Services.Calendar
                 throw new RentalNotFoundException("Rental not found");
             }
 
-            var bookings = _bookingRepository
-                .GetAll()
-                .ToList();
-
-            var result = new CalendarViewModel
-            {
-                RentalId = rentalId,
-                Dates = new List<CalendarDateViewModel>()
-            };
-            for (var i = 0; i < nights; i++)
-            {
-                var date = new CalendarDateViewModel
-                {
-                    Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingViewModel>()
-                };
-
-                foreach (var booking in bookings)
-                {
-                    if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
-                    {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
-                    }
-                }
-
-                result.Dates.Add(date);
-            }
+            var result = GenerateCalendar(rental, start, nights);
 
             return result;
+        }
+
+        private CalendarDto GenerateCalendar(RentalEntity rental, DateTime start, int nights)
+        {
+            var calendar = new CalendarDto
+            {
+                RentalId = rental.Id,
+                Dates = new List<CalendarDateDto>()
+            };
+
+            var preparationTime = rental.PreparationTime;
+            var bookings = GetBookingsByRentalId(rental.Id);
+
+            for (var i = 0; i < nights; i++)
+            {
+                var date = start.Date.AddDays(i);
+                var calendarBookings = GetCalendarBookings(bookings, date);
+                var calendarPreparationTimes = GetCalendarPreparationTimes(bookings, date, preparationTime);
+
+                calendar.Dates.Add(new CalendarDateDto
+                {
+                    Date = date,
+                    Bookings = calendarBookings,
+                    PreparationTimes = calendarPreparationTimes
+                });
+            }
+
+            return calendar;
+        }
+
+        private List<CalendarPreparationTimeDto> GetCalendarPreparationTimes(List<BookingEntity> bookings, DateTime date, int preparationTime)
+        {
+            return bookings
+                .Where(x => x.End <= date.Date && x.End.AddDays(preparationTime) > date.Date)
+                .Select(x => new CalendarPreparationTimeDto
+                {
+                    Unit = x.Unit,
+                })
+                .ToList();
+        }
+
+        private List<CalendarBookingDto> GetCalendarBookings(List<BookingEntity> bookingQuery, DateTime date)
+        {
+            var result = bookingQuery
+                .Where(x => x.Start <= date.Date && x.Start.AddDays(x.Nights) > date.Date)
+                .Select(x => new CalendarBookingDto
+                {
+                    Id = x.Id,
+                    Unit = x.Unit,
+                })
+                .ToList();
+
+            return result;
+        }
+
+        private List<BookingEntity> GetBookingsByRentalId(int rentalId)
+        {
+            var query = _bookingRepository.Table
+                .Where(x => x.RentalId == rentalId);
+
+            return query.ToList();
         }
     }
 }
