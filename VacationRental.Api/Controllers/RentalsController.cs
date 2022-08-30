@@ -1,43 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
+using Application.Models;
+using Application.Models.Exceptions;
+using Application.Models.Rental.Requests;
+using Application.Models.Rental.Responses;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace VacationRental.Api.Controllers
+namespace VacationRental.Api.Controllers;
+
+[Route("api/v1/rentals")]
+[ApiController]
+public class RentalsController : Controller
 {
-    [Route("api/v1/rentals")]
-    [ApiController]
-    public class RentalsController : ControllerBase
+    private readonly IBusControl _busControl;
+    private readonly IRequestClient<CheckRental> _client;
+
+    public RentalsController(IBusControl buscontrol, IRequestClient<CheckRental> client)
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        _busControl = buscontrol;
+        _client = client;
+    }
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+    [HttpGet]
+    [Route("{rentalId:int}")]
+    public async Task<ActionResult<RentalResponse>> Get(int rentalId)
+    {
+        if (rentalId > 0)
         {
-            _rentals = rentals;
+            var response = await _client.GetResponse<RentalResponse>(new { Id = rentalId });
+            return Ok(response.Message);
         }
+        return BadRequest();
+    }
 
-        [HttpGet]
-        [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+    [HttpPost]
+    public async Task<ActionResult<ResourceIdViewModel>> Post(CreateRentalRequest model)
+    {
+        var endpoint = _busControl.CreateRequestClient<CreateRentalRequest>();
+        var result = await endpoint.GetResponse<ResourceIdViewModel, RentalNotFound>(model);
+
+        if (result.Is(out Response<RentalNotFound>? notfoundResponse))
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            return _rentals[rentalId];
         }
-
-        [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        else if (result.Is(out Response<ResourceIdViewModel>? resourcesVieModel))
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
-
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
-
-            return key;
+            return resourcesVieModel.Message;
         }
+       
+        return BadRequest();
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> Put(UpdateRentalRequest updModel)
+    {
+        var endpoint = _busControl.CreateRequestClient<UpdateRentalRequest>();
+        var result = await endpoint.GetResponse<ResourceIdViewModel>(updModel);
+        return StatusCode(204);
     }
 }

@@ -1,72 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
+using Application.Models;
+using Application.Models.Booking.Requests;
+using Application.Models.Booking.Responses;
+using Application.Models.Exceptions;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
 
-namespace VacationRental.Api.Controllers
+namespace VacationRental.Api.Controllers;
+
+[Route("api/v1/bookings")]
+[ApiController]
+public class BookingsController : Controller
 {
-    [Route("api/v1/bookings")]
-    [ApiController]
-    public class BookingsController : ControllerBase
+    private readonly IBusControl _busControl;
+    private readonly IRequestClient<CheckBooking> _client;
+    public BookingsController(IBusControl busControl, IRequestClient<CheckBooking> client)
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        _busControl = busControl;
+        _client = client;
+    }
 
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+    [HttpGet]
+    [Route("{bookingId:int}")]
+    public async Task<ActionResult<BookingResponse>> Get(int bookingId)
+    {
+        var response = await _client.GetResponse<BookingResponse>(new { Id = bookingId });
+        return Ok(response.Message);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ResourceIdViewModel>> Post(CreateBookingRequest model)
+    {
+        var endpoint = _busControl.CreateRequestClient<CreateBookingRequest>();
+        var result = await endpoint.GetResponse<ResourceIdViewModel, RentalNotFound>(model);
+
+        if (result.Is(out Response<RentalNotFound>? notfoundResponse))
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            return NotFound();
         }
-
-        [HttpGet]
-        [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        else if (result.Is(out Response<ResourceIdViewModel>? resourcesVieModel))
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
-
-            return _bookings[bookingId];
+            return Ok(resourcesVieModel.Message);
         }
-
-        [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
-        {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
-
-            for (var i = 0; i < model.Nights; i++)
-            {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
-            }
-
-
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
-            {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
-
-            return key;
-        }
+        return BadRequest();
     }
 }
