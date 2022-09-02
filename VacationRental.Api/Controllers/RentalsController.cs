@@ -1,7 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using VR.Application.Queries.GetRental;
+using VR.Application.Requests.AddRental;
+using VR.Application.Requests.UpdateRental;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +13,46 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IMediator _mediator;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(
+            IMediator mediator)
         {
-            _rentals = rentals;
+            _mediator = mediator;
         }
 
-        [HttpGet]
-        [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        [HttpGet("{rentalId:int}")]
+        [ProducesResponseType(typeof(GetRentalResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
+            var response = await _mediator.Send(new GetRentalQuery(rentalId), HttpContext.RequestAborted);
 
-            return _rentals[rentalId];
+            return Ok(response);
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        [ProducesResponseType(typeof(AddRentalResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Post([FromBody] AddRentalRequest request)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+            var response = await _mediator.Send(request, HttpContext.RequestAborted);
 
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
+            return Ok(response);
+        }
 
-            return key;
+        [HttpPut("{id:int}")]
+        [ProducesResponseType(typeof(UpdateRentalResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Put([FromRoute]int id, [FromBody] UpdateRentalRequest request)
+        {
+            request.Id = id;
+            var resonse = await _mediator.Send(request, HttpContext.RequestAborted);
+
+            return Ok(resonse);
         }
     }
 }
