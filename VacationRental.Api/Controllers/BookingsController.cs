@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using VacationRental.Api.Helpers;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Controllers
@@ -38,33 +39,21 @@ namespace VacationRental.Api.Controllers
             if (!_rentals.ContainsKey(model.RentalId))
                 throw new ApplicationException("Rental not found");
 
-            for (var i = 0; i < model.Nights; i++)
+            var item = new BookingViewModel
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights + _rentals[model.RentalId].PreparationTimeInDays) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights + _rentals[model.RentalId].PreparationTimeInDays) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights + _rentals[model.RentalId].PreparationTimeInDays) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+                Nights = model.Nights,
+                RentalId = model.RentalId,
+                Start = model.Start.Date
+            };
+            if (!BookingHelper.CheckAvailability(item, _bookings.Values, _rentals[model.RentalId]))
+            {
+                throw new ApplicationException("Not available");
             }
 
 
             var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
-            {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
+            item.Id = key.Id;
+            _bookings.Add(key.Id, item);
 
             return key;
         }
