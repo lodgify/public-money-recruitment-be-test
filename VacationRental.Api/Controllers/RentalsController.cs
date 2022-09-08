@@ -16,6 +16,22 @@ namespace VacationRental.Api.Controllers
             _rentals = rentals;
         }
 
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public RentalViewModel Put(int rentalId, RentalBindingModel model)
+        {
+            if (!_rentals.ContainsKey(rentalId))
+                throw new ApplicationException("Rental not found");
+            if (_rentals[rentalId].Units != model.Units ||
+                _rentals[rentalId].PreparationTimeInDays != model.PreparationTimeInDays)
+            {
+                //TODO Check if update values are okay for existing bookings
+            }
+            _rentals[rentalId].Units = model.Units;
+            _rentals[rentalId].PreparationTimeInDays = model.PreparationTimeInDays;
+
+            return _rentals[rentalId];
+        }
         [HttpGet]
         [Route("{rentalId:int}")]
         public RentalViewModel Get(int rentalId)
