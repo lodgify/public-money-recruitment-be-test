@@ -28,7 +28,7 @@ namespace VacationRental.Api
 
             services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new Info { Title = "Vacation rental information", Version = "v1" }));
             DependencyConfiguration.Inject(services, connectionString);
-           
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
