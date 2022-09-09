@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Core", "Vaca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Common", "VacationRental.Common\VacationRental.Common.csproj", "{299AE071-FAA8-48FC-A026-8359B4D22B9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Repository", "VacationRental.Repository\VacationRental.Repository.csproj", "{BDEC3E39-1F10-4B57-A12F-2DBD3BE3298A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{299AE071-FAA8-48FC-A026-8359B4D22B9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{299AE071-FAA8-48FC-A026-8359B4D22B9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{299AE071-FAA8-48FC-A026-8359B4D22B9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDEC3E39-1F10-4B57-A12F-2DBD3BE3298A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDEC3E39-1F10-4B57-A12F-2DBD3BE3298A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDEC3E39-1F10-4B57-A12F-2DBD3BE3298A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDEC3E39-1F10-4B57-A12F-2DBD3BE3298A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

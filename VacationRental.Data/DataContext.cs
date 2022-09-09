@@ -2,17 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using VacationRental.Data.Entities;
 
 namespace VacationRental.Data
 {
-    public class DataContex: DbContext
+    public class DataContext: DbContext
     {
-		public DataContex(DbContextOptions<DataContex> options)
+		public DataContext(DbContextOptions<DataContext> options)
 			: base(options)
 		{
 		}
 
-		public DataContex() : base()
+		public DataContext() : base()
 		{
 
 		}
@@ -26,5 +27,8 @@ namespace VacationRental.Data
 		{
 			base.OnModelCreating(modelBuilder);
 		}
+
+		public DbSet<Rental> Rentals { get; set; }
+		public DbSet<Booking> Bookings { get; set; }
 	}
 }

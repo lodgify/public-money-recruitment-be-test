@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\VacationRental.Common\VacationRental.Common.csproj" />
     <ProjectReference Include="..\VacationRental.Data\VacationRental.Data.csproj" />
+    <ProjectReference Include="..\VacationRental.Repository\VacationRental.Repository.csproj" />
   </ItemGroup>
 
 </Project>
