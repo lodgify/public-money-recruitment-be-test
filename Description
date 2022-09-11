@@ -6,3 +6,5 @@ After implementing, update rental and introducing PreparationTimeInDays field, I
 - Moved the business logic to service layer from controller.
 - AutoMapper: To convert entities to view model (reverse too) and binding models to view models.
 - Unit tests: I implemented two sample tests to use mocks (Fakeiteasy) and updated existing unit tests with PreparationTimeInDays field.
+
+Note: Since I moved the data to database instead of in memory usage, unit tests should be updated to be used by mocking the data layer but I didn't change that part.
