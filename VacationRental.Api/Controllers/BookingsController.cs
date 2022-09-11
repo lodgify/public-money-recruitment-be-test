@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Helpers;
 using VacationRental.Common.Models;
 using VacationRental.Service.Interfaces;
 
@@ -13,11 +13,13 @@ namespace VacationRental.Api.Controllers
     {
         private readonly IRentalService _rentalService;
         private readonly IBookingService _bookService;
+        private readonly IMapper _mapper;
 
-        public BookingsController(IRentalService rentalService, IBookingService bookingService)
+        public BookingsController(IRentalService rentalService, IBookingService bookingService, IMapper mapper)
         {
             _rentalService = rentalService;
             _bookService = bookingService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -40,19 +42,7 @@ namespace VacationRental.Api.Controllers
             if (rental is null)
                 throw new ApplicationException("Rental not found");
 
-            var item = new BookingViewModel
-            {
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            };
-            var bookings = _bookService.GetAll();
-            if (!BookingHelper.CheckAvailability(item, bookings, rental))
-            {
-                throw new ApplicationException("Not available");
-            }
-
-            item = _bookService.AddOrUpdate(item);
+            var item = _bookService.SaveBooking(rental, _mapper.Map<BookingViewModel>(model));
 
             var key = new ResourceIdViewModel { Id = item.Id };
             return key;
