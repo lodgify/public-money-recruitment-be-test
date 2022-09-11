@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Helpers;
-using VacationRental.Api.Models;
+using VacationRental.Common.Models;
+using VacationRental.Service.Interfaces;
 
 namespace VacationRental.Api.Controllers
 {
@@ -10,25 +11,24 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IRentalService _rentalService;
+        private readonly IBookingService _bookService;
 
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        public BookingsController(IRentalService rentalService, IBookingService bookingService)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _rentalService = rentalService;
+            _bookService = bookingService;
         }
 
         [HttpGet]
         [Route("{bookingId:int}")]
         public BookingViewModel Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
+            var booking = _bookService.Get(bookingId);
+            if (booking is null)
                 throw new ApplicationException("Booking not found");
 
-            return _bookings[bookingId];
+            return booking;
         }
 
         [HttpPost]
@@ -36,7 +36,8 @@ namespace VacationRental.Api.Controllers
         {
             if (model.Nights <= 0)
                 throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
+            var rental = _rentalService.Get(model.RentalId);
+            if (rental is null)
                 throw new ApplicationException("Rental not found");
 
             var item = new BookingViewModel
@@ -45,16 +46,15 @@ namespace VacationRental.Api.Controllers
                 RentalId = model.RentalId,
                 Start = model.Start.Date
             };
-            if (!BookingHelper.CheckAvailability(item, _bookings.Values, _rentals[model.RentalId]))
+            var bookings = _bookService.GetAll();
+            if (!BookingHelper.CheckAvailability(item, bookings, rental))
             {
                 throw new ApplicationException("Not available");
             }
 
+            item = _bookService.AddOrUpdate(item);
 
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-            item.Id = key.Id;
-            _bookings.Add(key.Id, item);
-
+            var key = new ResourceIdViewModel { Id = item.Id };
             return key;
         }
     }

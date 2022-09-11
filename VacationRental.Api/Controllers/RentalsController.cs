@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Helpers;
-using VacationRental.Api.Models;
+using VacationRental.Common.Models;
+using VacationRental.Service.Interfaces;
 
 namespace VacationRental.Api.Controllers
 {
@@ -10,51 +11,58 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IRentalService _rentalService;
+        private readonly IBookingService _bookService;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals, IDictionary<int, BookingViewModel> bookings)
+
+        public RentalsController(IRentalService rentalService, IBookingService bookingService)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _rentalService = rentalService;
+            _bookService = bookingService;
         }
 
         [HttpPut]
         [Route("{rentalId:int}")]
         public RentalViewModel Put(int rentalId, RentalBindingModel model)
         {
-            if (!_rentals.ContainsKey(rentalId))
+            var rental = _rentalService.Get(rentalId);
+            if (rental is null)
                 throw new ApplicationException("Rental not found");
-            if (_rentals[rentalId].Units != model.Units ||
-                _rentals[rentalId].PreparationTimeInDays != model.PreparationTimeInDays && BookingHelper.CheckAvailability(_bookings.Values, _rentals[rentalId]))
+
+            var bookings = _bookService.GetAll();
+
+            if (rental.Units != model.Units ||
+                rental.PreparationTimeInDays != model.PreparationTimeInDays && BookingHelper.CheckAvailability(bookings, rental))
             {
-                _rentals[rentalId].Units = model.Units;
-                _rentals[rentalId].PreparationTimeInDays = model.PreparationTimeInDays;
+                rental.Units = model.Units;
+                rental.PreparationTimeInDays = model.PreparationTimeInDays;
+                _rentalService.AddOrUpdate(rental);
             }
             
-            return _rentals[rentalId];
+            return rental;
         }
         [HttpGet]
         [Route("{rentalId:int}")]
         public RentalViewModel Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
+            var rental = _rentalService.Get(rentalId);
+            if (rental is null)
                 throw new ApplicationException("Rental not found");
 
-            return _rentals[rentalId];
+            return rental;
         }
 
         [HttpPost]
         public ResourceIdViewModel Post(RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
 
-            _rentals.Add(key.Id, new RentalViewModel
+            var item = _rentalService.AddOrUpdate(new RentalViewModel
             {
-                Id = key.Id,
-                Units = model.Units,
-                PreparationTimeInDays = model.PreparationTimeInDays
+                PreparationTimeInDays = model.PreparationTimeInDays,
+                Units = model.Units
             });
+
+            var key = new ResourceIdViewModel { Id = item.Id };
 
             return key;
         }
