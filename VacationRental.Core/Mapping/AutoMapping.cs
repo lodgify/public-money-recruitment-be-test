@@ -13,6 +13,8 @@ namespace VacationRental.Core.Mapping
 		{
 			CreateMap<Rental, RentalViewModel>().ReverseMap();
 			CreateMap<Booking, BookingViewModel>().ReverseMap();
+			CreateMap<RentalBindingModel, RentalViewModel>().ForMember(o => o.Id, opt => opt.Ignore());
+			CreateMap<BookingBindingModel, BookingViewModel>().ForMember(o => o.Id, opt => opt.Ignore());
 		}
 	}
 }

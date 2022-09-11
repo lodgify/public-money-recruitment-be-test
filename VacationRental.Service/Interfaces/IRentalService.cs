@@ -9,5 +9,8 @@ namespace VacationRental.Service.Interfaces
 {
     public interface IRentalService : IBaseService<IBaseRepository<Rental>, RentalViewModel, Rental>
     {
+        ResourceIdViewModel CreateRental(RentalViewModel model);
+
+        bool UpdateRental(int rentalId, ref RentalViewModel model);
     }
 }
