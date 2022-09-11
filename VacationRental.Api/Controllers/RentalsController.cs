@@ -44,6 +44,13 @@ namespace VacationRental.Api.Controllers
             return rental;
         }
 
+        [HttpGet]
+        [Route("getAll")]
+        public IEnumerable<RentalViewModel> GetAll()
+        {
+            return _rentalService.GetAll();
+        }
+
         [HttpPost]
         public ResourceIdViewModel Post(RentalBindingModel model)
         {

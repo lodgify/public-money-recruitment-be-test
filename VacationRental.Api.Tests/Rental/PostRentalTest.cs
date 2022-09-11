@@ -11,21 +11,21 @@ using Xunit;
 
 namespace VacationRental.Api.Tests.Rental
 {
-    public class PostRental
+    public class PostRentalTest
     {
         [Fact]
-        public void PostRentalServiceTest()
+        public void CreateRentalServiceTest_ShouldBeCalledOnce()
         {
             //Arrange
 
             //Act
             var rentalService = A.Fake<IRentalService>();
             var model = A.Fake<RentalViewModel>();
-            rentalService.CreateRental(model);
+            var key = rentalService.CreateRental(model);
             //Assert
             A.CallTo(() => rentalService.CreateRental(A<RentalViewModel>._)).MustHaveHappenedOnceExactly();
+            Assert.NotNull(key);
         }
 
-        
     }
 }
