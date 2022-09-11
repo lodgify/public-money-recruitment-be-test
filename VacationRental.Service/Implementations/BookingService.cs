@@ -39,9 +39,9 @@ namespace VacationRental.Service.Implementations
             for (var i = 0; i < model.Nights; i++)
             {
                 var count = bookings.Count(booking => booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays) > model.Start.Date)
+                        && ((booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays) > model.Start.Date)
                         || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays) < model.Start.AddDays(model.Nights)));
+                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays) < model.Start.AddDays(model.Nights))));
                
                 if (count >= rental.Units)
                     return false;
