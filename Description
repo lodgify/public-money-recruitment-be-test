@@ -8,3 +8,4 @@ After implementing, update rental and introducing PreparationTimeInDays field, I
 - Unit tests: I implemented two sample tests to use mocks (Fakeiteasy) and updated existing unit tests with PreparationTimeInDays field.
 
 Note: Since I moved the data to database instead of in memory usage, unit tests should be updated to be used by mocking the data layer but I didn't change that part.
+Note2: I implemented all of the functionalities in a different feature branch and merged them into dev branch. At the end, I created a single pull request to master branch.
