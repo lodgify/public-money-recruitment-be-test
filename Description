@@ -1,0 +1,8 @@
+After implementing, update rental and introducing PreparationTimeInDays field, I added followings to project:
+
+- Data Layer: I used EntityFramework as ORM and Postgresql as database with code first approach. I moved the existing logic/models without updating them to EF.
+- Repository Layer: introduced BaseRepository and common functions to all entities.
+- Service Layer: I used simple CRUD operations from BaseService and introduced some new functionalities if needed.
+- Moved the business logic to service layer from controller.
+- AutoMapper: To convert entities to view model (reverse too) and binding models to view models.
+- Unit tests: I implemented two sample tests to use mocks (Fakeiteasy) and updated existing unit tests with PreparationTimeInDays field.
