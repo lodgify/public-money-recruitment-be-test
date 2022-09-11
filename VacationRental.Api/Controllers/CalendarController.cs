@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using VacationRental.Common.Models;
+using VacationRental.Service.Interfaces;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,15 +10,13 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class CalendarController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IRentalService _rentalService;
+        private readonly IBookingService _bookService;
 
-        public CalendarController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        public CalendarController(IRentalService rentalService, IBookingService bookingService)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _rentalService = rentalService;
+            _bookService = bookingService;
         }
 
         [HttpGet]
@@ -25,7 +24,8 @@ namespace VacationRental.Api.Controllers
         {
             if (nights < 0)
                 throw new ApplicationException("Nights must be positive");
-            if (!_rentals.ContainsKey(rentalId))
+            var rental = _rentalService.Get(rentalId);
+            if (rental is null)
                 throw new ApplicationException("Rental not found");
 
             var result = new CalendarViewModel 
@@ -33,6 +33,7 @@ namespace VacationRental.Api.Controllers
                 RentalId = rentalId,
                 Dates = new List<CalendarDateViewModel>() 
             };
+            var bookings = _bookService.GetAll();
             for (var i = 0; i < nights; i++)
             {
                 var date = new CalendarDateViewModel
@@ -41,7 +42,7 @@ namespace VacationRental.Api.Controllers
                     Bookings = new List<CalendarBookingViewModel>()
                 };
 
-                foreach (var booking in _bookings.Values)
+                foreach (var booking in bookings)
                 {
                     if (booking.RentalId == rentalId
                         && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)

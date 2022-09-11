@@ -2,13 +2,13 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
+using VacationRental.Common.Models;
 using Xunit;
 
 namespace VacationRental.Api.Tests
 {
     [Collection("Integration")]
-    public class PostRentalTests
+    public class PostRentalTests : IClassFixture<IntegrationFixture>
     {
         private readonly HttpClient _client;
 
@@ -22,7 +22,8 @@ namespace VacationRental.Api.Tests
         {
             var request = new RentalBindingModel
             {
-                Units = 25
+                Units = 25,
+                PreparationTimeInDays = 3
             };
 
             ResourceIdViewModel postResult;
