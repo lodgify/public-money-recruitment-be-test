@@ -41,6 +41,11 @@ public class RentalsController : ControllerBase
     [Route("{rentalId:int}")]
     public async Task<IActionResult> Get(int rentalId, CancellationToken cancellationToken = default)
     {
+        if (rentalId == 0)
+        {
+            ModelState.AddModelError("rentalId", "rentalId is required");
+        }
+
         if (!ModelState.IsValid)
         {
             _logger.LogInformation($"BadRequest at {Request.Path}. Request details: {JsonSerializer.Serialize(rentalId)}");
@@ -72,6 +77,35 @@ public class RentalsController : ControllerBase
         }
 
         var key = _rentalService.Create(_mapper.Map<RentalBindingModel, RentalDto>(model));
+
+        return StatusCode(StatusCodes.Status201Created, key);
+    }
+
+    /// <summary>
+    /// Updates a rental
+    /// </summary>
+    /// <returns>Unique Id that represents a new rental</returns>
+    /// <response code="201">Returns an item identifier</response>
+    /// <response code="400">Returns a validation error message</response>
+    [HttpPut]
+    [HandleExceptions]
+    [Route("{rentalId:int}")]
+    public async Task<IActionResult> Put(RentalBindingModel model, int rentalId, CancellationToken cancellationToken = default)
+    {
+        if (rentalId == 0)
+        {
+            ModelState.AddModelError("rentalId", "rentalId is required");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            _logger.LogInformation($"BadRequest at {Request.Path}. Request details: {JsonSerializer.Serialize(model)}");
+            return BadRequest(ModelState);
+        }
+        var rental = _mapper.Map<RentalBindingModel, RentalDto>(model);
+        rental.Id = rentalId;
+
+        var key = _rentalService.Update(rental);
 
         return StatusCode(StatusCodes.Status201Created, key);
     }

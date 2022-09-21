@@ -41,6 +41,11 @@ public class BookingsController : ControllerBase
     [HandleExceptions]
     public async Task<IActionResult> Get(int bookingId, CancellationToken cancellationToken = default)
     {
+        if (bookingId == 0)
+        {
+            ModelState.AddModelError("rentalId", "rentalId is required");
+        }
+
         if (!ModelState.IsValid)
         {
             _logger.LogInformation($"BadRequest at {Request.Path}. Request details: {JsonSerializer.Serialize(bookingId)}");

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using VacationRental.Data.Model;
+using VacationRental.Data.Model.Enums;
 using VacationRental.Data.Repositories.Abstractions;
 using VacationRental.Services.Abstractions;
 using VacationRental.Services.Dto;
@@ -28,7 +29,7 @@ public class BookingService : IBookingService
     {
         var rental = _rentalRepository.Get(newBooking.RentalId);
 
-        for (var i = 0; i < newBooking.Nights; i++)
+        for (var i = 0; i < newBooking.Nights + rental.PreparationTimeInDays; i++)
         {
             var count =
                 _bookingRepository
@@ -38,10 +39,28 @@ public class BookingService : IBookingService
                         || (booking.Start < newBooking.Start.AddDays(newBooking.Nights) && booking.Start.AddDays(booking.Nights) >= newBooking.Start.AddDays(newBooking.Nights))
                         || (booking.Start > newBooking.Start && booking.Start.AddDays(booking.Nights) < newBooking.Start.AddDays(newBooking.Nights)));
 
-            if (rental is null || count >= rental.Units)
+            if (rental is null || count >= rental.Units || rental.Units < newBooking.Unit)
                 throw new ApplicationException("Rental is not available");
         }
 
-        return _bookingRepository.Add(_mapper.Map<BookingDto, Booking>(newBooking)).Id;
+        var bookingData = _mapper.Map<BookingDto, Booking>(newBooking);
+        bookingData.Type = BookingType.Booking;
+        var newId = _bookingRepository.Add(bookingData).Id;
+
+        if (rental.PreparationTimeInDays > 0)
+        {
+            var serviceData = new Booking
+            {
+                Nights = rental.PreparationTimeInDays,
+                RentalId = rental.Id,
+                Unit = bookingData.Unit,
+                Start = bookingData.Start.AddDays(bookingData.Nights),
+                Type = BookingType.Service
+            };
+
+            _bookingRepository.Add(serviceData);
+        }
+
+        return newId;
     }
 }

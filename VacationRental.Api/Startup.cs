@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,8 +30,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services
-            .AddMvc();
+        services.AddMvc();
 
         services.AddSwaggerGen(
            options => {
@@ -47,7 +47,7 @@ public class Startup
         services.AddTransient<IRentalService, RentalService>();
         services.AddTransient<IBookingService, BookingService>();
         services.AddTransient<ICalendarService, CalendarService>();
-
+        
         services.AddAutoMapper(typeof(ViewModelMappingProfile), typeof(DtoMappingProfile));
         services.AddLogging(
             loggingBuilder => loggingBuilder

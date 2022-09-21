@@ -129,6 +129,12 @@
   <data name="StartIsRequired" xml:space="preserve">
     <value>Start parameter is required</value>
   </data>
+  <data name="UnitIsRequired" xml:space="preserve">
+    <value>Unit number is required</value>
+  </data>
+  <data name="UnitMustBePositive" xml:space="preserve">
+    <value>Unit number must be positive</value>
+  </data>
   <data name="UnitsIsRequired" xml:space="preserve">
     <value>Units is required</value>
   </data>

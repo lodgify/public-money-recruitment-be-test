@@ -1,7 +1,6 @@
 ﻿namespace VacationRental.Api.Models.ViewModels;
 
-public class CalendarBookingViewModel
-{
-    public int Id { get; set; }
+public class CalendarPreparationTimeViewModel
+{ 
     public int Unit { get; set; }
 }

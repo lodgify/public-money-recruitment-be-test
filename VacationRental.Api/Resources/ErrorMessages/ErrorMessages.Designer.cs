@@ -97,6 +97,24 @@ namespace VacationRental.Api.Resources.ErrorMessages {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Unit number is required.
+        /// </summary>
+        public static string UnitIsRequired {
+            get {
+                return ResourceManager.GetString("UnitIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Unit number must be positive.
+        /// </summary>
+        public static string UnitMustBePositive {
+            get {
+                return ResourceManager.GetString("UnitMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Units is required.
         /// </summary>
         public static string UnitsIsRequired {

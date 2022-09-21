@@ -26,4 +26,12 @@ public class BookingBindingModel
     [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "NightsIsRequired")]
     [Range(1, int.MaxValue, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "NightsMustBePositive")]
     public int Nights { get; set; }
+
+    /// <summary>
+    /// Unit number
+    /// </summary>
+    /// <example>1</example>
+    [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "UnitIsRequired")]
+    [Range(1, int.MaxValue, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "UnitMustBePositive")]
+    public int Unit { get; set; }
 }

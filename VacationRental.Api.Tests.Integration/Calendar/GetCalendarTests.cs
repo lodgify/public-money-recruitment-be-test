@@ -31,12 +31,12 @@ public class GetCalendarTests
         Assert.True(postRentalResponse.IsSuccessStatusCode);
         postRentalResult = await postRentalResponse.Content.ReadAsAsync<int>();
 
-
         var postBooking1Request = new BookingBindingModel
         {
             RentalId = postRentalResult,
             Nights = 2,
-            Start = new DateTime(2000, 01, 02)
+            Start = new DateTime(2000, 01, 02),
+            Unit = 1
         };
 
         int postBooking1Result;
@@ -45,12 +45,12 @@ public class GetCalendarTests
         Assert.True(postBooking1Response.IsSuccessStatusCode);
         postBooking1Result = await postBooking1Response.Content.ReadAsAsync<int>();
 
-
         var postBooking2Request = new BookingBindingModel
         {
             RentalId = postRentalResult,
             Nights = 2,
-            Start = new DateTime(2000, 01, 03)
+            Start = new DateTime(2000, 01, 03),
+            Unit = 2
         };
 
         int postBooking2Result;

@@ -36,7 +36,8 @@ public class PostBookingTests
         {
             RentalId = postRentalResult,
             Nights = 3,
-            Start = new DateTime(2001, 01, 01)
+            Start = new DateTime(2001, 01, 01),
+            Unit = 1
         };
 
         int postBookingResult;
@@ -73,7 +74,8 @@ public class PostBookingTests
         {
             RentalId = postRentalResult,
             Nights = 3,
-            Start = new DateTime(2002, 01, 01)
+            Start = new DateTime(2002, 01, 01), 
+            Unit = 1
         };
 
         using var postBooking1Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request);
@@ -83,7 +85,8 @@ public class PostBookingTests
         {
             RentalId = postRentalResult,
             Nights = 1,
-            Start = new DateTime(2002, 01, 02)
+            Start = new DateTime(2002, 01, 02),
+            Unit = 1
         };
 
         using var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request);
