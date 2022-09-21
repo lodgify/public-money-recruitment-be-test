@@ -1,43 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using VacationRental.Api.Models.BindingModels;
+using VacationRental.Api.Models.ViewModels;
+using VacationRental.Middleware.ExceptionHandling;
+using VacationRental.Services.Abstractions;
+using VacationRental.Services.Dto;
 
-namespace VacationRental.Api.Controllers
+namespace VacationRental.Api.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class RentalsController : ControllerBase
 {
-    [Route("api/v1/rentals")]
-    [ApiController]
-    public class RentalsController : ControllerBase
+    private readonly IRentalService _rentalService;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public RentalsController(IRentalService rentalService, IMapper mapper, ILogger<RentalsController> logger)
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        _rentalService = rentalService;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+    /// <summary>
+    /// Searches for a rental item
+    /// </summary>
+    /// <param name="rentalId">Unique Id that represents a rental</param>
+    /// <returns>RentalViewModel item</returns>
+    /// <response code="200 ">Returns a RentalViewModel item</response>
+    /// <response code="400">Returns a validation error message</response>
+    /// <response code="404">If the item is not found</response>
+    [HttpGet]
+    [HandleExceptions]
+    [Route("{rentalId:int}")]
+    public async Task<IActionResult> Get(int rentalId, CancellationToken cancellationToken = default)
+    {
+        if (!ModelState.IsValid)
         {
-            _rentals = rentals;
+            _logger.LogInformation($"BadRequest at {Request.Path}. Request details: {JsonSerializer.Serialize(rentalId)}");
+            return BadRequest(ModelState);
         }
 
-        [HttpGet]
-        [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
-        {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
+        var booking = _rentalService.Get(rentalId);
 
-            return _rentals[rentalId];
+        if (booking is null)
+            return NotFound();
+
+        return Ok(_mapper.Map<RentalDto, RentalViewModel>(booking));
+    }
+
+    /// <summary>
+    /// Creates a new rental
+    /// </summary>
+    /// <returns>Unique Id that represents a new rental</returns>
+    /// <response code="201">Returns an item identifier</response>
+    /// <response code="400">Returns a validation error message</response>
+    [HttpPost]
+    [HandleExceptions]
+    public async Task<IActionResult> Post(RentalBindingModel model, CancellationToken cancellationToken = default)
+    {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogInformation($"BadRequest at {Request.Path}. Request details: {JsonSerializer.Serialize(model)}");
+            return BadRequest(ModelState);
         }
 
-        [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
-        {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+        var key = _rentalService.Create(_mapper.Map<RentalBindingModel, RentalDto>(model));
 
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
-
-            return key;
-        }
+        return StatusCode(StatusCodes.Status201Created, key);
     }
 }
