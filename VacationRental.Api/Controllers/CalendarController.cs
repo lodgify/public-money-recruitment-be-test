@@ -28,11 +28,13 @@ namespace VacationRental.Api.Controllers
             if (!_rentals.ContainsKey(rentalId))
                 throw new ApplicationException("Rental not found");
 
-            var result = new CalendarViewModel 
+            var result = new CalendarViewModel
             {
                 RentalId = rentalId,
-                Dates = new List<CalendarDateViewModel>() 
+                Dates = new List<CalendarDateViewModel>()
             };
+
+            // looks at each night from the start date
             for (var i = 0; i < nights; i++)
             {
                 var date = new CalendarDateViewModel
@@ -43,13 +45,22 @@ namespace VacationRental.Api.Controllers
 
                 foreach (var booking in _bookings.Values)
                 {
+                    // finds the booking
                     if (booking.RentalId == rentalId
+                        // checks if booking started before or on current date  AND  if booking ends after current date 
                         && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
                     {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
+                        // if so, adds the booking ID to the calendar booking viewing model
+                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id, isCleaning = false });
+                    }
+                    // does the same thing by checking if booking is in the afterward cleaning phase
+                    else if (booking.RentalId == rentalId
+                        && booking.Start.AddDays(booking.Nights) <= date.Date && booking.Start.AddDays(booking.Nights + _rentals[booking.RentalId].PreparationTimeInDays) > date.Date)
+                    {
+                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id, isCleaning = true });
                     }
                 }
-
+                // adds all the date bookings to the calendar viewing model
                 result.Dates.Add(date);
             }
 

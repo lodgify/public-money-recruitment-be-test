@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 
@@ -12,9 +14,7 @@ namespace VacationRental.Api.Controllers
         private readonly IDictionary<int, RentalViewModel> _rentals;
         private readonly IDictionary<int, BookingViewModel> _bookings;
 
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        public BookingsController(IDictionary<int, RentalViewModel> rentals, IDictionary<int, BookingViewModel> bookings)
         {
             _rentals = rentals;
             _bookings = bookings;
@@ -34,28 +34,37 @@ namespace VacationRental.Api.Controllers
         public ResourceIdViewModel Post(BookingBindingModel model)
         {
             if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
+                throw new ApplicationException("Nights must be positive");
             if (!_rentals.ContainsKey(model.RentalId))
                 throw new ApplicationException("Rental not found");
 
+            // pre-declaring the days to clean this rental will save space on the below if statement
+            int cleaningDays = _rentals[model.RentalId].PreparationTimeInDays;
+
             for (var i = 0; i < model.Nights; i++)
             {
-                var count = 0;
+                var unavailableRooms = 0;
                 foreach (var booking in _bookings.Values)
                 {
+                    // the boolean logic was set up in a way that didn't require the ID's to match. Moving one parenthesis fixed the issue
+
+                    // checks if IDs match
                     if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
+                        // looks for clashes between the two bookings
+                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights + cleaningDays) > model.Start.Date  // 1S-2S 1E
+                        || (booking.Start < model.Start.AddDays(model.Nights + cleaningDays) && booking.Start.AddDays(booking.Nights + cleaningDays) >= model.Start.AddDays(model.Nights + cleaningDays)) // 1S 2E-1E
+                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights + cleaningDays) < model.Start.AddDays(model.Nights + cleaningDays)))) // 2S 1S 1E 2E
                     {
-                        count++;
+                        // if there is a clash, that room can't be used, so increase the number of unavailable rooms
+                        unavailableRooms++;
                     }
                 }
-                if (count >= _rentals[model.RentalId].Units)
+                // if all rooms are unavailable?
+                if (unavailableRooms >= _rentals[model.RentalId].Units)
                     throw new ApplicationException("Not available");
             }
 
-
+            // add the room to the dictionary and return all of the ID "Keys"
             var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
 
             _bookings.Add(key.Id, new BookingViewModel
