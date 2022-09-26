@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using VacationRental.Repository.Entities.Interfaces;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.Repository.Entities
 {
     [ExcludeFromCodeCoverage]
-    public class BookingViewModel
+    public class BookingEntity : IEntity
     {
         public int Id { get; set; }
         public int RentalId { get; set; }

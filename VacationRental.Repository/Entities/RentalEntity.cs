@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using VacationRental.Repository.Entities.Interfaces;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.Repository.Entities
 {
     [ExcludeFromCodeCoverage]
-    public class RentalViewModel
+    public class RentalEntity : IEntity
     {
         public int Id { get; set; }
         public int Units { get; set; }
