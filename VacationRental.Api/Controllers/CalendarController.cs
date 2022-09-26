@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
@@ -13,17 +12,10 @@ namespace VacationRental.Api.Controllers
     {
         private readonly ICalendarsService _calendarsService;
         private readonly IMapper _mapper;
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
 
-        public CalendarController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings,
-            ICalendarsService calendarsService,
+        public CalendarController(ICalendarsService calendarsService,
             IMapper mapper)
         {
-            _rentals = rentals;
-            _bookings = bookings;
             _calendarsService = calendarsService;
             _mapper = mapper;
         }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 using VacationRental.BusinessLogic.Services.Interfaces;
@@ -14,17 +13,9 @@ namespace VacationRental.Api.Controllers
         private readonly IBookingsService _bookingsService;
         private readonly IMapper _mapper;
 
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
-
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings,
-            IBookingsService bookingsService,
+        public BookingsController(IBookingsService bookingsService,
             IMapper mapper)
         {
-            _rentals = rentals;
-            _bookings = bookings;
             _bookingsService = bookingsService;
             _mapper = mapper;
         }
