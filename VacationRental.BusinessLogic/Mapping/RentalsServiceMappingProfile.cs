@@ -6,12 +6,12 @@ using VacationRental.Repository.Entities;
 namespace VacationRental.BusinessLogic.Mapping
 {
     [ExcludeFromCodeCoverage]
-    public class BookingServiceMappingProfile : Profile
+    public class RentalsServiceMappingProfile : Profile
     {
-        public BookingServiceMappingProfile()
+        public RentalsServiceMappingProfile()
         {
-            CreateMap<BookingEntity, Booking>();
-            CreateMap<CreateBooking, BookingEntity>()
+            CreateMap<RentalEntity, Rental>();
+            CreateMap<CreateRental, RentalEntity>()
                 .ForMember(x => x.Id, opt => opt.Ignore());
         }
     }

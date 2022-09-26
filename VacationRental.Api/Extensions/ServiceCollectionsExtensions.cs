@@ -24,7 +24,7 @@ namespace VacationRental.Api.Extensions
 
         private static void RegisterSolutionAutoMapperProfiles(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(BookingsControllerMappingProfile), typeof(RentalServiceMappingProfile));
+            services.AddAutoMapper(typeof(BookingsControllerMappingProfile), typeof(RentalsServiceMappingProfile));
         }
 
         private static void RegisterSolutionFluentValidators(IServiceCollection services)

@@ -74,7 +74,7 @@ namespace VacationRental.BusinessLogic.Services
 
                 if (count >= rental.Units)
                 {
-                    throw new ApplicationException("Not available");
+                    throw new ApplicationException("Not available.");
                 }
             }
 
