@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.BusinessObjects
 {
     [ExcludeFromCodeCoverage]
-    public class RentalBindingModel
+    public class CreateRental
     {
         public int Units { get; set; }
     }

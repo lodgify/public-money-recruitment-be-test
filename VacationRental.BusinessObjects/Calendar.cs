@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.BusinessObjects
 {
     [ExcludeFromCodeCoverage]
-    public class CalendarViewModel
+    public class Calendar
     {
         public int RentalId { get; set; }
-        public List<CalendarDateViewModel> Dates { get; set; }
+        public List<CalendarDate> Dates { get; set; }
     }
 }

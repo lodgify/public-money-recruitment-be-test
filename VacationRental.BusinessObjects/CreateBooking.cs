@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.BusinessObjects
 {
     [ExcludeFromCodeCoverage]
-    public class BookingBindingModel
+    public class CreateBooking
     {
         public int RentalId { get; set; }
 
