@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using MediatR;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using System.Threading;
+using VacationRental.Application.Rentals.Queries.GetRental;
+using VacationRental.Application.Rentals.Commands.CreateRental;
+using VacationRental.Application.Rentals.Commands.UpdateRental;
+using VacationRental.Application.Rentals.Models;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +15,31 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IMediator _mediator;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(IMediator mediator)
         {
-            _rentals = rentals;
+            _mediator = mediator;
         }
 
-        [HttpGet]
-        [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        [HttpGet("{rentalId}")]
+        public async Task<RentalViewModel> GetRental([FromRoute]GetRentalsQuery query, CancellationToken cancellationToken)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            return _rentals[rentalId];
+            return await _mediator.Send(query, cancellationToken);
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        public async Task<IActionResult> AddRental([FromBody] CreateRentalCommand command, CancellationToken cancellationToken)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+            return Ok(await _mediator.Send(command, cancellationToken));
+        }
 
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
-
-            return key;
+        [HttpPut("{rentalId}")]
+        public async Task<IActionResult> UpdateRental([FromRoute] int rentalId, [FromBody] UpdateRentalCommand command, CancellationToken cancellationToken)
+        {
+            command.SetRentalId(rentalId);
+            return Ok(await _mediator.Send(command, cancellationToken));
         }
     }
 }
+
