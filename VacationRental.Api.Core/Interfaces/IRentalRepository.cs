@@ -6,5 +6,6 @@ namespace VacationRental.Api.Core.Interfaces
     {
         ResourceIdViewModel InsertNewRental(RentalBindingModel rental);
         RentalViewModel GetRental(int rentalId);
+        bool UpdateRental(int rentalId, RentalBindingModel rental);
     }
 }

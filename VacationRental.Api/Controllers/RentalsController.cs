@@ -29,7 +29,6 @@ namespace VacationRental.Api.Controllers
 
             var rental = _rentalService.GetRentalById(rentalId);
             return rental.ToOk(e => e);
-
         }
 
         [HttpPost]
@@ -42,6 +41,20 @@ namespace VacationRental.Api.Controllers
                 return BadRequest(ModelState);
 
             var rental = _rentalService.AddNewRental(model);
+            return rental.ToOk(e => e);
+        }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        public IActionResult Put([Required] int rentalId, [Required] RentalBindingModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var rental = _rentalService.UpdateRentalById(rentalId, model);
             return rental.ToOk(e => e);
         }
     }

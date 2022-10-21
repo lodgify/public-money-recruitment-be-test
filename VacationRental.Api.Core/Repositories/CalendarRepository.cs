@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VacationRental.Api.Core.Helpers;
 using VacationRental.Api.Core.Interfaces;
 using VacationRental.Api.Core.Models;
@@ -26,21 +27,33 @@ namespace VacationRental.Api.Core.Repositories
                 throw new ApplicationException("Rental not found");
 
             var calendaryViewModel = CommonHelper.SetCalendarInstanceForRentalId(rentalId);
+            var rentalUnit = _rentals[rentalId].Units;
+
+            CalendarDateViewModel date;
 
             for (var i = 0; i < nights; i++)
             {
-                var date = start.SetCalendarDateInstanceFromStartDate(i);
+                date = start.SetCalendarDateInstanceFromStartDate(i);
 
-                // TODO: add preparation time here
                 foreach (var booking in _bookings.Values)
                 {
                     if (booking.ValidateCalendarBookingsFromDates(date.Date, rentalId))
                     {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
+                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id, Unit = rentalUnit });
                     }
                 }
-
                 calendaryViewModel.Dates.Add(date);
+            }
+
+            var preparationTimeInDays = _rentals[rentalId].PreparationTimeInDays;
+            if(preparationTimeInDays > 0)
+            {
+                for(var i = 1; i <= preparationTimeInDays; i++)
+                {
+                    date = start.SetCalendarDateInstanceFromStartDate(i);
+                    date.PreparationTimes.Add(new CalendarRentalUnitViewModel { Unit = rentalUnit });
+                    calendaryViewModel.Dates.Add(date);
+                }
             }
 
             return calendaryViewModel;

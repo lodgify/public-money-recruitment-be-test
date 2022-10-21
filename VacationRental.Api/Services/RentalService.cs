@@ -48,5 +48,23 @@ namespace VacationRental.Api.Services
                 return new Result<ResourceIdViewModel>(exception);
             }
         }
+
+        public Result<bool> UpdateRentalById(int rentalId, RentalBindingModel model)
+        {
+            try
+            {
+                _logger.LogInformation($"Update data Id: {rentalId} with values: {model}");
+                var updated = _rentalRepository.UpdateRental(rentalId, model);
+                if(!updated)
+                    return new Result<bool>(new ApplicationException("not modified"));
+
+                return updated;
+            }
+            catch (ApplicationException exception)
+            {
+                _logger.LogError($"An error occurred for method {nameof(UpdateRentalById)} with error:\n\n{exception.Message}");
+                return new Result<bool>(exception);
+            }
+        }
     }
 }

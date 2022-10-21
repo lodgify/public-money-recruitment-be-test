@@ -29,6 +29,11 @@ namespace VacationRental.Api.Extensions
                         return new StatusCodeResult(406);
                     }
 
+                    if (validationException.Message.Contains("not modified"))
+                    {
+                        return new StatusCodeResult(304);
+                    }
+
                     return new BadRequestObjectResult(validationException.Message);
                 }
 
