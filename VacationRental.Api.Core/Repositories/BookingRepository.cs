@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VacationRental.Api.Core.Helpers;
 using VacationRental.Api.Core.Interfaces;
 using VacationRental.Api.Core.Models;
@@ -27,22 +28,24 @@ namespace VacationRental.Api.Core.Repositories
             return _bookings[bookingId];
         }
 
-        public ResourceIdViewModel InsertNewBooking(BookingBindingModel bookingModel)
+        public ResourceIdViewModel InsertNewBooking(BookingBindingModel newBooking)
         {
-            if (bookingModel.Nights <= 0)
+            if (newBooking.Nights <= 0)
                 throw new ApplicationException("Nights must be positive");
-            if (!_rentals.ContainsKey(bookingModel.RentalId))
+            if (!_rentals.ContainsKey(newBooking.RentalId))
                 throw new ApplicationException("Rental not found");
 
-            for (var i = 0; i < bookingModel.Nights; i++)
+            // checks every rental available for the night
+            for (var i = 0; i < newBooking.Nights; i++)
             {
-                var count = 0;
+                var occupiedUnits = 0;
                 foreach (var booking in _bookings.Values)
                 {
-                    if (CommonHelper.ValidateBookingDates(booking, bookingModel))
-                        count++;
+                    if (CommonHelper.CheckOccupancyAvailability(booking, newBooking, _rentals[newBooking.RentalId].PreparationTimeInDays))
+                        occupiedUnits++;
                 }
-                if (count >= _rentals[bookingModel.RentalId].Units)
+
+                if (occupiedUnits >= _rentals[newBooking.RentalId].Units)
                     throw new ApplicationException("Not available");
             }
 
@@ -51,9 +54,9 @@ namespace VacationRental.Api.Core.Repositories
             _bookings.Add(resource.Id, new BookingViewModel
             {
                 Id = resource.Id,
-                Nights = bookingModel.Nights,
-                RentalId = bookingModel.RentalId,
-                Start = bookingModel.Start.Date
+                Nights = newBooking.Nights,
+                RentalId = newBooking.RentalId,
+                Start = newBooking.Start.Date
             });
 
             return resource;

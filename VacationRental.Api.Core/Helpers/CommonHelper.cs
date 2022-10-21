@@ -31,12 +31,13 @@ namespace VacationRental.Api.Core.Helpers
             };
         }
 
-        public static bool ValidateBookingDates(BookingViewModel booking, BookingBindingModel bookingModel)
+        public static bool CheckOccupancyAvailability(BookingViewModel booking, BookingBindingModel newBooking, int preparationDate)
         {
-            return booking.RentalId == bookingModel.RentalId
-                    && (booking.Start <= bookingModel.Start.Date && booking.Start.AddDays(booking.Nights) > bookingModel.Start.Date)
-                    || (booking.Start < bookingModel.Start.AddDays(bookingModel.Nights) && booking.Start.AddDays(booking.Nights) >= bookingModel.Start.AddDays(bookingModel.Nights))
-                        || (booking.Start > bookingModel.Start && booking.Start.AddDays(booking.Nights) < bookingModel.Start.AddDays(bookingModel.Nights));
+            var occupiedDays = newBooking.Nights + preparationDate;
+            var currentBooking = booking.Nights + preparationDate;
+            return  (booking.Start <= newBooking.Start.Date && booking.Start.AddDays(currentBooking) > newBooking.Start.Date)
+                    || (booking.Start < newBooking.Start.AddDays(occupiedDays) && booking.Start.AddDays(currentBooking) >= newBooking.Start.AddDays(occupiedDays))
+                    || (booking.Start > newBooking.Start && booking.Start.AddDays(currentBooking) < newBooking.Start.AddDays(occupiedDays));
         }
 
         public static bool ValidateCalendarBookingsFromDates(this BookingViewModel bookingViewModel, DateTime date, int rentalId)
