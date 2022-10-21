@@ -5,7 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
-using VacationRental.Api.Models;
+using VacationRental.Api.Core.Interfaces;
+using VacationRental.Api.Core.Models;
+using VacationRental.Api.Core.Repositories;
+using VacationRental.Api.Interfaces;
+using VacationRental.Api.Services;
 
 namespace VacationRental.Api
 {
@@ -27,6 +31,16 @@ namespace VacationRental.Api
 
             services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
             services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+
+            // Add repositories to IoC Container
+            services.AddTransient<IBookingRepository, BookingRepository>();
+            services.AddTransient<ICalendarRepository, CalendarRepository>();
+            services.AddTransient<IRentalRepository, RentalRepository>();
+
+            // Add current services to IoC Container
+            services.AddTransient<IBookingService, BookingService>();
+            services.AddTransient<ICalendarService, CalendarService>();
+            services.AddTransient<IRentalService, RentalService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
