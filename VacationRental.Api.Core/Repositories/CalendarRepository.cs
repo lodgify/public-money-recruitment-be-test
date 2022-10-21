@@ -29,11 +29,9 @@ namespace VacationRental.Api.Core.Repositories
             var calendaryViewModel = CommonHelper.SetCalendarInstanceForRentalId(rentalId);
             var rentalUnit = _rentals[rentalId].Units;
 
-            CalendarDateViewModel date;
-
             for (var i = 0; i < nights; i++)
             {
-                date = start.SetCalendarDateInstanceFromStartDate(i);
+                var date = start.SetCalendarDateInstanceFromStartDate(i);
 
                 foreach (var booking in _bookings.Values)
                 {
@@ -44,13 +42,15 @@ namespace VacationRental.Api.Core.Repositories
                 }
                 calendaryViewModel.Dates.Add(date);
             }
-
+            
+            // Set preparation time for rentals
             var preparationTimeInDays = _rentals[rentalId].PreparationTimeInDays;
             if(preparationTimeInDays > 0)
             {
-                for(var i = 1; i <= preparationTimeInDays; i++)
+                for(var i = 0; i < preparationTimeInDays; i++)
                 {
-                    date = start.SetCalendarDateInstanceFromStartDate(i);
+                    var addedDays = i + nights;
+                    var date = start.SetCalendarDateInstanceFromStartDate(addedDays);
                     date.PreparationTimes.Add(new CalendarRentalUnitViewModel { Unit = rentalUnit });
                     calendaryViewModel.Dates.Add(date);
                 }

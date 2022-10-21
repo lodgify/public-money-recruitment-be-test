@@ -21,7 +21,8 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 2
+                Units = 2,
+                PreparationTimeInDays = 2
             };
 
             ResourceIdViewModel postRentalResult;
@@ -66,7 +67,7 @@ namespace VacationRental.Api.Tests
                 var getCalendarResult = await getCalendarResponse.Content.ReadAsAsync<CalendarViewModel>();
                 
                 Assert.Equal(postRentalResult.Id, getCalendarResult.RentalId);
-                Assert.Equal(5, getCalendarResult.Dates.Count);
+                Assert.Equal(7, getCalendarResult.Dates.Count);
 
                 Assert.Equal(new DateTime(2000, 01, 01), getCalendarResult.Dates[0].Date);
                 Assert.Empty(getCalendarResult.Dates[0].Bookings);

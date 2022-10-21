@@ -19,19 +19,24 @@ namespace VacationRental.Api.Extensions
             {
                 if (exception is ApplicationException validationException)
                 {
-                    if (validationException.Message.Contains("not found"))
+                    if (validationException.Message.ToLower().Contains("not found"))
                     {
                         return new NotFoundResult();
                     }
 
-                    if (validationException.Message.Contains("not acceptable"))
+                    if (validationException.Message.ToLower().Contains("not acceptable"))
                     {
                         return new StatusCodeResult(406);
                     }
 
-                    if (validationException.Message.Contains("not modified"))
+                    if (validationException.Message.ToLower().Contains("not modified"))
                     {
                         return new StatusCodeResult(304);
+                    }
+
+                    if(validationException.Message.ToLower().Contains("not available"))
+                    {
+                        throw new ApplicationException("Not available");
                     }
 
                     return new BadRequestObjectResult(validationException.Message);
