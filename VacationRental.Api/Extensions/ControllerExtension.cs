@@ -34,11 +34,6 @@ namespace VacationRental.Api.Extensions
                         return new StatusCodeResult(304);
                     }
 
-                    if(validationException.Message.ToLower().Contains("not available"))
-                    {
-                        throw new ApplicationException("Not available");
-                    }
-
                     return new BadRequestObjectResult(validationException.Message);
                 }
 
