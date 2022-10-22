@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using VacationRental.Api.Core.Models;
+using VacationRental.Api.Infrastructure.Models;
 
 namespace VacationRental.Api.Core.Helpers
 {
     internal static class CommonHelper
     {
-        public static ResourceIdViewModel CreateResourceIdForRentals(this IDictionary<int, RentalViewModel> rentals)
-            => new ResourceIdViewModel { Id = rentals.Keys.Count + 1 };
-
-        public static ResourceIdViewModel CreateResourceIdForBookings(this IDictionary<int, BookingViewModel> bookings)
-            => new ResourceIdViewModel { Id = bookings.Keys.Count + 1 };
-
         public static CalendarViewModel SetCalendarInstanceForRentalId(int rentalId)
         {
             return new CalendarViewModel
@@ -45,5 +40,8 @@ namespace VacationRental.Api.Core.Helpers
             return bookingViewModel.RentalId == rentalId
                         && bookingViewModel.Start <= date.Date && bookingViewModel.Start.AddDays(bookingViewModel.Nights) > date.Date;
         }
+
+        public static BookingViewModel ToBookingDto(this BookingBindingModel bindingModel)
+            => new BookingViewModel { Id = 0, Nights = bindingModel.Nights, RentalId = bindingModel.RentalId, Start = bindingModel.Start };
     }
 }

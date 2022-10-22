@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using VacationRental.Api.Core.Interfaces;
 using VacationRental.Api.Extensions;
-using VacationRental.Api.Interfaces;
 using VacationRental.Api.Models;
 
 namespace VacationRental.Api.Controllers
@@ -21,12 +22,12 @@ namespace VacationRental.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get([FromQuery] CalendarRequestModel request)
+        public async Task<IActionResult> Get([FromQuery] CalendarRequestModel request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = _calendarService.GetCalendar(request);
+            var result = await _calendarService.GetRentalCalendarAsync(request.RentalId, request.Start, request.Nights);
             return result.ToOk(e => e);
         }
     }

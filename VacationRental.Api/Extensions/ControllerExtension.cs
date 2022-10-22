@@ -1,6 +1,7 @@
 ﻿using LanguageExt;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using VacationRental.Api.Core.Helpers.Exceptions;
 
 namespace VacationRental.Api.Extensions
 {
@@ -17,27 +18,19 @@ namespace VacationRental.Api.Extensions
                 return new OkObjectResult(response);
             }, exception =>
             {
-                if (exception is ApplicationException validationException)
-                {
-                    if (validationException.Message.ToLower().Contains("not found"))
-                    {
-                        return new NotFoundResult();
-                    }
+                if(exception is NotFoundException rentalNotFoundException)
+                    return new NotFoundResult();
 
-                    if (validationException.Message.ToLower().Contains("not acceptable"))
-                    {
-                        return new StatusCodeResult(406);
-                    }
+                if (exception is UpdateFailedException rentalUpdateFailException)
+                    return new StatusCodeResult(304); // Not Modified
 
-                    if (validationException.Message.ToLower().Contains("not modified"))
-                    {
-                        return new StatusCodeResult(304);
-                    }
+                if (exception is NotAvailableException notAvailableException)
+                    return new StatusCodeResult(409); // Conflict 
 
+                if(exception is ApplicationException validationException)
                     return new BadRequestObjectResult(validationException.Message);
-                }
 
-                return new StatusCodeResult(500);
+                return new StatusCodeResult(500); // Internal Server Error
             });
         }
     }

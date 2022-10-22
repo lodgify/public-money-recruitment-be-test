@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Core.Models;
+using VacationRental.Api.Infrastructure.Models;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -47,11 +45,11 @@ namespace VacationRental.Api.Tests
                 PreparationTimeInDays = 2
             };
 
-            bool putRentalResult;
+            ResourceIdViewModel putRentalResult;
             using (var putRentalResponse = await _client.PutAsJsonAsync($"/api/v1/rentals/{postRentalResult.Id}", putRentalRequest))
             {
                 Assert.True(putRentalResponse.IsSuccessStatusCode);
-                putRentalResult = await putRentalResponse.Content.ReadAsAsync<bool>();
+                putRentalResult = await putRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
             RentalViewModel getRentalDetailExpected;
@@ -61,6 +59,7 @@ namespace VacationRental.Api.Tests
                 getRentalDetailExpected = await getRentalResponse.Content.ReadAsAsync<RentalViewModel>();
             }
 
+            Assert.True(putRentalResult.Id > 0);
             Assert.NotEqual(getRentalDetailExpected.Units, getRentalDetailActual.Units);
             Assert.NotEqual(getRentalDetailExpected.PreparationTimeInDays, getRentalDetailActual.PreparationTimeInDays);
         }

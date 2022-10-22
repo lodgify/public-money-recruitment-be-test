@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VacationRental.Api.Core.Interfaces;
 using VacationRental.Api.Core.Models;
 using VacationRental.Api.Extensions;
-using VacationRental.Api.Interfaces;
 
 namespace VacationRental.Api.Controllers
 {
@@ -22,12 +23,12 @@ namespace VacationRental.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get([Required] int rentalId)
+        public async Task<IActionResult> Get([Required] int rentalId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var rental = _rentalService.GetRentalById(rentalId);
+            var rental = await _rentalService.GetRentalByIdAsync(rentalId);
             return rental.ToOk(e => e);
         }
 
@@ -35,12 +36,12 @@ namespace VacationRental.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-        public IActionResult Post([Required] RentalBindingModel model)
+        public async Task<IActionResult> Post([Required] RentalBindingModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var rental = _rentalService.AddNewRental(model);
+            var rental = await _rentalService.InsertNewRentalAsync(model);
             return rental.ToOk(e => e);
         }
 
@@ -49,12 +50,12 @@ namespace VacationRental.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status304NotModified)]
-        public IActionResult Put([Required] int rentalId, [Required] RentalBindingModel model)
+        public async Task<IActionResult> Put([Required] int rentalId, [Required] RentalBindingModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var rental = _rentalService.UpdateRentalById(rentalId, model);
+            var rental = await _rentalService.UpdateRentalAsync(rentalId, model);
             return rental.ToOk(e => e);
         }
     }

@@ -1,39 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using LanguageExt;
+using System;
+using System.Threading.Tasks;
 using VacationRental.Api.Core.Helpers;
+using VacationRental.Api.Core.Helpers.Exceptions;
 using VacationRental.Api.Core.Interfaces;
 using VacationRental.Api.Core.Models;
+using VacationRental.Api.Infrastructure.Contracts;
 
 namespace VacationRental.Api.Core.Repositories
 {
-    public class CalendarRepository : ICalendarRepository
+    public class CalendarService : ICalendarService
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IRentalRepository _rentalRepository;
 
-        public CalendarRepository(IDictionary<int, RentalViewModel> rentals,
-                IDictionary<int, BookingViewModel> bookings)
+        public CalendarService(IBookingRepository bookingRepository, IRentalRepository rentalRepository)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _bookingRepository = bookingRepository;
+            _rentalRepository = rentalRepository;
         }
 
-        public CalendarViewModel GetRentalCalendar(int rentalId, DateTime start, int nights)
+        public async Task<Result<CalendarViewModel>> GetRentalCalendarAsync(int rentalId, DateTime start, int nights)
         {
+            var rentals = await _rentalRepository.GetAllAsync();
+            var bookings = await _bookingRepository.GetAllAsync();
+
             if (nights < 0)
-                throw new ApplicationException("Nights must be positive");
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
+                return await Task.FromResult(new Result<CalendarViewModel>(new NegativeArgumentException("Night argument must be positive")));
+            if (!rentals.ContainsKey(rentalId))
+                return await Task.FromResult(new Result<CalendarViewModel>(new NotFoundException("Rental not found", rentalId)));
 
             var calendaryViewModel = CommonHelper.SetCalendarInstanceForRentalId(rentalId);
-            var rentalUnit = _rentals[rentalId].Units;
+            var rentalUnit = rentals[rentalId].Units;
 
             for (var i = 0; i < nights; i++)
             {
                 var date = start.SetCalendarDateInstanceFromStartDate(i);
 
-                foreach (var booking in _bookings.Values)
+                foreach (var booking in bookings.Values)
                 {
                     if (booking.ValidateCalendarBookingsFromDates(date.Date, rentalId))
                     {
@@ -44,7 +48,7 @@ namespace VacationRental.Api.Core.Repositories
             }
             
             // Set preparation time for rentals
-            var preparationTimeInDays = _rentals[rentalId].PreparationTimeInDays;
+            var preparationTimeInDays = rentals[rentalId].PreparationTimeInDays;
             if(preparationTimeInDays > 0)
             {
                 for(var i = 0; i < preparationTimeInDays; i++)
@@ -59,5 +63,4 @@ namespace VacationRental.Api.Core.Repositories
             return calendaryViewModel;
         }
     }
-
 }

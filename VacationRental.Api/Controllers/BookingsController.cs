@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Core.Models;
 using VacationRental.Api.Extensions;
-using VacationRental.Api.Interfaces;
+using VacationRental.Api.Core.Interfaces;
 
 namespace VacationRental.Api.Controllers
 {
@@ -21,12 +22,12 @@ namespace VacationRental.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get([Required] int bookingId)
+        public async Task<IActionResult> Get([Required] int bookingId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var booking = _bookingService.GetBookingById(bookingId);
+            var booking = await _bookingService.GetBookingByIdAsync(bookingId);
             return booking.ToOk(e => e);
         }
 
@@ -34,12 +35,12 @@ namespace VacationRental.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-        public IActionResult Post([Required] BookingBindingModel model)
+        public async Task<IActionResult> Post([Required] BookingBindingModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var booking = _bookingService.AddNewBooking(model);
+            var booking = await _bookingService.InsertNewBookingAsync(model);
             return booking.ToOk(e => e);
         }
     }

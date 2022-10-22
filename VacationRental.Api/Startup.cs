@@ -1,15 +1,11 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
-using VacationRental.Api.Core.Interfaces;
-using VacationRental.Api.Core.Models;
-using VacationRental.Api.Core.Repositories;
-using VacationRental.Api.Interfaces;
-using VacationRental.Api.Services;
+using VacationRental.Api.Core.Containers;
+using VacationRental.Api.Infrastructure.Container;
 
 namespace VacationRental.Api
 {
@@ -28,19 +24,10 @@ namespace VacationRental.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new Info { Title = "Vacation rental information", Version = "v1" }));
-
-            services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
-            services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
-
-            // Add repositories to IoC Container
-            services.AddTransient<IBookingRepository, BookingRepository>();
-            services.AddTransient<ICalendarRepository, CalendarRepository>();
-            services.AddTransient<IRentalRepository, RentalRepository>();
-
-            // Add current services to IoC Container
-            services.AddTransient<IBookingService, BookingService>();
-            services.AddTransient<ICalendarService, CalendarService>();
-            services.AddTransient<IRentalService, RentalService>();
+            
+            // Add Infrastructure and Core services
+            services.AddInfrastructureServices();
+            services.AddCoreServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
