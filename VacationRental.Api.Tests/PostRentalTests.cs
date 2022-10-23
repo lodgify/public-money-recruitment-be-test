@@ -1,8 +1,7 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
+using VacationRental.Api.Core.Models;
+using VacationRental.Api.Infrastructure.Models;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -22,7 +21,8 @@ namespace VacationRental.Api.Tests
         {
             var request = new RentalBindingModel
             {
-                Units = 25
+                Unit = 25,
+                PreparationTimeInDays = 2
             };
 
             ResourceIdViewModel postResult;
@@ -37,7 +37,7 @@ namespace VacationRental.Api.Tests
                 Assert.True(getResponse.IsSuccessStatusCode);
 
                 var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(request.Units, getResult.Units);
+                Assert.Equal(request.Unit, getResult.Units);
             }
         }
     }

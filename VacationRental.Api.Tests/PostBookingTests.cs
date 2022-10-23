@@ -1,8 +1,9 @@
-﻿using System;
-using System.Net;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
+using VacationRental.Api.Core.Models;
+using VacationRental.Api.Infrastructure.Models;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -22,7 +23,8 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 4
+                Unit = 4,
+                PreparationTimeInDays = 2
             };
 
             ResourceIdViewModel postRentalResult;
@@ -62,7 +64,8 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 1
+                Unit = 1,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postRentalResult;
@@ -91,12 +94,12 @@ namespace VacationRental.Api.Tests
                 Start = new DateTime(2002, 01, 02)
             };
 
-            await Assert.ThrowsAsync<ApplicationException>(async () =>
+            using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
             {
-                using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
-                {
-                }
-            });
+                Assert.False(postBooking2Response.IsSuccessStatusCode);
+                var result = postBooking2Response.StatusCode;
+                Assert.Equal(StatusCodes.Status409Conflict, (int)result);
+            }
         }
     }
 }
