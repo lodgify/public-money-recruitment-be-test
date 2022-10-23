@@ -27,6 +27,9 @@ namespace VacationRental.Api.Extensions
                 if (exception is NotAvailableException notAvailableException)
                     return new StatusCodeResult(409); // Conflict 
 
+                if (exception is RentOverlappedException rentOverlappedException)
+                    return new BadRequestObjectResult(rentOverlappedException.Message);
+
                 if(exception is ApplicationException validationException)
                     return new BadRequestObjectResult(validationException.Message);
 

@@ -20,7 +20,16 @@ namespace VacationRental.Api.Infrastructure.Repositories
             => await Task.FromResult(_rentals);
 
         public async Task<RentalViewModel> GetByIdAsync(int id)
-            => await Task.FromResult(_rentals[id]);
+        {
+            try
+            {
+                return await Task.FromResult(_rentals[id]);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         public async Task<ResourceIdViewModel> AddAsync(RentalViewModel entityViewModel)
         {

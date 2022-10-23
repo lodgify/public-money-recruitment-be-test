@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VacationRental.Api.Core.Models;
 using VacationRental.Api.Infrastructure.Models;
 
@@ -29,8 +30,8 @@ namespace VacationRental.Api.Core.Helpers
         public static bool CheckOccupancyAvailability(BookingViewModel booking, BookingBindingModel newBooking, int preparationDate)
         {
             var occupiedDays = newBooking.Nights + preparationDate;
-            var currentBooking = booking.Nights + preparationDate;
-            return  (booking.Start <= newBooking.Start.Date && booking.Start.AddDays(currentBooking) > newBooking.Start.Date)
+            var currentBooking = booking.Nights + preparationDate -1;
+            return  booking.Start <= newBooking.Start.Date && booking.Start.AddDays(currentBooking) > newBooking.Start.Date
                     || (booking.Start < newBooking.Start.AddDays(occupiedDays) && booking.Start.AddDays(currentBooking) >= newBooking.Start.AddDays(occupiedDays))
                     || (booking.Start > newBooking.Start && booking.Start.AddDays(currentBooking) < newBooking.Start.AddDays(occupiedDays));
         }
@@ -43,5 +44,20 @@ namespace VacationRental.Api.Core.Helpers
 
         public static BookingViewModel ToBookingDto(this BookingBindingModel bindingModel)
             => new BookingViewModel { Id = 0, Nights = bindingModel.Nights, RentalId = bindingModel.RentalId, Start = bindingModel.Start };
+
+        public static bool CheckConflictBookings(IEnumerable<BookingViewModel> bookings, RentalViewModel rental, RentalBindingModel rentalBindingModel)
+        {
+            foreach (var booking in bookings)
+            {
+                var newTotalBookedDays = booking.Start.AddDays(booking.Nights + rentalBindingModel.PreparationTimeInDays);
+                var currentTotalBookedDays = booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays);
+                if (newTotalBookedDays > currentTotalBookedDays)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

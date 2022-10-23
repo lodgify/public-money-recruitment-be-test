@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using VacationRental.Api.Infrastructure.Commons;
 using VacationRental.Api.Infrastructure.Contracts;
 using VacationRental.Api.Infrastructure.Models;
+using System;
 
 namespace VacationRental.Api.Infrastructure.Repositories
 {
@@ -19,7 +21,16 @@ namespace VacationRental.Api.Infrastructure.Repositories
             => await Task.FromResult(_bookings);
 
         public async Task<BookingViewModel> GetByIdAsync(int id)
-            => await Task.FromResult(_bookings[id]);
+        {
+            try
+            {
+                return await Task.FromResult(_bookings[id]);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         public async Task<ResourceIdViewModel> AddAsync(BookingViewModel entityViewModel)
         {
@@ -28,6 +39,9 @@ namespace VacationRental.Api.Infrastructure.Repositories
             _bookings.Add(resource.Id, entityViewModel);
             return await Task.FromResult(resource);
         }
+
+        public async Task<IEnumerable<BookingViewModel>> GetAllByRentalIdAsync(int rentalId)
+            => await Task.FromResult(_bookings.Values.Where(e => e.RentalId.Equals(rentalId)));
 
         #region Unused methods
         public Task<ResourceIdViewModel> UpdateAsync(BookingViewModel rentalViewModel)
