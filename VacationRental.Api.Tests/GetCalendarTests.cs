@@ -22,7 +22,7 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 2,
+                Unit = 2,
                 PreparationTimeInDays = 2
             };
 

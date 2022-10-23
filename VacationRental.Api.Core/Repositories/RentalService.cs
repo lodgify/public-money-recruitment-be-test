@@ -37,7 +37,7 @@ namespace VacationRental.Api.Core.Repositories
 
             return await _rentalRepository.AddAsync(new RentalViewModel
             {
-                Units = model.Units,
+                Units = model.Unit,
                 PreparationTimeInDays = model.PreparationTimeInDays
             });
         }
@@ -54,7 +54,7 @@ namespace VacationRental.Api.Core.Repositories
             if(rental == null)
                 return await Task.FromResult(new Result<ResourceIdViewModel>(new NotFoundException("Rental not found", rentalId)));
 
-            rental.Units = rentalModel.Units;
+            rental.Units = rentalModel.Unit;
             rental.PreparationTimeInDays = rentalModel.PreparationTimeInDays;
 
             var updated = await _rentalRepository.UpdateAsync(rental);
