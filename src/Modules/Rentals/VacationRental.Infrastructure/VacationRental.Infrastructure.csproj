@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\VacationRental.Shared.Infrastructure\VacationRental.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\VacationRental.Application\VacationRental.Application.csproj" />
+  </ItemGroup>
+
+</Project>

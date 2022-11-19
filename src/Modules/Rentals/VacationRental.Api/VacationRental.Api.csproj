@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\VacationRental.Shared.Infrastructure\VacationRental.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\VacationRental.Infrastructure\VacationRental.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
