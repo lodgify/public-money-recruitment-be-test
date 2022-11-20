@@ -2,7 +2,7 @@
 
 namespace VacationRental.Application.Commands
 {
-    internal record AddRental(int Units) : ICommand<int>
+    internal record AddRental(int Units, int PreparationTimeInDays) : ICommand<int>
     {
     }
 }

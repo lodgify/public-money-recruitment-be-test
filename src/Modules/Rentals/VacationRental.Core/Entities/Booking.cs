@@ -6,17 +6,26 @@ namespace VacationRental.Core.Entities
     {
         public int Id { get; private set; }
 
-        public int RentalId { get; private set; }
-
         public DateTime Start { get; private set; }
 
         public int Nights { get; private set; }
 
-        public Booking(int rentalId, DateTime start, int nights)
+        public int Unit { get; private set; }
+
+        public int RentalId { get; private set; }
+
+        public Rental Rental { get; private set; }
+
+        private Booking()
         {
-            RentalId = rentalId;
-            Start = start;
+        }
+
+        public Booking(Rental rental, DateTime start, int nights, int units)
+        {
+            Rental = rental;
+            Start = start.Date;
             Nights = nights;
+            Unit = units;
         }
 
         public void SetBookingId(int bookingId)
@@ -24,12 +33,37 @@ namespace VacationRental.Core.Entities
             Id = bookingId;
         }
 
-        public bool IsNotAvailable(DateTime start, int nights)
+        public bool IsNotAvailable(DateTime date, int specifiedNights)
         {
-            return (Start <= start && Start.AddDays(Nights) > start.Date)
-                   || (Start < start.AddDays(nights) && Start.AddDays(Nights) >= start.AddDays(nights))
-                   || (Start > start && Start.AddDays(Nights) < start.AddDays(nights));
+            var totalBooked = specifiedNights + Rental.PreparationTimeInDays;
+
+            return (Start <= date.Date && PreparationEndDate > date.Date)
+                || (Start < date.AddDays(totalBooked) && PreparationEndDate >= date.AddDays(totalBooked))
+                || (Start > date && PreparationEndDate < date.AddDays(totalBooked));
         }
 
+        public BookingStatus GetStatus(DateTime date)
+        {
+            if (IsBooked(date)) return BookingStatus.Booked;
+            else if (IsPreparationPeriod(date)) return BookingStatus.Preparation;
+
+            return BookingStatus.Free;
+        }
+
+        private bool IsBooked(DateTime date)
+        {
+            return Start <= date.Date && BookingEndDate > date.Date;
+        }
+
+        private bool IsPreparationPeriod(DateTime date)
+        {
+            return PreparationStartDate <= date.Date && PreparationEndDate > date.Date;
+        }
+
+        private DateTime BookingEndDate => Start.AddDays(Nights);
+
+        private DateTime PreparationStartDate => BookingEndDate;
+
+        private DateTime PreparationEndDate => Start.AddDays(Nights + Rental.PreparationTimeInDays);
     }
 }

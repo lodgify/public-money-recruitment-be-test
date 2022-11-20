@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using VacationRental.Core.Entities;
 
 namespace VacationRental.Core.Repositories
 {
     internal interface IBookingRepository
     {
-        Booking Get(int id);
-        IReadOnlyCollection<Booking> GetAll(int rentalId);
-        int Add(Booking booking);
+        Task<Booking> GetAsync(int id);
+        Task AddAsync(Booking booking);
     }
 }

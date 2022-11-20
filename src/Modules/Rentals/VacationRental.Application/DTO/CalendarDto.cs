@@ -13,10 +13,17 @@ namespace VacationRental.Application.DTO
     {
         public DateTime Date { get; set; }
         public List<CalendarBookingDto> Bookings { get; set; }
+        public List<CalendarPreparationTimeDto> PreparationTimes { get; set; }
     }
 
     internal class CalendarBookingDto
     {
         public int Id { get; set; }
+        public int Unit { get; set; }
+    }
+
+    internal class CalendarPreparationTimeDto
+    {
+        public int Unit { get; set; }
     }
 }

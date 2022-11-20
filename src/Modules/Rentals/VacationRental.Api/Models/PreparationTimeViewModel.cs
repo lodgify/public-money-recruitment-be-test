@@ -1,8 +1,7 @@
 ﻿namespace VacationRental.Api.Models
 {
-    public class CalendarBookingViewModel
+    public class PreparationTimeViewModel
     {
-        public int Id { get; set; }
         public int Unit { get; set; }
     }
 }

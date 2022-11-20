@@ -15,12 +15,13 @@ namespace VacationRental.Application.Commands.Handlers
             _rentalRepository = rentalRepository;
         }
 
-        public Task<int> HandleAsync(AddRental command, CancellationToken cancellationToken = default)
+        public async Task<int> HandleAsync(AddRental command, CancellationToken cancellationToken = default)
         {
-            var rental = new Rental(command.Units);
-            var rentalId = _rentalRepository.Add(rental);
+            var rental = new Rental(command.Units, command.PreparationTimeInDays);
 
-            return Task.FromResult(rentalId);
+            await _rentalRepository.AddAsync(rental);
+
+            return rental.Id;
         }
     }
 }

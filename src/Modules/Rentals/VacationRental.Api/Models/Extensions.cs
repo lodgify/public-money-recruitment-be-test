@@ -28,6 +28,11 @@ namespace VacationRental.Api.Models
                 Bookings = d.Bookings.Select(b => new CalendarBookingViewModel
                 {
                     Id = b.Id,
+                    Unit = b.Unit
+                }).ToList(),
+                PreparationTimes = d.PreparationTimes.Select(pt => new PreparationTimeViewModel
+                {
+                    Unit = pt.Unit
                 }).ToList()
             }).ToList()
         };

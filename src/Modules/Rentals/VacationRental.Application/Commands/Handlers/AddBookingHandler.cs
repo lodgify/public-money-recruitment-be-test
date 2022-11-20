@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using VacationRental.Application.Exceptions;
-using VacationRental.Core.Entities;
+using VacationRental.Core.Exceptions;
 using VacationRental.Core.Repositories;
 using VacationRental.Shared.Abstractions.Commands;
 
@@ -22,35 +20,18 @@ namespace VacationRental.Application.Commands.Handlers
         public async Task<int> HandleAsync(AddBooking command, CancellationToken cancellationToken = default)
         {
             if (command.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
+                throw new BookingInvalidNightsException();
 
-            var rental = _rentalRepository.Get(command.RentalId);
+            var rental = await _rentalRepository.GetAsync(command.RentalId);
 
             if (rental is null)
             {
-                throw new RentalNotFoundException(command.RentalId);
+                throw new RentalNotExistException(command.RentalId);
             }
 
-            var rentalBookings = _bookingRepository.GetAll(command.RentalId);
+            var newBooking = rental.CreateBooking(command.Start, command.Nights);
 
-            for (var i = 0; i < command.Nights; i++)
-            {
-                var count = 0;
-                foreach (var booking in rentalBookings)
-                {
-                    if (booking.IsNotAvailable(command.Start, command.Nights))
-                    {
-                        count++;
-                    }
-                }
-
-                if (count >= rental.Units)
-                    throw new BookingNotAvailableException();
-            }
-
-            var newBooking = new Booking(command.RentalId, command.Start, command.Nights);
-
-            _bookingRepository.Add(newBooking);
+            await _bookingRepository.AddAsync(newBooking);
 
             return newBooking.Id;
         }

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using VacationRental.Application.DTO;
-using VacationRental.Application.Exceptions;
+using VacationRental.Core.Exceptions;
 using VacationRental.Core.Repositories;
 using VacationRental.Shared.Abstractions.Queries;
 
@@ -16,16 +16,16 @@ namespace VacationRental.Application.Queries.Handlers
             _rentalRepository = rentalRepository;
         }
 
-        public Task<RentalDto> HandleAsync(GetRental query, CancellationToken cancellationToken = default)
+        public async Task<RentalDto> HandleAsync(GetRental query, CancellationToken cancellationToken = default)
         {
-            var rental = _rentalRepository.Get(query.Id);
+            var rental = await _rentalRepository.GetAsync(query.Id);
 
             if (rental is null)
             {
-                throw new RentalNotFoundException(query.Id);
+                throw new RentalNotExistException(query.Id);
             }
 
-            return Task.FromResult(rental.AsDto());
+            return rental.AsDto();
         }
     }
 }

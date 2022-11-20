@@ -1,10 +1,11 @@
-﻿using VacationRental.Core.Entities;
+﻿using System.Threading.Tasks;
+using VacationRental.Core.Entities;
 
 namespace VacationRental.Core.Repositories
 {
     internal interface IRentalRepository
     {
-        Rental Get(int id);
-        int Add(Rental rental);
+        Task<Rental> GetAsync(int id);
+        Task AddAsync(Rental rental);
     }
 }

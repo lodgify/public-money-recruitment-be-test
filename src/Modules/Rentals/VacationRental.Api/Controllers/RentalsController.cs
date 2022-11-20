@@ -30,7 +30,7 @@ namespace VacationRental.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ResourceIdViewModel>> PostAsync(RentalBindingModel model)
         {
-            var id = await _dispatcher.SendAsync(new AddRental(model.Units));
+            var id = await _dispatcher.SendAsync(new AddRental(model.Units, model.PreparationTimeInDays));
 
             return Ok(new ResourceIdViewModel { Id = id });
         }

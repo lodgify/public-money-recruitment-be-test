@@ -9,6 +9,9 @@ using VacationRental.Shared.Abstractions.Commands;
 using VacationRental.Shared.Abstractions.Queries;
 
 [assembly: InternalsVisibleTo("VacationRental.Api")]
+[assembly: InternalsVisibleTo("VacationRental.Tests.Unit")]
+[assembly: InternalsVisibleTo("VacationRental.Tests.Integration")]
+[assembly: InternalsVisibleTo("VacationRental.Tests.EndToEnd")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 namespace VacationRental.Application

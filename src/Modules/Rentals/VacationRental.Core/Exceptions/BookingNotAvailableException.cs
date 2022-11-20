@@ -1,6 +1,6 @@
 ﻿using VacationRental.Shared.Abstractions.Exceptions;
 
-namespace VacationRental.Application.Exceptions
+namespace VacationRental.Core.Exceptions
 {
     internal class BookingNotAvailableException : DomainException
     {
