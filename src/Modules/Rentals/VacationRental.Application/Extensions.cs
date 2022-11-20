@@ -23,8 +23,10 @@ namespace VacationRental.Application
             services.AddScoped<IQueryHandler<GetRental, RentalDto>, GetRentalHandler>();
             services.AddScoped<IQueryHandler<GetBooking, BookingDto>, GetBookingHandler>();
             services.AddScoped<IQueryHandler<GetCalendar, CalendarDto>, GetCalendarHandler>();
+
             services.AddScoped<ICommandHandler<AddRental, int>, AddRentalHandler>();
             services.AddScoped<ICommandHandler<AddBooking, int>, AddBookingHandler>();
+            services.AddScoped<ICommandHandler<UpdateRental, int>, UpdateRentalHandler>();
 
             return services;
         }

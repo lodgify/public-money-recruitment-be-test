@@ -4,11 +4,15 @@ using VacationRental.Core.Entities;
 
 namespace VacationRental.Infrastructure.EF.Configurations
 {
-    internal class BookingConfiguration : IEntityTypeConfiguration<Booking>
+    internal class RentalConfiguration : IEntityTypeConfiguration<Rental>
     {
-        public void Configure(EntityTypeBuilder<Booking> builder)
+        public void Configure(EntityTypeBuilder<Rental> builder)
         {
             builder.Property(r => r.Id).ValueGeneratedOnAdd();
+
+            builder
+                .HasMany(r => r.Bookings)
+                .WithOne(b => b.Rental);
         }
     }
 }

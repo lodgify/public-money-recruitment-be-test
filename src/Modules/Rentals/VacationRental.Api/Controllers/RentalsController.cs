@@ -34,5 +34,14 @@ namespace VacationRental.Api.Controllers
 
             return Ok(new ResourceIdViewModel { Id = id });
         }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public async Task<ActionResult<ResourceIdViewModel>> PutAsync(int rentalId, RentalBindingModel model)
+        {
+            var id = await _dispatcher.SendAsync(new UpdateRental(rentalId, model.Units, model.PreparationTimeInDays));
+
+            return Ok(new ResourceIdViewModel { Id = id });
+        }
     }
 }

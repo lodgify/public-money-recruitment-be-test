@@ -23,7 +23,7 @@ namespace VacationRental.Tests.Integration.Commands
             var command = new AddRental(units, preparationTimeInDays);
             var newRentalId = await Act(command);
 
-            var newRental = await _rentalRepository.GetAsync(newRentalId);
+            var newRental = await _rentalRepository.GetAsync(newRentalId, CancellationToken.None);
             newRental.Units.ShouldBe(units);
             newRental.PreparationTimeInDays.ShouldBe(preparationTimeInDays);
             newRental.Bookings.ShouldBeEmpty();

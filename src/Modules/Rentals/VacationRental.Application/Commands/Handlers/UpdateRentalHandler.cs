@@ -6,20 +6,17 @@ using VacationRental.Shared.Abstractions.Commands;
 
 namespace VacationRental.Application.Commands.Handlers
 {
-    internal class AddBookingHandler : ICommandHandler<AddBooking, int>
+    internal class UpdateRentalHandler : ICommandHandler<UpdateRental, int>
     {
         private readonly IRentalRepository _rentalRepository;
 
-        public AddBookingHandler(IRentalRepository rentalRepository)
+        public UpdateRentalHandler(IRentalRepository rentalRepository)
         {
             _rentalRepository = rentalRepository;
         }
 
-        public async Task<int> HandleAsync(AddBooking command, CancellationToken cancellationToken = default)
+        public async Task<int> HandleAsync(UpdateRental command, CancellationToken cancellationToken = default)
         {
-            if (command.Nights <= 0)
-                throw new BookingInvalidNightsException();
-
             var rental = await _rentalRepository.GetAsync(command.RentalId, cancellationToken);
 
             if (rental is null)
@@ -27,12 +24,11 @@ namespace VacationRental.Application.Commands.Handlers
                 throw new RentalNotExistException(command.RentalId);
             }
 
-            var newBooking = rental.CreateBooking(command.Start, command.Nights);
-            rental.AddBooking(newBooking);
+            rental.Update(command.Units, command.PreparationTimeInDays);
 
             await _rentalRepository.UpdateAsync(rental, cancellationToken);
 
-            return newBooking.Id;
+            return rental.Id;
         }
     }
 }

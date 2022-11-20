@@ -19,7 +19,7 @@ namespace VacationRental.Application.Commands.Handlers
         {
             var rental = new Rental(command.Units, command.PreparationTimeInDays);
 
-            await _rentalRepository.AddAsync(rental);
+            await _rentalRepository.AddAsync(rental, cancellationToken);
 
             return rental.Id;
         }

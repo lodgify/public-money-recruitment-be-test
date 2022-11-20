@@ -20,7 +20,7 @@ namespace VacationRental.Tests.Unit.Commands
             var command = new AddRental(units, preparationTimeInDays);
             await Act(command);
 
-            _rentalRepository.Verify(x => x.AddAsync(It.Is<Rental>(r => r.Units == units && r.PreparationTimeInDays == preparationTimeInDays)), Times.Once);
+            _rentalRepository.Verify(x => x.AddAsync(It.Is<Rental>(r => r.Units == units && r.PreparationTimeInDays == preparationTimeInDays), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         private readonly Mock<IRentalRepository> _rentalRepository;

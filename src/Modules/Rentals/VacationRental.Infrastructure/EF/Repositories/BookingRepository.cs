@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading;
 using System.Threading.Tasks;
 using VacationRental.Core.Entities;
 using VacationRental.Core.Repositories;
@@ -16,22 +17,11 @@ namespace VacationRental.Infrastructure.EF.Repositories
             _bookings = _context.Bookings;
         }
 
-        public async Task AddAsync(Booking booking)
-        {
-            var latest = await _bookings.LastOrDefaultAsync();
-            var newBookingId = latest is null ? 1 : latest.Id + 1;
-
-            booking.SetBookingId(newBookingId);
-
-            await _bookings.AddAsync(booking);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<Booking> GetAsync(int id)
+        public async Task<Booking> GetAsync(int id, CancellationToken cancellationToken)
         {
             return await _bookings
                 .Include(x => x.Rental)
-                .SingleOrDefaultAsync(x => x.Id == id);
+                .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
     }
 }

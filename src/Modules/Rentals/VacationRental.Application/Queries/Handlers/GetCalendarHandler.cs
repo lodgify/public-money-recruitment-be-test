@@ -23,7 +23,7 @@ namespace VacationRental.Application.Queries.Handlers
             if (query.Nights < 0)
                 throw new BookingInvalidNightsException();
 
-            var rental = await _rentalRepository.GetAsync(query.RentalId);
+            var rental = await _rentalRepository.GetAsync(query.RentalId, cancellationToken);
 
             if (rental is null)
             {

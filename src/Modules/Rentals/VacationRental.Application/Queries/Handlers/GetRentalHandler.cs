@@ -18,7 +18,7 @@ namespace VacationRental.Application.Queries.Handlers
 
         public async Task<RentalDto> HandleAsync(GetRental query, CancellationToken cancellationToken = default)
         {
-            var rental = await _rentalRepository.GetAsync(query.Id);
+            var rental = await _rentalRepository.GetAsync(query.Id, cancellationToken);
 
             if (rental is null)
             {

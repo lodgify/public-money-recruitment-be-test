@@ -33,7 +33,6 @@ namespace VacationRental.Tests.EndToEnd.Controllers
             await _dbContext.Context.Database.EnsureCreatedAsync();
 
             var rental = new Rental(_fixture.Create<int>(), _fixture.Create<int>());
-            rental.SetRentalId(_fixture.Create<int>());
             await _dbContext.Context.Rentals.AddAsync(rental);
             await _dbContext.Context.SaveChangesAsync();
 

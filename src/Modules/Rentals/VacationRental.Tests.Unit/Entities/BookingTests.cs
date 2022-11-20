@@ -23,16 +23,17 @@ namespace VacationRental.Tests.Unit.Entities
         [InlineData(2, 3, BookingStatus.Free)]
         public void given_valid_booking_isBooked_should_return_valid_status_for_specified_date(int nights, int addDays, BookingStatus expectedStatus)
         {
+            const int preparationTimeInDays = 1;
             var now = DateTime.UtcNow;
-            var booking = CreateBooking(now, nights);
+            var booking = CreateBooking(now, nights, preparationTimeInDays);
 
             var status = booking.GetStatus(now.AddDays(addDays));
 
             status.ShouldBe(expectedStatus);
         }
 
-        private Booking CreateBooking(DateTime date, int nights) => new(CreateRental(), date, nights, _fixture.Create<int>());
+        private Booking CreateBooking(DateTime date, int nights, int preparationTimeInDays) => new(CreateRental(preparationTimeInDays), date, nights, _fixture.Create<int>());
 
-        private Rental CreateRental() => new(_fixture.Create<int>(), 1);
+        private Rental CreateRental(int preparationTimeInDays) => new(_fixture.Create<int>(), preparationTimeInDays);
     }
 }

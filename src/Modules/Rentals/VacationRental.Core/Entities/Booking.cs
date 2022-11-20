@@ -28,14 +28,9 @@ namespace VacationRental.Core.Entities
             Unit = units;
         }
 
-        public void SetBookingId(int bookingId)
+        public bool IsNotAvailable(DateTime date, int specifiedNights, int preparationTimeInDays)
         {
-            Id = bookingId;
-        }
-
-        public bool IsNotAvailable(DateTime date, int specifiedNights)
-        {
-            var totalBooked = specifiedNights + Rental.PreparationTimeInDays;
+            var totalBooked = specifiedNights + preparationTimeInDays;
 
             return (Start <= date.Date && PreparationEndDate > date.Date)
                 || (Start < date.AddDays(totalBooked) && PreparationEndDate >= date.AddDays(totalBooked))
