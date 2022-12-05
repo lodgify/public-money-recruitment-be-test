@@ -1,44 +1,55 @@
-﻿using System;
+﻿using AutoFixture;
+using AutoMapper;
+using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
+using VacationRental.Business;
+using VacationRental.Business.BusinessLogic;
+using VacationRental.Infrastructure.Models;
+using VacationRental.Infrastructure.Repositories;
 using Xunit;
 
 namespace VacationRental.Api.Tests
 {
-    [Collection("Integration")]
     public class PostRentalTests
     {
-        private readonly HttpClient _client;
-
-        public PostRentalTests(IntegrationFixture fixture)
+        private IFixture _fixture;
+        private RentalBusinessLogic _rentalBusinessLogic;
+        public PostRentalTests()
         {
-            _client = fixture.Client;
+            _fixture = new Fixture();
+
+            _fixture.Inject<IRentalRepository>(new RentalRepository(new Dictionary<int, Rental>()));
+            _fixture.Inject<IBookingsRepository>(new BookingRepository(new Dictionary<int, Booking>()));
+
+            var mappingConfig = new MapperConfiguration(
+                    mc => mc.AddProfile(new MappingProfile()));
+            var mapper = mappingConfig.CreateMapper();
+
+            _fixture.Inject(mapper);
+            _rentalBusinessLogic = _fixture.Create<RentalBusinessLogic>();
         }
 
         [Fact]
-        public async Task GivenCompleteRequest_WhenPostRental_ThenAGetReturnsTheCreatedRental()
+        public void GivenCompleteRequest_WhenPostRental_ThenAGetReturnsTheCreatedRental()
         {
-            var request = new RentalBindingModel
-            {
-                Units = 25
-            };
+            // Arrange
+            var request = _fixture.Build<RentalBindingModel>()
+                .With(m => m.Units, 25)
+                .With(m => m.PreparationTimeInDays, 3)
+                .Create();
 
-            ResourceIdViewModel postResult;
-            using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
-            {
-                Assert.True(postResponse.IsSuccessStatusCode);
-                postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
-            }
+            int rentalId = _rentalBusinessLogic.AddRental(request);
 
-            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
-            {
-                Assert.True(getResponse.IsSuccessStatusCode);
+            // Act
+            var rental = _rentalBusinessLogic.GetRental(rentalId);
 
-                var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(request.Units, getResult.Units);
-            }
+            // Assert
+            Assert.Equal(request.Units, rental.Units);
+            Assert.Equal(request.PreparationTimeInDays, rental.PreparationTimeInDays);
         }
     }
 }
