@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Api.Services;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +9,47 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IRentalService _rentalService;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(IRentalService rentalService)
         {
-            _rentals = rentals;
+            _rentalService = rentalService;
         }
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BookingViewModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
+            var result = _rentalService.Get(rentalId);
 
-            return _rentals[rentalId];
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResourceIdViewModel))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Post(RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
+            var result = _rentalService.Create(model);
 
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
+            if (result <= 0)
+                return StatusCode(500);
 
-            return key;
+            return Ok(result);
+        }
+
+        [HttpPut]
+        [Route("{rentalId:int}")]
+        public IActionResult Put(int rentalId, RentalBindingModel model)
+        {
+            _rentalService.Update(rentalId, model);
+
+            return NoContent();
         }
     }
 }
