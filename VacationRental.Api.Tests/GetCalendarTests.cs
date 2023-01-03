@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
+using VacationRental.Domain.Primitives;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -20,51 +21,51 @@ namespace VacationRental.Api.Tests
         [Fact]
         public async Task GivenCompleteRequest_WhenGetCalendar_ThenAGetReturnsTheCalculatedCalendar()
         {
-            var postRentalRequest = new RentalBindingModel
+            var postRentalRequest = new RentalDto
             {
                 Units = 2
             };
 
-            ResourceIdViewModel postRentalResult;
+            ResourceId postRentalResult;
             using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
             {
                 Assert.True(postRentalResponse.IsSuccessStatusCode);
-                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceId>();
             }
 
-            var postBooking1Request = new BookingBindingModel
+            var postBooking1Request = new BookingRequest
             {
                  RentalId = postRentalResult.Id,
                  Nights = 2,
                  Start = new DateTime(2000, 01, 02)
             };
 
-            ResourceIdViewModel postBooking1Result;
+            ResourceId postBooking1Result;
             using (var postBooking1Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking1Request))
             {
                 Assert.True(postBooking1Response.IsSuccessStatusCode);
-                postBooking1Result = await postBooking1Response.Content.ReadAsAsync<ResourceIdViewModel>();
+                postBooking1Result = await postBooking1Response.Content.ReadAsAsync<ResourceId>();
             }
 
-            var postBooking2Request = new BookingBindingModel
+            var postBooking2Request = new BookingRequest
             {
                 RentalId = postRentalResult.Id,
                 Nights = 2,
                 Start = new DateTime(2000, 01, 03)
             };
 
-            ResourceIdViewModel postBooking2Result;
+            ResourceId postBooking2Result;
             using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
             {
                 Assert.True(postBooking2Response.IsSuccessStatusCode);
-                postBooking2Result = await postBooking2Response.Content.ReadAsAsync<ResourceIdViewModel>();
+                postBooking2Result = await postBooking2Response.Content.ReadAsAsync<ResourceId>();
             }
 
             using (var getCalendarResponse = await _client.GetAsync($"/api/v1/calendar?rentalId={postRentalResult.Id}&start=2000-01-01&nights=5"))
             {
                 Assert.True(getCalendarResponse.IsSuccessStatusCode);
 
-                var getCalendarResult = await getCalendarResponse.Content.ReadAsAsync<CalendarViewModel>();
+                var getCalendarResult = await getCalendarResponse.Content.ReadAsAsync<CalendarDto>();
                 
                 Assert.Equal(postRentalResult.Id, getCalendarResult.RentalId);
                 Assert.Equal(5, getCalendarResult.Dates.Count);
