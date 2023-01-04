@@ -15,9 +15,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{4D7028CA-40B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{71263E24-7CAB-40D5-9C0F-6B15BB1F46C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Application", "VacationRental.Application\VacationRental.Application.csproj", "{D5E77AFE-4F75-4FE9-A170-142941F476D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Application", "VacationRental.Application\VacationRental.Application.csproj", "{D5E77AFE-4F75-4FE9-A170-142941F476D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Domain", "VacationRental.Domain\VacationRental.Domain.csproj", "{EA0B07C4-D51C-4371-8A81-D3B5BC37EB0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Domain", "VacationRental.Domain\VacationRental.Domain.csproj", "{EA0B07C4-D51C-4371-8A81-D3B5BC37EB0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{EE4E69B3-250F-42AB-B4F5-E2744E59A783}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Infrastructure", "VacationRental.Infrastructure\VacationRental.Infrastructure.csproj", "{0BB161AC-7D68-4271-88B4-218D635A28F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,10 @@ Global
 		{EA0B07C4-D51C-4371-8A81-D3B5BC37EB0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA0B07C4-D51C-4371-8A81-D3B5BC37EB0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA0B07C4-D51C-4371-8A81-D3B5BC37EB0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BB161AC-7D68-4271-88B4-218D635A28F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB161AC-7D68-4271-88B4-218D635A28F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB161AC-7D68-4271-88B4-218D635A28F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB161AC-7D68-4271-88B4-218D635A28F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +60,8 @@ Global
 		{71263E24-7CAB-40D5-9C0F-6B15BB1F46C6} = {95D3F653-BFAB-4D70-83F2-D2A078998D1A}
 		{D5E77AFE-4F75-4FE9-A170-142941F476D0} = {71263E24-7CAB-40D5-9C0F-6B15BB1F46C6}
 		{EA0B07C4-D51C-4371-8A81-D3B5BC37EB0D} = {71263E24-7CAB-40D5-9C0F-6B15BB1F46C6}
+		{EE4E69B3-250F-42AB-B4F5-E2744E59A783} = {95D3F653-BFAB-4D70-83F2-D2A078998D1A}
+		{0BB161AC-7D68-4271-88B4-218D635A28F9} = {EE4E69B3-250F-42AB-B4F5-E2744E59A783}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A5319C5-4F21-41BF-B8A7-BC45868FEC89}

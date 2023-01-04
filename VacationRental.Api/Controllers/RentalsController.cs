@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using VacationRental.Domain.Entities;
 using VacationRental.Domain.Messages.Rentals;
 using VacationRental.Domain.Models.Rentals;
-using VacationRental.Domain.Primitives;
 
 namespace VacationRental.Api.Controllers
-{    
+{
     [ApiController]
     [Route("api/v1/[controller]")]
     public class RentalsController : ControllerBase
@@ -33,7 +33,7 @@ namespace VacationRental.Api.Controllers
         {
             var key = new ResourceId { Id = _rentals.Keys.Count + 1 };
 
-            _rentals.Add(key.Id, Rental.Create(key.Id, model.Units, model.PreparationTimeInDays));
+            _rentals.Add(key.Id, Rental.Create(model.Units, model.PreparationTimeInDays));
 
             return key;
         }

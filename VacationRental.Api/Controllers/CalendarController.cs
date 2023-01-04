@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using VacationRental.Api.Models;
+using VacationRental.Domain.Aggregates.Calendars;
+using VacationRental.Domain.Messages.Calendars;
 using VacationRental.Domain.Models.Bookings;
-using VacationRental.Domain.Models.Calendars;
 using VacationRental.Domain.Models.Rentals;
 
 namespace VacationRental.Api.Controllers
-{    
+{
     [ApiController]
     [Route("api/v1/[controller]")]
     public class CalendarController : ControllerBase
@@ -56,7 +57,7 @@ namespace VacationRental.Api.Controllers
                     if (booking.RentalId == rentalId
                         && booking.Start <= date.Date && endBookingDate > date.Date)
                     {
-                        date.Bookings.Add(CalendarBooking.Create(booking.Id, booking.Units));
+                        date.Bookings.Add(CalendarBooking.Create(booking.Units));
                     }
 
                     if (booking.RentalId == rentalId

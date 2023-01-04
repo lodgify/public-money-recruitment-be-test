@@ -39,9 +39,9 @@ namespace VacationRental.Application.Features.Bookings.Commands.CreateBooking
             if (numberOfBookings >= rental.Units)
                 throw new ApplicationException("Not available");
 
-            var bookingId = _bookingsRepository.Add(Booking.Create(request.RentalId, request.Start, request.Nights, request.Units)).Id;
-            var resourceId = new ResourceId { Id= bookingId };
-            return Task.FromResult(resourceId);
+            var bookingId = _bookingsRepository.Add(Booking.Create(request.RentalId, request.Start, request.Nights, request.Units)).Id;            
+            
+            return Task.FromResult(new ResourceId { Id = bookingId });
         }
 
         private int CalculateNumberOfBookings(IReadOnlyList<Booking> bookings, DateTime start, int nights)

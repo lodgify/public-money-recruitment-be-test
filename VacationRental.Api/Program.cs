@@ -3,8 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
-using VacationRental.Api.Models;
+using VacationRental.Domain.Messages.Bookings;
 using VacationRental.Domain.Models.Bookings;
+using VacationRental.Domain.Models.Rentals;
 
 var builder = WebApplication.CreateBuilder(args);
 {

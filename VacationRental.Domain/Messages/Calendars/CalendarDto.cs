@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using VacationRental.Domain.Aggregates.Calendars;
 
 namespace VacationRental.Domain.Messages.Calendars
 {

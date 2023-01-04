@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-using VacationRental.Application.Contracts.Persistence;
-using VacationRental.Domain.Entities;
+﻿using VacationRental.Application.Contracts.Persistence;
 using VacationRental.Domain.Primitives;
 
 namespace VacationRental.Infrastructure.Repositories
