@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using VacationRental.Domain.Messages.Rentals;
+using VacationRental.Domain.Models.Rentals;
 using VacationRental.Domain.Primitives;
 
 namespace VacationRental.Api.Controllers
-{
-    [Route("api/v1/rentals")]
+{    
     [ApiController]
+    [Route("api/v1/[controller]")]
     public class RentalsController : ControllerBase
     {
         private readonly IDictionary<int, Rental> _rentals;
@@ -19,7 +20,7 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public Rental Get(int rentalId)
+        public RentalDto Get(int rentalId)
         {
             if (!_rentals.ContainsKey(rentalId))
                 throw new ApplicationException("Rental not found");
@@ -28,15 +29,11 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpPost]
-        public ResourceId Post(RentalDto model)
+        public ResourceId Post(RentalRequest model)
         {
             var key = new ResourceId { Id = _rentals.Keys.Count + 1 };
 
-            _rentals.Add(key.Id, new Rental
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
+            _rentals.Add(key.Id, Rental.Create(key.Id, model.Units, model.PreparationTimeInDays));
 
             return key;
         }

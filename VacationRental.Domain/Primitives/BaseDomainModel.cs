@@ -1,6 +1,12 @@
 ﻿namespace VacationRental.Domain.Primitives
 {
-    public class BaseDomainModel : ResourceId
+    public abstract class BaseDomainModel
     {
+        public int Id { get; set; } 
+
+        protected BaseDomainModel()
+        {
+            Id = 0;
+        }
     }
 }

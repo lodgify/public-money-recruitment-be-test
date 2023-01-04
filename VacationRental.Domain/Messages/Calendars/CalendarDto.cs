@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.Domain.Messages.Calendars
 {
     public class CalendarDto
     {

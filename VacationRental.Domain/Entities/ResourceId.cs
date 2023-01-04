@@ -1,4 +1,4 @@
-﻿namespace VacationRental.Domain.Primitives
+﻿namespace VacationRental.Domain.Entities
 {
     public class ResourceId
     {

@@ -1,4 +1,4 @@
-﻿namespace VacationRental.Domain.Models
+﻿namespace VacationRental.Domain.Messages.Rentals
 {
     public class RentalRequest
     {

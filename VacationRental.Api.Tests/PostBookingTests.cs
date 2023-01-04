@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
+using VacationRental.Domain.Models.Bookings;
 using VacationRental.Domain.Primitives;
 using Xunit;
 

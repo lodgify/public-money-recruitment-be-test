@@ -1,19 +1,22 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Domain.Models.Bookings;
+using VacationRental.Domain.Models.Calendars;
+using VacationRental.Domain.Models.Rentals;
 
 namespace VacationRental.Api.Controllers
-{
-    [Route("api/v1/calendar")]
+{    
     [ApiController]
+    [Route("api/v1/[controller]")]
     public class CalendarController : ControllerBase
     {
-        private readonly IDictionary<int, RentalDto> _rentals;
+        private readonly IDictionary<int, Rental> _rentals;
         private readonly IDictionary<int, Booking> _bookings;
 
         public CalendarController(
-            IDictionary<int, RentalDto> rentals,
+            IDictionary<int, Rental> rentals,
             IDictionary<int, Booking> bookings)
         {
             _rentals = rentals;
@@ -33,20 +36,36 @@ namespace VacationRental.Api.Controllers
                 RentalId = rentalId,
                 Dates = new List<CalendarDate>() 
             };
+             
+            var rental = _rentals[rentalId];
+            var endBookingDate = DateTime.Now;
+
             for (var i = 0; i < nights; i++)
             {
                 var date = new CalendarDate
                 {
                     Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBooking>()
+                    Bookings = new List<CalendarBooking>(),
+                    PreparationTimes = new List<PreparationTime>()
                 };
 
                 foreach (var booking in _bookings.Values)
                 {
+                    endBookingDate = booking.Start.AddDays(booking.Nights);
+
                     if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
+                        && booking.Start <= date.Date && endBookingDate > date.Date)
                     {
-                        date.Bookings.Add(new CalendarBooking { Id = booking.Id });
+                        date.Bookings.Add(CalendarBooking.Create(booking.Id, booking.Units));
+                    }
+
+                    if (booking.RentalId == rentalId
+                        && endBookingDate < date.Date && endBookingDate.AddDays(rental.PreparationTimeInDays) >= date.Date)
+                    {
+                        date.PreparationTimes.Add(new PreparationTime
+                        {
+                            Unit = booking.Units
+                        });
                     }
                 }
 

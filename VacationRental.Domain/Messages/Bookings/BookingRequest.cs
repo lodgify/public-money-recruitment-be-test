@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VacationRental.Api.Models
+namespace VacationRental.Domain.Messages.Bookings
 {
     public class BookingRequest
     {
@@ -14,5 +14,7 @@ namespace VacationRental.Api.Models
 
         private DateTime _startIgnoreTime;
         public int Nights { get; set; }
+        public int Units { get; set; }
+
     }
 }
