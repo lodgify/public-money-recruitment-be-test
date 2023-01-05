@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using VacationRental.Application.Features.Bookings.Commands.CreateBooking;
+using VacationRental.Application.Features.Bookings.Queries.GetBooking;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Messages.Bookings;
 
@@ -22,10 +23,8 @@ namespace VacationRental.Api.Controllers
         [Route("{bookingId:int}")]
         public BookingDto Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
-
-            return _bookings[bookingId];
+            var query = new GetBookingQuery(bookingId);
+            return _mediator.Send(query).Result;
         }
 
         [HttpPost]

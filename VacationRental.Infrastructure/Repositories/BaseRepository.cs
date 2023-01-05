@@ -7,6 +7,14 @@ namespace VacationRental.Infrastructure.Repositories
     {
         public readonly IDictionary<int, T> _persistence;
 
+        public BaseRepository()
+        {
+            if (this._persistence == null) 
+            { 
+                _persistence = new Dictionary<int, T>();
+            }
+        }
+
         public T Add(T entity)
         {
             entity.Id = _persistence.Keys.Count + 1;            

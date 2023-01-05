@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
 using VacationRental.Domain.Entities;
+using VacationRental.Domain.Messages.Bookings;
 using VacationRental.Domain.Messages.Calendars;
+using VacationRental.Domain.Messages.Rentals;
 using Xunit;
 
 namespace VacationRental.Api.Tests

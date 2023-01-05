@@ -8,7 +8,7 @@ namespace VacationRental.Application.Features.Bookings.Commands.CreateBooking
         public CreateBookingCommandValidator()
         {
             RuleFor(c => c.Nights)
-                .LessThan(0)
+                .GreaterThanOrEqualTo(0)
                 .WithMessage("Nigts must be positive");
         }
 

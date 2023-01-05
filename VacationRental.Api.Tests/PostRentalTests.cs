@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.Models;
 using VacationRental.Domain.Entities;
+using VacationRental.Domain.Messages.Rentals;
 using VacationRental.Domain.Models.Rentals;
 using Xunit;
 
