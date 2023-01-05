@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using VacationRental.Api.Models;
 using VacationRental.Application.Contracts.Mediatr;
 using VacationRental.Application.Contracts.Persistence;
@@ -22,7 +20,7 @@ namespace VacationRental.Application.Features.Calendars.Queries.GetRentalCalenda
             _bookingRepository = bookingRepository;            
         }
 
-        public Task<CalendarDto> Handle(GetRentalCalendarQuery request, CancellationToken cancellationToken)
+        public CalendarDto Handle(GetRentalCalendarQuery request)
         {
             var rental = _rentalRepository.GetById(request.RentalId);
             if (rental == null)
@@ -54,7 +52,7 @@ namespace VacationRental.Application.Features.Calendars.Queries.GetRentalCalenda
                 result.Dates.Add(date);
             }
 
-            return Task.FromResult(result);
+            return result;
         }
     }
 }

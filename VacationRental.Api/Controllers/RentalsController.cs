@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using VacationRental.Application.Features.Rentals.Commands.CreateRental;
 using VacationRental.Application.Features.Rentals.Queries.GetRental;
 using VacationRental.Domain.Entities;
@@ -20,17 +21,17 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalDto Get(int rentalId)
+        public async Task<RentalDto> Get(int rentalId)
         {
             var query = new GetRentalQuery(rentalId);
-            return _mediator.Send(query).Result;
+            return await _mediator.Send(query);
         }
 
         [HttpPost]
-        public ResourceId Post(RentalRequest model)
+        public async Task<ResourceId> Post(RentalRequest model)
         {
             var command = new CreateRentalCommand(model.Units, model.PreparationTimeInDays);            
-            return _mediator.Send(command).Result;
+            return await _mediator.Send(command);
         }
     }
 }

@@ -1,12 +1,9 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using VacationRental.Api.Models;
+using System.Threading.Tasks;
+using VacationRental.Application.Contracts.Persistence;
 using VacationRental.Application.Features.Calendars.Queries.GetRentalCalendar;
-using VacationRental.Domain.Aggregates.Calendars;
 using VacationRental.Domain.Messages.Calendars;
-using VacationRental.Domain.Models.Bookings;
 using VacationRental.Domain.Models.Rentals;
 
 namespace VacationRental.Api.Controllers
@@ -15,18 +12,21 @@ namespace VacationRental.Api.Controllers
     [Route("api/v1/[controller]")]
     public class CalendarController : ControllerBase
     {
-        private readonly IMediator _mediator;        
+        private readonly IRepository<Rental> _rentalRepository;
+        private readonly IBookingRepository _bookingRepository;
 
-        public CalendarController(IMediator mediator)
+        public CalendarController(IRepository<Rental> rentalRepository, IBookingRepository bookingRepository)
         {
-            _mediator = mediator;
+            _rentalRepository = rentalRepository;
+            _bookingRepository = bookingRepository;
         }
 
         [HttpGet]
-        public CalendarDto Get(int rentalId, DateTime start, int nights)
+        public async Task<CalendarDto> Get(int rentalId, DateTime start, int nights)
         {
             var query = new GetRentalCalendarQuery(rentalId, start, nights);
-            return _mediator.Send(query).Result;
+            var handler = new GetRentalCalendarQueryHandler(_rentalRepository, _bookingRepository);
+            return handler.Handle(query);
         }
     }
 }

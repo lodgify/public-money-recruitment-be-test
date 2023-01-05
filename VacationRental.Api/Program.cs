@@ -2,15 +2,18 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using VacationRental.Api.Middlewares;
 using VacationRental.Application;
 using VacationRental.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    builder.Services.AddControllers();
+    builder.Services.AddMvcCore().AddApiExplorer();    
+    builder.Services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new OpenApiInfo { Title = "Vacation rental information", Version = "v1" }));
+    builder.Services.AddTransient<ExceptionHandlingMiddleware>();
     builder.Services.AddApplicationServices();
     builder.Services.AddInfrastructureServices();
-    builder.Services.AddMvcCore().AddApiExplorer();
-    builder.Services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new OpenApiInfo { Title = "Vacation rental information", Version = "v1" }));
     builder.Services.AddCors(opt =>
     {
         opt.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
@@ -21,6 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseCors("CorsPolicy");
     app.MapControllers();
 
@@ -28,7 +32,7 @@ var app = builder.Build();
     {
         app.UseDeveloperExceptionPage();        
     }
-    app.UseHttpsRedirection();
+
     app.UseSwagger();
     app.UseSwaggerUI(opts => opts.SwaggerEndpoint("/swagger/v1/swagger.json", "VacationRental v1"));
 }

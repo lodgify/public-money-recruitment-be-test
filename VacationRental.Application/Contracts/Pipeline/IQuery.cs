@@ -2,7 +2,7 @@
 
 namespace VacationRental.Application.Contracts.Mediatr
 {
-    public interface ICommand<out TResponse> : IRequest<TResponse>
+    public interface IQuery<out TResponse> where TResponse : class
     {
     }
 }
