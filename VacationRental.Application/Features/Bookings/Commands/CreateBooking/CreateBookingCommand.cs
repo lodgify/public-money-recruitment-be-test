@@ -1,5 +1,5 @@
 ﻿using System;
-using VacationRental.Application.Contracts.Mediatr;
+using VacationRental.Application.Contracts.Pipeline;
 using VacationRental.Domain.Entities;
 
 namespace VacationRental.Application.Features.Bookings.Commands.CreateBooking

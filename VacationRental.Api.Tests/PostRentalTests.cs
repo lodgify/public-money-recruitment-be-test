@@ -39,7 +39,7 @@ namespace VacationRental.Api.Tests
             {
                 Assert.True(getResponse.IsSuccessStatusCode);
 
-                var getResult = await getResponse.Content.ReadAsAsync<Rental>();
+                var getResult = await getResponse.Content.ReadAsAsync<RentalDto>();
                 Assert.Equal(request.Units, getResult.Units);
             }
         }

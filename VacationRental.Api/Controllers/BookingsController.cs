@@ -1,7 +1,6 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using VacationRental.Application.Contracts.Pipeline;
+using VacationRental.Application.Exceptions;
 using VacationRental.Application.Features.Bookings.Commands.CreateBooking;
 using VacationRental.Application.Features.Bookings.Queries.GetBooking;
 using VacationRental.Domain.Entities;
@@ -13,26 +12,42 @@ namespace VacationRental.Api.Controllers
     [Route("api/v1/[controller]")]
     public class BookingsController : ControllerBase
     {
-        private IMediator _mediator;
-        
-        public BookingsController(IMediator mediator)
+        private readonly IQueryHandler<GetBookingQuery, BookingDto> _getBookingQueryHandler;
+        private readonly ICommandHandler<CreateBookingCommand, ResourceId> _createBookingCommandHandler;
+        private readonly FluentValidation.IValidator<GetBookingQuery> _getBookingQueryValidator;
+        private readonly FluentValidation.IValidator<CreateBookingCommand> _createBookingCommandValidator;
+
+        public BookingsController(IQueryHandler<GetBookingQuery, BookingDto> getBookingQueryHandler, ICommandHandler<CreateBookingCommand, ResourceId> createBookingCommandHandler, FluentValidation.IValidator<GetBookingQuery> getBookingQueryValidator, FluentValidation.IValidator<CreateBookingCommand> createBookingCommandValidator)
         {
-            _mediator = mediator;
+            _getBookingQueryHandler = getBookingQueryHandler;
+            _createBookingCommandHandler = createBookingCommandHandler;
+            _getBookingQueryValidator = getBookingQueryValidator;
+            _createBookingCommandValidator = createBookingCommandValidator;
         }
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public async Task<BookingDto> Get(int bookingId)
+        public BookingDto Get(int bookingId)
         {
             var query = new GetBookingQuery(bookingId);
-            return await _mediator.Send(query);
+            var result = _getBookingQueryValidator.Validate(query);
+            if (!result.IsValid)
+            {
+                throw new ValidationException(result.Errors);
+            }
+            return _getBookingQueryHandler.Handle(query);
         }
 
         [HttpPost]
-        public async Task<ResourceId> Post(BookingRequest request)
+        public ResourceId Post(BookingRequest request)
         {
             var command = new CreateBookingCommand(request.RentalId, request.Start, request.Nights, request.Units);
-            return await _mediator.Send(command);
+            var result = _createBookingCommandValidator.Validate(command);
+            if (!result.IsValid)
+            {
+                throw new ValidationException(result.Errors);
+            }
+            return _createBookingCommandHandler.Handle(command);
         }
     }
 }

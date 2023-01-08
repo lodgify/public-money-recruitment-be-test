@@ -1,6 +1,6 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using VacationRental.Application.Contracts.Pipeline;
+using VacationRental.Application.Exceptions;
 using VacationRental.Application.Features.Rentals.Commands.CreateRental;
 using VacationRental.Application.Features.Rentals.Queries.GetRental;
 using VacationRental.Domain.Entities;
@@ -12,26 +12,44 @@ namespace VacationRental.Api.Controllers
     [Route("api/v1/rentals")]
     public class RentalsController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IQueryHandler<GetRentalQuery, RentalDto> _getRentalQueryHandler;
+        private readonly ICommandHandler<CreateRentalCommand, ResourceId> _createRentalCommandHandler;
+        private readonly FluentValidation.IValidator<GetRentalQuery> _getRentalQueryValidator;
+        private readonly FluentValidation.IValidator<CreateRentalCommand> _createRentalCommandValidator;
 
-        public RentalsController(IMediator mediator)
+        public RentalsController(IQueryHandler<GetRentalQuery, RentalDto> getRentalQueryHandler, ICommandHandler<CreateRentalCommand, ResourceId> createRentalCommandHandler, FluentValidation.IValidator<GetRentalQuery> getRentalQueryValidator, FluentValidation.IValidator<CreateRentalCommand> createRentalCommandValidator)
         {
-            _mediator = mediator;
+            _getRentalQueryHandler = getRentalQueryHandler;
+            _createRentalCommandHandler = createRentalCommandHandler;
+            _getRentalQueryValidator = getRentalQueryValidator;
+            _createRentalCommandValidator = createRentalCommandValidator;
         }
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public async Task<RentalDto> Get(int rentalId)
+        public RentalDto Get(int rentalId)
         {
             var query = new GetRentalQuery(rentalId);
-            return await _mediator.Send(query);
+            var result = _getRentalQueryValidator.Validate(query);
+            if (!result.IsValid)
+            {
+                throw new ValidationException(result.Errors);
+            }
+
+            return _getRentalQueryHandler.Handle(query);
         }
 
         [HttpPost]
-        public async Task<ResourceId> Post(RentalRequest model)
+        public ResourceId Post(RentalRequest model)
         {
-            var command = new CreateRentalCommand(model.Units, model.PreparationTimeInDays);            
-            return await _mediator.Send(command);
+            var command = new CreateRentalCommand(model.Units, model.PreparationTimeInDays);
+            var result = _createRentalCommandValidator.Validate(command);
+            if (!result.IsValid)
+            {
+                throw new ValidationException(result.Errors);
+            }
+
+            return _createRentalCommandHandler.Handle(command);
         }
     }
 }

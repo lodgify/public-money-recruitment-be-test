@@ -1,4 +1,4 @@
-﻿using VacationRental.Application.Contracts.Mediatr;
+﻿using VacationRental.Application.Contracts.Pipeline;
 using VacationRental.Domain.Messages.Bookings;
 
 namespace VacationRental.Application.Features.Bookings.Queries.GetBooking

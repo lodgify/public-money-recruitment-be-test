@@ -38,7 +38,8 @@ namespace VacationRental.Api.Tests
             {
                  RentalId = postRentalResult.Id,
                  Nights = 2,
-                 Start = new DateTime(2000, 01, 02)
+                 Start = new DateTime(2000, 01, 02),
+                 Units = 1
             };
 
             ResourceId postBooking1Result;
@@ -52,7 +53,8 @@ namespace VacationRental.Api.Tests
             {
                 RentalId = postRentalResult.Id,
                 Nights = 2,
-                Start = new DateTime(2000, 01, 03)
+                Start = new DateTime(2000, 01, 03),
+                Units = 1
             };
 
             ResourceId postBooking2Result;

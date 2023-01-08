@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using VacationRental.Api.Models;
-using VacationRental.Application.Contracts.Mediatr;
 using VacationRental.Application.Contracts.Persistence;
+using VacationRental.Application.Contracts.Pipeline;
+using VacationRental.Application.Exceptions;
 using VacationRental.Domain.Aggregates.Calendars;
+using VacationRental.Domain.Errors;
 using VacationRental.Domain.Messages.Calendars;
 using VacationRental.Domain.Models.Rentals;
 
@@ -21,10 +23,10 @@ namespace VacationRental.Application.Features.Calendars.Queries.GetRentalCalenda
         }
 
         public CalendarDto Handle(GetRentalCalendarQuery request)
-        {
+        {            
             var rental = _rentalRepository.GetById(request.RentalId);
             if (rental == null)
-                throw new ApplicationException("Rental not found");
+                throw new NotFoundException(RentalError.RentalNotFound);
 
             var result = new CalendarDto
             {
@@ -53,6 +55,6 @@ namespace VacationRental.Application.Features.Calendars.Queries.GetRentalCalenda
             }
 
             return result;
-        }
+        }                
     }
 }

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using VacationRental.Application.Contracts.Mediatr;
 using VacationRental.Application.Contracts.Persistence;
+using VacationRental.Application.Contracts.Pipeline;
+using VacationRental.Application.Exceptions;
+using VacationRental.Domain.Errors;
 using VacationRental.Domain.Messages.Rentals;
 using VacationRental.Domain.Models.Rentals;
 
@@ -20,13 +20,13 @@ namespace VacationRental.Application.Features.Rentals.Queries.GetRental
             _mapper = mapper;
         }
 
-        public Task<RentalDto> Handle(GetRentalQuery request, CancellationToken cancellationToken)
-        {
+        public RentalDto Handle(GetRentalQuery request)
+        {            
             var rental = _rentalRepository.GetById(request.RentalId);
             if (rental == null)
-                throw new ApplicationException("Rental not found");
+                throw new NotFoundException(RentalError.RentalNotFound);
 
-            return Task.FromResult(_mapper.Map<RentalDto>(rental));
+            return _mapper.Map<RentalDto>(rental);
         }
     }
 }

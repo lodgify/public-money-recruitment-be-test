@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace VacationRental.Application.Contracts.Mediatr
+﻿namespace VacationRental.Application.Contracts.Pipeline
 {
     public interface IQuery<out TResponse> where TResponse : class
     {

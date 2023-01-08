@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using VacationRental.Application.Contracts.Mediatr;
+using VacationRental.Application.Contracts.Pipeline;
 using VacationRental.Application.Contracts.Persistence;
 using VacationRental.Domain.Messages.Bookings;
+using VacationRental.Application.Exceptions;
+using VacationRental.Domain.Errors;
 
 namespace VacationRental.Application.Features.Bookings.Queries.GetBooking
 {
@@ -22,13 +19,14 @@ namespace VacationRental.Application.Features.Bookings.Queries.GetBooking
             _mapper = mapper;
         }
 
-        public Task<BookingDto> Handle(GetBookingQuery request, CancellationToken cancellationToken)
-        {
+        public BookingDto Handle(GetBookingQuery request)
+        {            
+
             var booking = _bookinRepository.GetById(request.bookingId);
             if (booking == null)
-                throw new ApplicationException("Booking not found");
+                throw new NotFoundException(BookingError.BookingNotFound);
 
-            return Task.FromResult(_mapper.Map<BookingDto>(booking));
-        }
+            return _mapper.Map<BookingDto>(booking);
+        }        
     }
 }

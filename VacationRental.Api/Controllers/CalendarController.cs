@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Threading.Tasks;
-using VacationRental.Application.Contracts.Persistence;
+using VacationRental.Application.Contracts.Pipeline;
+using VacationRental.Application.Exceptions;
 using VacationRental.Application.Features.Calendars.Queries.GetRentalCalendar;
 using VacationRental.Domain.Messages.Calendars;
-using VacationRental.Domain.Models.Rentals;
 
 namespace VacationRental.Api.Controllers
 {
@@ -12,21 +11,25 @@ namespace VacationRental.Api.Controllers
     [Route("api/v1/[controller]")]
     public class CalendarController : ControllerBase
     {
-        private readonly IRepository<Rental> _rentalRepository;
-        private readonly IBookingRepository _bookingRepository;
+        private readonly IQueryHandler<GetRentalCalendarQuery, CalendarDto> _getRentalCalendarQueryHandler;
+        private readonly FluentValidation.IValidator<GetRentalCalendarQuery> _getRentalQueryValidator;
 
-        public CalendarController(IRepository<Rental> rentalRepository, IBookingRepository bookingRepository)
+        public CalendarController(IQueryHandler<GetRentalCalendarQuery, CalendarDto> getRentalCalendarQueryHandler, FluentValidation.IValidator<GetRentalCalendarQuery> getRentalQueryValidator)
         {
-            _rentalRepository = rentalRepository;
-            _bookingRepository = bookingRepository;
+            _getRentalCalendarQueryHandler = getRentalCalendarQueryHandler;
+            _getRentalQueryValidator = getRentalQueryValidator;
         }
 
         [HttpGet]
-        public async Task<CalendarDto> Get(int rentalId, DateTime start, int nights)
+        public CalendarDto Get(int rentalId, DateTime start, int nights)
         {
-            var query = new GetRentalCalendarQuery(rentalId, start, nights);
-            var handler = new GetRentalCalendarQueryHandler(_rentalRepository, _bookingRepository);
-            return handler.Handle(query);
+            var query = new GetRentalCalendarQuery(rentalId, start, nights);            
+            var result = _getRentalQueryValidator.Validate(query);
+            if (!result.IsValid)
+            {
+                throw new ValidationException(result.Errors);
+            }
+            return _getRentalCalendarQueryHandler.Handle(query);
         }
     }
 }

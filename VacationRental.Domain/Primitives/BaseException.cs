@@ -15,7 +15,7 @@ namespace VacationRental.Domain.Primitives
 
         public BaseException()
         {
-            Error = new DomainError(1000, "\"One or more errors has been found\"");
+            Error = new DomainError("\"One or more errors has been found\"");
         }
     }
 }

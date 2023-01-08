@@ -18,6 +18,10 @@ namespace VacationRental.Domain.Models.Bookings
             Units = units;
         }
 
+        public Booking()
+        {
+        }
+
         public static Booking Create(int rentalId, DateTime start, int nights, int units)
         {
             return new Booking(rentalId, start, nights, units);

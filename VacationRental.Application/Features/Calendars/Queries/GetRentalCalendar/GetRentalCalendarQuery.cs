@@ -1,5 +1,5 @@
 ﻿using System;
-using VacationRental.Application.Contracts.Mediatr;
+using VacationRental.Application.Contracts.Pipeline;
 using VacationRental.Domain.Messages.Calendars;
 
 namespace VacationRental.Application.Features.Calendars.Queries.GetRentalCalendar

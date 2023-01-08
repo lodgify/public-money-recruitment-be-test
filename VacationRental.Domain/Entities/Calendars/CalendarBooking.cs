@@ -1,7 +1,8 @@
-﻿using VacationRental.Domain.Primitives;
+﻿using System.Text.Json.Serialization;
+using VacationRental.Domain.Primitives;
 
 namespace VacationRental.Api.Models
-{
+{    
     public class CalendarBooking : BaseDomainModel
     {        
         public int Unit { get; private set; }
@@ -10,6 +11,10 @@ namespace VacationRental.Api.Models
         {
             Id = id;
             Unit = unit;
+        }
+
+        public CalendarBooking()
+        {
         }
 
         public static CalendarBooking Create(int id, int unit)

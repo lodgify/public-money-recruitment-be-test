@@ -1,32 +1,32 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using VacationRental.Application.Contracts.Mediatr;
 using VacationRental.Application.Contracts.Persistence;
+using VacationRental.Application.Contracts.Pipeline;
+using VacationRental.Application.Exceptions;
 using VacationRental.Domain.Entities;
+using VacationRental.Domain.Errors;
 using VacationRental.Domain.Models.Bookings;
 using VacationRental.Domain.Models.Rentals;
+using ValidationException = VacationRental.Application.Exceptions.ValidationException;
 
 namespace VacationRental.Application.Features.Bookings.Commands.CreateBooking
 {
     public class CreateBookingCommandHandler : ICommandHandler<CreateBookingCommand, ResourceId>
     {
         private readonly IBookingRepository _bookingsRepository;
-        private readonly IRepository<Rental> _rentalsRepository;
+        private readonly IRepository<Rental> _rentalsRepository;        
 
         public CreateBookingCommandHandler(IBookingRepository bookingsRepository, IRepository<Rental> rentalRepository)
         {
             _bookingsRepository = bookingsRepository;
-            _rentalsRepository = rentalRepository;
+            _rentalsRepository = rentalRepository;            
         }
 
-        public Task<ResourceId> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
+        public ResourceId Handle(CreateBookingCommand request)
         {
             var rental = _rentalsRepository.GetById(request.RentalId);
             if (rental == null)
-                throw new ApplicationException("Rental not found");
+                throw new NotFoundException(RentalError.RentalNotFound);
             
             var bookingsByRental = _bookingsRepository.GetBookingByRentalId(request.RentalId);
             var numberOfBookings = 0;
@@ -37,12 +37,13 @@ namespace VacationRental.Application.Features.Bookings.Commands.CreateBooking
             }
             
             if (numberOfBookings >= rental.Units)
-                throw new ApplicationException("Not available");
+                throw new ConflictException(RentalError.RentalNotAvailable);
 
             var bookingId = _bookingsRepository.Add(Booking.Create(request.RentalId, request.Start, request.Nights, request.Units)).Id;            
             
-            return Task.FromResult(new ResourceId { Id = bookingId });
+            return new ResourceId { Id = bookingId };
         }
+        
 
         private int CalculateNumberOfBookings(IReadOnlyList<Booking> bookings, DateTime start, int nights)
         {

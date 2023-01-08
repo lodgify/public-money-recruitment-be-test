@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddTransient<ExceptionHandlingMiddleware>();
     builder.Services.AddApplicationServices();
     builder.Services.AddInfrastructureServices();
+    //builder.Services.AddProblemDetails();
     builder.Services.AddCors(opt =>
     {
         opt.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
@@ -27,14 +28,13 @@ var app = builder.Build();
     app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseCors("CorsPolicy");
     app.MapControllers();
-
+    //app.UseExceptionHandler();
     if (app.Environment.IsDevelopment())
     {
-        app.UseDeveloperExceptionPage();        
-    }
-
-    app.UseSwagger();
-    app.UseSwaggerUI(opts => opts.SwaggerEndpoint("/swagger/v1/swagger.json", "VacationRental v1"));
+        //app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI(opts => opts.SwaggerEndpoint("/swagger/v1/swagger.json", "VacationRental v1"));
+    }    
 }
 
 app.Run();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using VacationRental.Application.Exceptions;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Messages.Bookings;
 using VacationRental.Domain.Messages.Rentals;
@@ -52,7 +53,7 @@ namespace VacationRental.Api.Tests
             {
                 Assert.True(getBookingResponse.IsSuccessStatusCode);
 
-                var getBookingResult = await getBookingResponse.Content.ReadAsAsync<Booking>();
+                var getBookingResult = await getBookingResponse.Content.ReadAsAsync<BookingDto>();
                 Assert.Equal(postBookingRequest.RentalId, getBookingResult.RentalId);
                 Assert.Equal(postBookingRequest.Nights, getBookingResult.Nights);
                 Assert.Equal(postBookingRequest.Start, getBookingResult.Start);
@@ -93,7 +94,7 @@ namespace VacationRental.Api.Tests
                 Start = new DateTime(2002, 01, 02)
             };
 
-            await Assert.ThrowsAsync<ApplicationException>(async () =>
+            await Assert.ThrowsAsync<ConflictException>(async () =>
             {
                 using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
                 {
