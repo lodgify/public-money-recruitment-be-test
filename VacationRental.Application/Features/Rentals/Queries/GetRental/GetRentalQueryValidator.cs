@@ -7,7 +7,8 @@ namespace VacationRental.Application.Features.Rentals.Queries.GetRental
         public GetRentalQueryValidator()
         {
             RuleFor(x => x.RentalId)
-                .NotNull().WithMessage("Rental id can not be null");
+                .NotNull().WithMessage("Rental id can not be null")
+                .GreaterThan(0).WithMessage("Rental id can not be negative");
         }
     }
 }

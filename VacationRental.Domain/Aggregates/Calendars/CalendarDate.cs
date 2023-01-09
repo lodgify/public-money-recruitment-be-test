@@ -12,7 +12,14 @@ namespace VacationRental.Domain.Aggregates.Calendars
         public DateTime Date { get; set; }
         public List<CalendarBooking> Bookings { get; set; }
         public List<PreparationTime> PreparationTimes { get; set; }
-        
+
+        public CalendarDate(DateTime date)
+        {
+            Date = date;
+            Bookings = new List<CalendarBooking>();
+            PreparationTimes = new List<PreparationTime>();
+        }
+
         public void AggregateBookings(Booking booking)
         {
             var endBookingDate = booking.Start.AddDays(booking.Nights);

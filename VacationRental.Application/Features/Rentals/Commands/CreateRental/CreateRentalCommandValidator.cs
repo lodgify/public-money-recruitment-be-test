@@ -7,7 +7,7 @@ namespace VacationRental.Application.Features.Rentals.Commands.CreateRental
         public CreateRentalCommandValidator()
         {
             RuleFor(x => x.Units)
-                .GreaterThanOrEqualTo(0).WithMessage("Units can not be negative");
+                .GreaterThan(0).WithMessage("Units can not be negative");
 
             RuleFor(x => x.PreparationTimeInDays)
                 .GreaterThanOrEqualTo(0).WithMessage("Preparation days can not be negative");

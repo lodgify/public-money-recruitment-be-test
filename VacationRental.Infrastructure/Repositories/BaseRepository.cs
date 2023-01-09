@@ -1,11 +1,12 @@
 ﻿using VacationRental.Application.Contracts.Persistence;
+using VacationRental.Application.Exceptions;
 using VacationRental.Domain.Primitives;
 
 namespace VacationRental.Infrastructure.Repositories
 {
-    public class BaseRepository<T> : IRepository<T> where T : BaseDomainModel
+    public class BaseRepository<T> : IDisposable, IRepository<T> where T : BaseDomainModel
     {
-        public readonly IDictionary<int, T> _persistence;
+        protected readonly IDictionary<int, T> _persistence;
 
         public BaseRepository()
         {
@@ -27,7 +28,7 @@ namespace VacationRental.Infrastructure.Repositories
         {
             if (_persistence.ContainsKey(entity.Id))
                 _persistence.Remove(entity.Id);
-        }
+        }        
 
         public IReadOnlyList<T> GetAll()
         {
@@ -42,13 +43,18 @@ namespace VacationRental.Infrastructure.Repositories
             return _persistence[id];
         }
 
-        public T Update(T entity)
+        public T? Update(T entity)
         {
             if (!_persistence.ContainsKey(entity.Id))
-                throw new ApplicationException("object doesn't exists in persitence");
+                return null;
             
             _persistence[entity.Id] = entity;
             return entity;
+        }
+
+        public void Dispose()
+        {
+            _persistence.Clear();
         }
     }
 }

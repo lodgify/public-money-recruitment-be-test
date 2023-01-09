@@ -7,10 +7,11 @@ namespace VacationRental.Application.Features.Calendars.Queries.GetRentalCalenda
         public GetRentalCalendarQueryValidator()
         {
             RuleFor(x => x.Nights)
-                .GreaterThanOrEqualTo(0).WithMessage("Nights must be positive");
+                .GreaterThan(0).WithMessage("Nights must be positive");
 
             RuleFor(x => x.RentalId)
-                .NotNull().WithMessage("Rental id can not be null");
+                .NotNull().WithMessage("Rental id can not be null")
+                .GreaterThan(0).WithMessage("Rental id must be positive"); 
         }
     }
 }

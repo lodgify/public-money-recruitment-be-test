@@ -34,17 +34,11 @@ namespace VacationRental.Application.Features.Calendars.Queries.GetRentalCalenda
                 Dates = new List<CalendarDate>()
             };
 
-            var bookings = _bookingRepository.GetBookingByRentalId(request.RentalId);
-
+            var bookings = _bookingRepository.GetBookingByRentalId(request.RentalId);            
             for (var i = 0; i < request.Nights; i++)
             {
-                var date = new CalendarDate
-                {
-                    Date = request.Start.Date.AddDays(i),
-                    Bookings = new List<CalendarBooking>(),
-                    PreparationTimes = new List<PreparationTime>()
-                };
-
+                var date = new CalendarDate(request.Start.Date.AddDays(i));
+                
                 foreach (var booking in bookings)
                 {
                     date.AggregateBookings(booking);

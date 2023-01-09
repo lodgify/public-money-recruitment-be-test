@@ -94,12 +94,11 @@ namespace VacationRental.Api.Tests
                 Start = new DateTime(2002, 01, 02)
             };
 
-            await Assert.ThrowsAsync<ConflictException>(async () =>
+            using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
             {
-                using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
-                {
-                }
-            });
+                Assert.True(!postBooking2Response.IsSuccessStatusCode);
+                Assert.Equal(System.Net.HttpStatusCode.Conflict, postBooking2Response.StatusCode);
+            }            
         }
     }
 }

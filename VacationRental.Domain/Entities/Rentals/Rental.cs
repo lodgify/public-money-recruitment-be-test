@@ -17,5 +17,17 @@ namespace VacationRental.Domain.Models.Rentals
         {
             return new Rental(units, preparationTimeInDays);
         }
+
+        public void SetUnits(int units)
+        {
+            Units = units;
+        }
+
+        public void SetPreparationTimeInDays(int preparationTimeInDays) 
+        {
+            PreparationTimeInDays = preparationTimeInDays;
+        }
+
+
     }
 }

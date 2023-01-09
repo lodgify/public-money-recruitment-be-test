@@ -13,7 +13,7 @@ namespace VacationRental.Application.Contracts.Persistence
 
         T Add(T entity);
         
-        T Update(T entity);
+        T? Update(T entity);
 
         void Delete(T entity);
     }

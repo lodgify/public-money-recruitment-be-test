@@ -43,7 +43,6 @@ namespace VacationRental.Api.Middlewares
                         statusCode = (int)HttpStatusCode.Conflict;
                         resultMessage = JsonConvert.SerializeObject(new CodeErrorException(statusCode, conflictException?.Error.Message, null));
                         break;
-
                 }
 
                 context.Response.StatusCode = statusCode;
