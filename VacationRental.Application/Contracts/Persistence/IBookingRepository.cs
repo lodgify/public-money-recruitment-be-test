@@ -5,6 +5,6 @@ namespace VacationRental.Application.Contracts.Persistence
 {
     public interface IBookingRepository : IRepository<Booking>
     {
-        IReadOnlyList<Booking> GetBookingByRentalId(int rentalId);
+        IReadOnlyList<Booking> GetBookingByRentalId(int rentalId);        
     }
 }

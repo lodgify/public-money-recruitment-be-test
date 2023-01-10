@@ -7,7 +7,7 @@ namespace VacationRental.Infrastructure.Repositories
     {
         public IReadOnlyList<Booking> GetBookingByRentalId(int rentalId)
         {
-            return _persistence.Values.Where( b => b.RentalId == rentalId ).ToList();
-        }
+            return _persistence.Values.Where( b => b.RentalId == rentalId ).OrderBy(b => b.Start).ToList();
+        }     
     }
 }

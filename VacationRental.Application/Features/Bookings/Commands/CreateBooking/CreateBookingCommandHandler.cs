@@ -4,6 +4,7 @@ using VacationRental.Application.Contracts.Persistence;
 using VacationRental.Application.Contracts.Pipeline;
 using VacationRental.Application.Exceptions;
 using VacationRental.Domain.Entities;
+using VacationRental.Domain.Entities.Bookings;
 using VacationRental.Domain.Errors;
 using VacationRental.Domain.Models.Bookings;
 using VacationRental.Domain.Models.Rentals;
@@ -29,37 +30,13 @@ namespace VacationRental.Application.Features.Bookings.Commands.CreateBooking
                 throw new NotFoundException(RentalError.RentalNotFound);
             
             var bookingsByRental = _bookingsRepository.GetBookingByRentalId(request.RentalId);
-            var numberOfBookings = 0;
             
-            for (var i = 0; i < request.Nights; i++)
-            {
-                numberOfBookings = CalculateNumberOfBookings(bookingsByRental, request.Start, request.Nights);
-            }
-            
-            if (numberOfBookings >= rental.Units)
-                throw new ConflictException(RentalError.RentalNotAvailable);
+            if(!BookingManager.isBookingAvailable(bookingsByRental, request.Start, request.Nights, rental.Units, rental.PreparationTimeInDays))
+                throw new ConflictException(RentalError.RentalNotAvailable);                            
 
             var bookingId = _bookingsRepository.Add(Booking.Create(request.RentalId, request.Start, request.Nights, request.Units)).Id;            
             
             return new ResourceId { Id = bookingId };
-        }
-        
-
-        private int CalculateNumberOfBookings(IReadOnlyList<Booking> bookings, DateTime start, int nights)
-        {
-            var numberOfBookings = 0;
-
-            foreach (var booking in bookings)
-            {
-                if ((booking.Start <= start.Date && booking.Start.AddDays(booking.Nights) > start.Date)
-                || (booking.Start < start.AddDays(nights) && booking.Start.AddDays(booking.Nights) >= start.AddDays(nights))
-                    || (booking.Start > start && booking.Start.AddDays(booking.Nights) < start.AddDays(nights)))
-                {
-                    numberOfBookings++;
-                }
-            }
-
-            return numberOfBookings;
         }
     }
 }

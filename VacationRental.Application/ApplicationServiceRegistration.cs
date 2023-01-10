@@ -6,6 +6,7 @@ using VacationRental.Application.Features.Bookings.Commands.CreateBooking;
 using VacationRental.Application.Features.Bookings.Queries.GetBooking;
 using VacationRental.Application.Features.Calendars.Queries.GetRentalCalendar;
 using VacationRental.Application.Features.Rentals.Commands.CreateRental;
+using VacationRental.Application.Features.Rentals.Commands.UpdateRental;
 using VacationRental.Application.Features.Rentals.Queries.GetRental;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Messages.Bookings;
@@ -26,7 +27,8 @@ namespace VacationRental.Application
             services.AddScoped(typeof(IQueryHandler<GetRentalCalendarQuery, CalendarDto>), typeof(GetRentalCalendarQueryHandler));
 
             services.AddScoped(typeof(ICommandHandler<CreateRentalCommand, ResourceId>), typeof(CreateRentalCommandHandler));
-            services.AddScoped(typeof(ICommandHandler<CreateBookingCommand, ResourceId>), typeof(CreateBookingCommandHandler));            
+            services.AddScoped(typeof(ICommandHandler<CreateBookingCommand, ResourceId>), typeof(CreateBookingCommandHandler));
+            services.AddScoped(typeof(ICommandHandler<UpdateRentalCommand, RentalDto>), typeof(UpdateRentalCommandHandler));            
 
             return services;
         }

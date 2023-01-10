@@ -34,7 +34,7 @@ namespace VacationRental.Domain.Aggregates.Calendars
         {
             var endBookingDate = booking.Start.AddDays(booking.Nights);
 
-            if (endBookingDate < Date && endBookingDate.AddDays(preparationTimeInDays) >= Date)
+            if (endBookingDate <= Date && endBookingDate.AddDays(preparationTimeInDays) > Date)
             {
                 PreparationTimes.Add(new PreparationTime
                 {

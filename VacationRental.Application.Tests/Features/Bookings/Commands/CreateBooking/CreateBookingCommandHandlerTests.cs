@@ -11,7 +11,7 @@ namespace VacationRental.Application.Tests.Features.Bookings.Commands.CreateBook
     {
 
         private Mock<IBookingRepository> _bookingRepository;
-        private Mock<IRepository<Rental>> _rentalRepository;
+        private Mock<IRepository<Rental>> _rentalRepository;        
 
         public CreateBookingCommandHandlerTests()
         {
@@ -50,7 +50,7 @@ namespace VacationRental.Application.Tests.Features.Bookings.Commands.CreateBook
                 .Returns(rental);
 
             _bookingRepository.Setup(x => x.GetBookingByRentalId(It.IsAny<int>()))
-                .Returns(new List<Booking> { booking, booking2 });
+                .Returns(new List<Booking> { booking, booking2 });            
 
             //Assert
             Assert.Throws<ConflictException>(() => commandHandler.Handle(request));

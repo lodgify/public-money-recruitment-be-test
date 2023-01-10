@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace VacationRental.Application.Features.Rentals.Commands.UpdateRental
 {
-    internal class UpdateRentalCommandValidator
+    public class UpdateRentalCommandValidator : AbstractValidator<UpdateRentalCommand>
     {
+        public UpdateRentalCommandValidator()
+        {
+            RuleFor(x => x.RentalId)
+                .NotNull().WithMessage("Id can not be null")
+                .GreaterThan(0).WithMessage("Units can not be negative");
+
+            RuleFor(x => x.Units)
+               .GreaterThan(0).WithMessage("Units can not be negative");
+
+            RuleFor(x => x.PreparationTimeInDays)
+                .GreaterThanOrEqualTo(0).WithMessage("Preparation days can not be negative");
+        }
+        
     }
 }

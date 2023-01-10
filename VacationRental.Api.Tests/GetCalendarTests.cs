@@ -24,7 +24,8 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalDto
             {
-                Units = 2
+                Units = 2, 
+                PreparationTimeInDays = 1
             };
 
             ResourceId postRentalResult;
@@ -54,7 +55,7 @@ namespace VacationRental.Api.Tests
                 RentalId = postRentalResult.Id,
                 Nights = 2,
                 Start = new DateTime(2000, 01, 03),
-                Units = 1
+                Units = 2
             };
 
             ResourceId postBooking2Result;
