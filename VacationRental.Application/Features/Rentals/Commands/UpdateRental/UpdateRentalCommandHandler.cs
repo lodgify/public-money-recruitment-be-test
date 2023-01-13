@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using VacationRental.Application.Contracts.Persistence;
 using VacationRental.Application.Contracts.Pipeline;
 using VacationRental.Application.Exceptions;
-using VacationRental.Domain.Entities.Bookings;
+using VacationRental.Domain.Entities.Rentals;
 using VacationRental.Domain.Errors;
 using VacationRental.Domain.Messages.Rentals;
-using VacationRental.Domain.Models.Bookings;
 using VacationRental.Domain.Models.Rentals;
 
 namespace VacationRental.Application.Features.Rentals.Commands.UpdateRental
@@ -27,24 +25,38 @@ namespace VacationRental.Application.Features.Rentals.Commands.UpdateRental
 
         public RentalDto Handle(UpdateRentalCommand command)
         {
-            var bookings = _bookingRepository.GetBookingByRentalId(command.RentalId);
+            var bookings = _bookingRepository.GetBookingByRentalId(command.RentalId).GroupBy(x => x.Start).ToList();
 
-            var numberOfBookings = 0;
-
-            for(var i = 0; i < bookings.Count()-1; i++)
+            if(bookings.Count() == 1)
             {
-                if (bookings[i].ShouldAddNewBookingToRental(bookings[i].Start, bookings[i].Nights, command.PreparationTimeInDays))
+                var numberOfBookings = 0;
+                foreach (var booking in bookings[0])
+                {
+                    if(RentalManager.HasUnitsAnyConflict(booking, command.PreparationTimeInDays, command.Units, numberOfBookings))
+                        throw new ConflictException(RentalError.RentalNotAvailable);                    
+
                     numberOfBookings++;
-
-                if (numberOfBookings >= command.Units)
-                    throw new ConflictException(RentalError.RentalNotAvailable);
-
-                var endDateTimeBooking = bookings[i].Start.AddDays(bookings[i].Nights + command.PreparationTimeInDays);
-                
-                if (endDateTimeBooking > bookings[i+1].Start)
-                    throw new ConflictException(RentalError.RentalNotAvailable);
+                }
             }
+            else
+            {
+                for (var i = 0; i < bookings.Count() - 1; i++)
+                {
+                    var numberOfBookings = 0;
 
+                    foreach (var booking in bookings[i])
+                    {
+                        if (RentalManager.HasUnitsAnyConflict(booking, command.PreparationTimeInDays, command.Units, numberOfBookings))                        
+                            throw new ConflictException(RentalError.RentalNotAvailable);
+                        
+                        numberOfBookings++;
+
+                        if (RentalManager.HasPreparationDaysAnyConflicts(bookings[i].Key, bookings[i + 1].Key, booking.Nights, bookings[i + 1].Count(), command.Units, command.PreparationTimeInDays))
+                            throw new ConflictException(RentalError.RentalNotAvailable);
+                    }
+                }
+            }
+            
             var rental = _rentalRepository.GetById(command.RentalId);
             rental.SetPreparationTimeInDays(command.PreparationTimeInDays);
             rental.SetUnits(command.Units);
@@ -52,7 +64,7 @@ namespace VacationRental.Application.Features.Rentals.Commands.UpdateRental
             var result = _rentalRepository.Update(rental);
 
             return _mapper.Map<RentalDto>(result);
+            }
 
         }
     }
-}

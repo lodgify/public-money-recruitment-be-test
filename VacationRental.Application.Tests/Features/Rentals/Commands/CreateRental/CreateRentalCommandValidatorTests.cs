@@ -1,7 +1,7 @@
 ﻿using VacationRental.Application.Features.Bookings.Queries.GetBooking;
 using VacationRental.Application.Features.Rentals.Commands.CreateRental;
 
-namespace VacationRental.Application.Tests.Features.Rentals.Commands
+namespace VacationRental.Application.Tests.Features.Rentals.Commands.CreateRental
 {
     public class CreateRentalCommandValidatorTests : IClassFixture<CreateRentalCommandValidatorTests>
     {
@@ -12,7 +12,7 @@ namespace VacationRental.Application.Tests.Features.Rentals.Commands
             _validator = new();
         }
 
-        [Theory]        
+        [Theory]
         [InlineData(-2, false, 1)]
         [InlineData(1, true, 0)]
         public void Validator_Should_ValidateUnits(int units, bool isValid, int errorNumber)

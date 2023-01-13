@@ -18,12 +18,7 @@ namespace VacationRental.Application.Tests.Features.Rentals.Queries
         public GetRentalQueryHandlerTests()
         {
             _rentalRepository = new();
-            var mapperConfig = new MapperConfiguration(m =>
-            {
-                m.AddProfile<MappingProfile>();
-            });
-
-            _mapper = mapperConfig.CreateMapper();
+            _mapper = TestData.CreateMapForTest();
         }
 
         [Fact]

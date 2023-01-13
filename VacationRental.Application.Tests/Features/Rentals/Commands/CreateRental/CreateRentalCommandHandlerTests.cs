@@ -4,7 +4,7 @@ using VacationRental.Application.Features.Rentals.Commands.CreateRental;
 using VacationRental.Domain.Entities;
 using VacationRental.Domain.Models.Rentals;
 
-namespace VacationRental.Application.Tests.Features.Rentals.Commands
+namespace VacationRental.Application.Tests.Features.Rentals.Commands.CreateRental
 {
     public class CreateRentalCommandHandlerTests
     {
