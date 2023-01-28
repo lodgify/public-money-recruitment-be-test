@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using VacationRental.Application.Midlewares.Booking;
+using VacationRental.Application.Midlewares.Calendar;
 using VacationRental.Application.Midlewares.Rental;
 using VacationRental.Infra;
 using VacationRental.Infra.Repositories;
@@ -13,6 +15,9 @@ namespace VacationRental.Api.Extensions
 			services.AddTransient<VacationRentalContext>();
 			services.AddScoped<IRentalRepository, RentalRepository>();
 			services.AddScoped<IRentalMiddleware, RentalMiddleware>();
+			services.AddScoped<IBookingRepository, BookingRepository>();
+			services.AddScoped<IBookingMiddleware, BookingMidleware>();
+			services.AddScoped<ICalendarMiddleware, CalendarMiddleware>();
 			return services;
 		}
 	}

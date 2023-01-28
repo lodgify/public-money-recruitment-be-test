@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace VacationRental.Application.Midlewares
+namespace VacationRental.Infra.Repositories
 {
-	public class BookingMidleware
+	public class CalendarRepository
 	{
 	}
 }
