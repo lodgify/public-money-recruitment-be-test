@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VacationRental.Infra;
 
 namespace VacationRental.Infra.Migrations
 {
     [DbContext(typeof(VacationRentalContext))]
-    partial class VacationRentalContextModelSnapshot : ModelSnapshot
+    [Migration("20230128175005_Unit_To_Period_Table")]
+    partial class Unit_To_Period_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
