@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using VacationRental.Domain.Rentals;
 using VacationRental.Infra.Repositories.Interfaces;
 
@@ -11,6 +12,11 @@ namespace VacationRental.Infra.Repositories
 		public RentalRepository(VacationRentalContext context)
 		{
 			this._context = context;
+		}
+
+		public async Task<Rental> GetById(int rentalId)
+		{
+			return await this._context.Rentals.FirstOrDefaultAsync(x => x.Id == rentalId);
 		}
 
 		public async Task<int> AddRental(Rental rental)
