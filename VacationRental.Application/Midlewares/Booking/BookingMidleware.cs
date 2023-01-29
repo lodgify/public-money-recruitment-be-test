@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
 using VacationRental.Application.Dtos;
+using VacationRental.Application.ViewModels;
 using VacationRental.Domain.Calendars;
 using VacationRental.Infra.Repositories.Interfaces;
 

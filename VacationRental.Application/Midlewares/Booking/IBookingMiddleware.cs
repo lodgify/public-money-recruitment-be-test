@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using VacationRental.Api.Models;
 using VacationRental.Application.Dtos;
+using VacationRental.Application.ViewModels;
 
 namespace VacationRental.Application.Midlewares.Booking
 {

@@ -17,6 +17,8 @@ namespace VacationRental.Infra.Repositories
 		public async Task<Rental> GetById(int rentalId)
 		{
 			return await this._context.Rentals
+				.Include(x => x.Bookings)
+				.Include(x => x.PreparationTimes)
 				.FirstOrDefaultAsync(x => x.Id == rentalId);
 		}
 

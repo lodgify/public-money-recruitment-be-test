@@ -5,6 +5,6 @@ namespace VacationRental.Application.Midlewares.Calendar
 {
 	public interface ICalendarMiddleware
 	{
-		Task GetAvailableCalendar(CalendarInputViewModel input);
+		Task<CalendarViewModel> GetAvailableCalendar(CalendarInputViewModel input);
 	}
 }

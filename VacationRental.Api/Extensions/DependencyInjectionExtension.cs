@@ -18,6 +18,7 @@ namespace VacationRental.Api.Extensions
 			services.AddScoped<IBookingRepository, BookingRepository>();
 			services.AddScoped<IBookingMiddleware, BookingMidleware>();
 			services.AddScoped<ICalendarMiddleware, CalendarMiddleware>();
+			services.AddScoped<IPreparationTimeRepository, PreparationTimeRepository>();
 			return services;
 		}
 	}
