@@ -13,4 +13,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VacationRental.Application\VacationRental.Application.csproj" />
+    <ProjectReference Include="..\VacationRental.Infra\VacationRental.Infra.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+using VacationRental.Application.Dtos;
+using VacationRental.Application.Midlewares.Rental;
+using VacationRental.Application.ViewModels;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,35 +10,27 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IRentalMiddleware _rentalMiddleware;
 
-        public RentalsController(IDictionary<int, RentalViewModel> rentals)
+        public RentalsController(IRentalMiddleware rentalMiddleware)
         {
-            _rentals = rentals;
+            this._rentalMiddleware = rentalMiddleware;
         }
 
         [HttpGet]
         [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
+        public async Task<Application.ViewModels.RentalViewModel> Get(int rentalId)
         {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            return _rentals[rentalId];
+            var rental = await this._rentalMiddleware.GetById(rentalId);
+            return rental;
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        public async Task<int> Post(RentalBindingModel model)
         {
-            var key = new ResourceIdViewModel { Id = _rentals.Keys.Count + 1 };
-
-            _rentals.Add(key.Id, new RentalViewModel
-            {
-                Id = key.Id,
-                Units = model.Units
-            });
-
-            return key;
+            var rentalDto = new RentalDto(model.Units, model.PreparationTimeInDays);
+            var response = await this._rentalMiddleware.AddRentalWithTimePeriod(rentalDto);
+            return response;
         }
-    }
+	}
 }
