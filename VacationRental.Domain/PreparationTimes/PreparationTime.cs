@@ -11,10 +11,10 @@ namespace VacationRental.Domain.PreparationTimes
 
 		}
 
-		public PreparationTime(int unity, Rental rental)
+		public PreparationTime(int unity, int rentalId)
 		{
 			this.Unity = unity;
-			this.Rental = rental;
+			this.RentalId = rentalId;
 		}
 
 		public int Unity { get; set; }
@@ -22,5 +22,7 @@ namespace VacationRental.Domain.PreparationTimes
 		public DateTime DateOfPreparation { get; set; }
 
 		public virtual Rental Rental { get; set; }
+
+		public int RentalId { get; set; }
 	}
 }

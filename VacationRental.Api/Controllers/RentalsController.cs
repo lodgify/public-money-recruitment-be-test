@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
 using VacationRental.Application.Dtos;
 using VacationRental.Application.Midlewares.Rental;
+using VacationRental.Application.ViewModels;
 
 namespace VacationRental.Api.Controllers
 {
@@ -26,13 +26,11 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ResourceIdViewModel> Post(RentalBindingModel model)
+        public async Task<int> Post(RentalBindingModel model)
         {
             var rentalDto = new RentalDto(model.Units, model.PreparationTimeInDays);
             var response = await this._rentalMiddleware.AddRentalWithTimePeriod(rentalDto);
-            var resource = new ResourceIdViewModel();
-            resource.Id = response;
-            return resource;
+            return response;
         }
 	}
 }

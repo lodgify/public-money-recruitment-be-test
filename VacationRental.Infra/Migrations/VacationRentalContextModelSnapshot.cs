@@ -65,7 +65,7 @@ namespace VacationRental.Infra.Migrations
 
                     b.Property<DateTime>("DateOfPreparation");
 
-                    b.Property<int?>("RentalId");
+                    b.Property<int>("RentalId");
 
                     b.Property<int>("Unity");
 
@@ -105,7 +105,8 @@ namespace VacationRental.Infra.Migrations
                 {
                     b.HasOne("VacationRental.Domain.Rentals.Rental", "Rental")
                         .WithMany("PreparationTimes")
-                        .HasForeignKey("RentalId");
+                        .HasForeignKey("RentalId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

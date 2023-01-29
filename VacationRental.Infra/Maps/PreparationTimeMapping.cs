@@ -11,7 +11,7 @@ namespace VacationRental.Infra.Maps
 			builder.ToTable("PreparationTime");
 			builder.HasKey(x => x.Id);
 			builder.Property(x => x.DateOfPreparation);
-			builder.HasOne(x => x.Rental).WithMany(x => x.PreparationTimes).OnDelete(DeleteBehavior.Cascade);
+			builder.HasOne(x => x.Rental).WithMany(x => x.PreparationTimes).HasForeignKey(w => w.RentalId).OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

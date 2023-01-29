@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using VacationRental.Api.Models;
+using VacationRental.Application.ViewModels;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -25,14 +23,14 @@ namespace VacationRental.Api.Tests
                 Units = 25
             };
 
-            ResourceIdViewModel postResult;
+			int postResult;
             using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
             {
                 Assert.True(postResponse.IsSuccessStatusCode);
-                postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postResult = await postResponse.Content.ReadAsAsync<int>();
             }
 
-            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
+            using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult}"))
             {
                 Assert.True(getResponse.IsSuccessStatusCode);
 

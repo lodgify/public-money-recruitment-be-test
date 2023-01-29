@@ -25,22 +25,14 @@ namespace VacationRental.Infra.Repositories
 
 		public async Task<Booking> CreateBooking(Booking booking)
 		{
-			try
+			await this._context.Bookings.AddAsync(booking);
+			var success = await this._context.SaveChangesAsync() > 0;
+			if (success)
 			{
-				await this._context.Bookings.AddAsync(booking);
-				var success = await this._context.SaveChangesAsync() > 0;
-				if (success) 
-				{
-					return booking;
-				}
-
-				return null;
+				return booking;
 			}
-			catch (System.Exception ex)
-			{
 
-				throw;
-			}
+			return null;
 		}
 
 		public async Task<List<Booking>> GetAllBookingsByRentalId(int rentalId)

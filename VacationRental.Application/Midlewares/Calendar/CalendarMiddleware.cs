@@ -125,7 +125,5 @@ namespace VacationRental.Application.Midlewares.Calendar
 
 			return bookingAvailables;
 		}
-
-
 	}
 }

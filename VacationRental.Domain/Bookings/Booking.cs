@@ -12,10 +12,10 @@ namespace VacationRental.Domain.Bookings
 
 		}
 
-		public Booking(CalendarDate calendarDate, Rental rental, int nights, int unity)
+		public Booking(CalendarDate calendarDate, int rentalId, int nights, int unity)
 		{
 			this.CalendarDate = calendarDate;
-			this.Rental = rental;
+			this.RentalId = rentalId;
 			this.Nights = nights;
 			this.Unity = unity;
 		}

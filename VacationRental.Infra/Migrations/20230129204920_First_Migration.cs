@@ -69,8 +69,9 @@ namespace VacationRental.Infra.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Unity = table.Column<int>(nullable: false),
                     DateOfPreparation = table.Column<DateTime>(nullable: false),
-                    RentalId = table.Column<int>(nullable: true)
+                    RentalId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,7 +81,7 @@ namespace VacationRental.Infra.Migrations
                         column: x => x.RentalId,
                         principalTable: "Rentals",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

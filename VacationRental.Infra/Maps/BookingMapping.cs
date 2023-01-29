@@ -13,7 +13,7 @@ namespace VacationRental.Infra.Maps
 			builder.HasKey(x => x.Id);
 			builder.Property(x => x.Unity);
 			builder.Property(x => x.Nights);
-			builder.HasOne(x => x.Rental).WithMany(x => x.Bookings);
+			builder.HasOne(x => x.Rental).WithMany(x => x.Bookings).HasForeignKey(w => w.RentalId).OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

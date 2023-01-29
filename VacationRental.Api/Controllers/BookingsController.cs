@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
 using VacationRental.Application.Dtos;
 using VacationRental.Application.Midlewares.Booking;
 using VacationRental.Application.ViewModels;

@@ -62,7 +62,7 @@ namespace VacationRental.Application.Midlewares.Booking
 				}
 
 				calendarDate = new CalendarDate(input.Start, input.Start.AddDays(input.Nights));
-				bookingEntity = new Domain.Bookings.Booking(calendarDate, rental, input.Nights, input.Nights);
+				bookingEntity = new Domain.Bookings.Booking(calendarDate, rental.Id, input.Nights, input.Nights);
 				var booking = await this._bookingRepository.CreateBooking(bookingEntity);
 				return booking.Id;
 			}
@@ -84,8 +84,7 @@ namespace VacationRental.Application.Midlewares.Booking
 			}
 
 			calendarDate = new CalendarDate(input.Start, input.Start.AddDays(input.Nights));
-			bookingEntity = new Domain.Bookings.Booking(calendarDate, rental, input.Nights, countNights);
-			rental.Bookings.Add(bookingEntity);
+			bookingEntity = new Domain.Bookings.Booking(calendarDate, rental.Id, input.Nights, countNights);
 			var bookingCreated = await this._bookingRepository.CreateBooking(bookingEntity);
 			return bookingCreated.Id;
 		}

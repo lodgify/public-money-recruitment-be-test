@@ -10,8 +10,8 @@ using VacationRental.Infra;
 namespace VacationRental.Infra.Migrations
 {
     [DbContext(typeof(VacationRentalContext))]
-    [Migration("20230128175005_Unit_To_Period_Table")]
-    partial class Unit_To_Period_Table
+    [Migration("20230129204920_First_Migration")]
+    partial class First_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -67,7 +67,7 @@ namespace VacationRental.Infra.Migrations
 
                     b.Property<DateTime>("DateOfPreparation");
 
-                    b.Property<int?>("RentalId");
+                    b.Property<int>("RentalId");
 
                     b.Property<int>("Unity");
 
@@ -107,7 +107,8 @@ namespace VacationRental.Infra.Migrations
                 {
                     b.HasOne("VacationRental.Domain.Rentals.Rental", "Rental")
                         .WithMany("PreparationTimes")
-                        .HasForeignKey("RentalId");
+                        .HasForeignKey("RentalId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
