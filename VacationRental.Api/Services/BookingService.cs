@@ -49,10 +49,7 @@ public class BookingService : IBookingService
             for (var b = 0; b < bookings.Count && isUnitAvailable; b++)
             {
                 var booking = bookings[b];
-                if (
-                    (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays) > model.Start.Date)
-                    || (booking.Start < model.Start.AddDays(model.Nights + rental.PreparationTimeInDays) && booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays) >= model.Start.AddDays(model.Nights + rental.PreparationTimeInDays))
-                    || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights + rental.PreparationTimeInDays) < model.Start.AddDays(model.Nights + rental.PreparationTimeInDays)))
+                if (booking.IsOverlapping(model.Start, model.Nights, rental.PreparationTimeInDays))
                 {
                     isUnitAvailable = false;
                 }
