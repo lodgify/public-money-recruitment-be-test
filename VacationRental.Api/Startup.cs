@@ -4,8 +4,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using VacationRental.Api.Models;
+using VacationRental.Api.Providers;
+using VacationRental.Api.Services;
+using VacationRental.Api.Storage;
+using VacationRental.Api.Validators;
 
 namespace VacationRental.Api
 {
@@ -18,15 +23,20 @@ namespace VacationRental.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
+            services.AddValidation();
+            services.AddSwaggerGen(opts =>
+            {
+                opts.SwaggerDoc("v1", new OpenApiInfo { Title = "Vacation rental information", Version = "v1" });
+            });
 
-            services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new Info { Title = "Vacation rental information", Version = "v1" }));
-
-            services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
-            services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+            services.AddSingleton<IIdGenerator, IdGenerator>();
+            services.AddSingleton<IStateManager, StateManager>();
+            services.AddSingleton<IRentalService, RentalService>();
+            services.AddSingleton<IBookingService, BookingService>();
+            services.AddSingleton<ICalendarService, CalendarService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,10 +46,16 @@ namespace VacationRental.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseMvc();
+            
             app.UseSwagger();
-            app.UseSwaggerUI(opts => opts.SwaggerEndpoint("/swagger/v1/swagger.json", "VacationRental v1"));
+            app.UseSwaggerUI(opts =>
+            {
+                opts.SwaggerEndpoint("/swagger/v1/swagger.json", "VacationRental v1");
+                opts.RoutePrefix = string.Empty;
+            });
+
+            app.UseRouting();
+            app.UseEndpoints(o => o.MapControllers());
         }
     }
 }
