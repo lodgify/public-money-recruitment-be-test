@@ -5,32 +5,23 @@ using VacationRental.Api.Services;
 
 namespace VacationRental.Api.Controllers
 {
-    [Route("api/v1/rentals")]
+    [Route("api/v1/vacationrental/rentals")]
     [ApiController]
-    public class RentalsController : ControllerBase
+    public class VacationRentalsController : ControllerBase
     {
         private readonly IRentalService _service;
-
-        public RentalsController(IRentalService service)
+        
+        public VacationRentalsController(IRentalService service)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
-        [HttpGet]
-        [Route("{rentalId:int}")]
-        public RentalViewModel Get(int rentalId)
-        {
-            if (!_service.IsExists(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            return _service.Get(rentalId);
-        }
-
         [HttpPost]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        public ResourceIdViewModel Post(VacationRentalBindingModel model)
         {
             var viewModel = new RentalViewModel
             {
+                PreparationTimeInDays = model.PreparationTimeInDays,
                 Units = model.Units
             };
             var resourceIdView = _service.Add(viewModel);
