@@ -1,72 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using VacationRental.Application.Contracts.Pipeline;
+using VacationRental.Application.Exceptions;
+using VacationRental.Application.Features.Bookings.Commands.CreateBooking;
+using VacationRental.Application.Features.Bookings.Queries.GetBooking;
+using VacationRental.Domain.Entities;
+using VacationRental.Domain.Messages.Bookings;
 
 namespace VacationRental.Api.Controllers
 {
-    [Route("api/v1/bookings")]
     [ApiController]
+    [Route("api/v1/[controller]")]
     public class BookingsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IQueryHandler<GetBookingQuery, BookingDto> _getBookingQueryHandler;
+        private readonly ICommandHandler<CreateBookingCommand, ResourceId> _createBookingCommandHandler;
+        private readonly FluentValidation.IValidator<GetBookingQuery> _getBookingQueryValidator;
+        private readonly FluentValidation.IValidator<CreateBookingCommand> _createBookingCommandValidator;
 
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        public BookingsController(IQueryHandler<GetBookingQuery, BookingDto> getBookingQueryHandler, ICommandHandler<CreateBookingCommand, ResourceId> createBookingCommandHandler, FluentValidation.IValidator<GetBookingQuery> getBookingQueryValidator, FluentValidation.IValidator<CreateBookingCommand> createBookingCommandValidator)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _getBookingQueryHandler = getBookingQueryHandler;
+            _createBookingCommandHandler = createBookingCommandHandler;
+            _getBookingQueryValidator = getBookingQueryValidator;
+            _createBookingCommandValidator = createBookingCommandValidator;
         }
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        public BookingDto Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
-
-            return _bookings[bookingId];
+            var query = new GetBookingQuery(bookingId);
+            var result = _getBookingQueryValidator.Validate(query);
+            if (!result.IsValid)
+            {
+                throw new ValidationException(result.Errors);
+            }
+            return _getBookingQueryHandler.Handle(query);
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
+        public ResourceId Post(BookingRequest request)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
-                throw new ApplicationException("Rental not found");
-
-            for (var i = 0; i < model.Nights; i++)
+            var command = new CreateBookingCommand(request.RentalId, request.Start, request.Nights, request.Units);
+            var result = _createBookingCommandValidator.Validate(command);
+            if (!result.IsValid)
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
-                if (count >= _rentals[model.RentalId].Units)
-                    throw new ApplicationException("Not available");
+                throw new ValidationException(result.Errors);
             }
-
-
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
-            {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
-            });
-
-            return key;
+            return _createBookingCommandHandler.Handle(command);
         }
     }
 }

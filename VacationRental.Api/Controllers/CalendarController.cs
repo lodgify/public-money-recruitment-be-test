@@ -1,59 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using VacationRental.Api.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using VacationRental.Application.Contracts.Pipeline;
+using VacationRental.Application.Exceptions;
+using VacationRental.Application.Features.Calendars.Queries.GetRentalCalendar;
+using VacationRental.Domain.Messages.Calendars;
 
 namespace VacationRental.Api.Controllers
 {
-    [Route("api/v1/calendar")]
     [ApiController]
+    [Route("api/v1/[controller]")]
     public class CalendarController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
+        private readonly IQueryHandler<GetRentalCalendarQuery, CalendarDto> _getRentalCalendarQueryHandler;
+        private readonly FluentValidation.IValidator<GetRentalCalendarQuery> _getRentalQueryValidator;
 
-        public CalendarController(
-            IDictionary<int, RentalViewModel> rentals,
-            IDictionary<int, BookingViewModel> bookings)
+        public CalendarController(IQueryHandler<GetRentalCalendarQuery, CalendarDto> getRentalCalendarQueryHandler, FluentValidation.IValidator<GetRentalCalendarQuery> getRentalQueryValidator)
         {
-            _rentals = rentals;
-            _bookings = bookings;
+            _getRentalCalendarQueryHandler = getRentalCalendarQueryHandler;
+            _getRentalQueryValidator = getRentalQueryValidator;
         }
 
         [HttpGet]
-        public CalendarViewModel Get(int rentalId, DateTime start, int nights)
+        public CalendarDto Get(int rentalId, DateTime start, int nights)
         {
-            if (nights < 0)
-                throw new ApplicationException("Nights must be positive");
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            var result = new CalendarViewModel 
+            var query = new GetRentalCalendarQuery(rentalId, start, nights);            
+            var result = _getRentalQueryValidator.Validate(query);
+            if (!result.IsValid)
             {
-                RentalId = rentalId,
-                Dates = new List<CalendarDateViewModel>() 
-            };
-            for (var i = 0; i < nights; i++)
-            {
-                var date = new CalendarDateViewModel
-                {
-                    Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingViewModel>()
-                };
-
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
-                    {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
-                    }
-                }
-
-                result.Dates.Add(date);
+                throw new ValidationException(result.Errors);
             }
-
-            return result;
+            return _getRentalCalendarQueryHandler.Handle(query);
         }
     }
 }
