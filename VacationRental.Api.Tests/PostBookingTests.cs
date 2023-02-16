@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Json;
 using VacationRental.Api.Models;
 using Xunit;
 
@@ -25,11 +22,11 @@ namespace VacationRental.Api.Tests
                 Units = 4
             };
 
-            ResourceIdViewModel postRentalResult;
+            ResourceIdViewModel? postRentalResult;
             using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
             {
                 Assert.True(postRentalResponse.IsSuccessStatusCode);
-                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postRentalResult = await postRentalResponse.Content.ReadFromJsonAsync<ResourceIdViewModel?>();
             }
 
             var postBookingRequest = new BookingBindingModel
@@ -39,18 +36,18 @@ namespace VacationRental.Api.Tests
                  Start = new DateTime(2001, 01, 01)
             };
 
-            ResourceIdViewModel postBookingResult;
+            ResourceIdViewModel? postBookingResult;
             using (var postBookingResponse = await _client.PostAsJsonAsync($"/api/v1/bookings", postBookingRequest))
             {
                 Assert.True(postBookingResponse.IsSuccessStatusCode);
-                postBookingResult = await postBookingResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postBookingResult = await postBookingResponse.Content.ReadFromJsonAsync<ResourceIdViewModel?>();
             }
 
             using (var getBookingResponse = await _client.GetAsync($"/api/v1/bookings/{postBookingResult.Id}"))
             {
                 Assert.True(getBookingResponse.IsSuccessStatusCode);
 
-                var getBookingResult = await getBookingResponse.Content.ReadAsAsync<BookingViewModel>();
+                var getBookingResult = await getBookingResponse.Content.ReadFromJsonAsync<BookingViewModel>();
                 Assert.Equal(postBookingRequest.RentalId, getBookingResult.RentalId);
                 Assert.Equal(postBookingRequest.Nights, getBookingResult.Nights);
                 Assert.Equal(postBookingRequest.Start, getBookingResult.Start);
@@ -65,11 +62,11 @@ namespace VacationRental.Api.Tests
                 Units = 1
             };
 
-            ResourceIdViewModel postRentalResult;
+            ResourceIdViewModel? postRentalResult;
             using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
             {
                 Assert.True(postRentalResponse.IsSuccessStatusCode);
-                postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
+                postRentalResult = await postRentalResponse.Content.ReadFromJsonAsync<ResourceIdViewModel?>();
             }
 
             var postBooking1Request = new BookingBindingModel

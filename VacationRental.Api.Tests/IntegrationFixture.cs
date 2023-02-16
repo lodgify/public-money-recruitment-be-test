@@ -1,29 +1,44 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using System;
-using System.Net.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Xunit;
 
 namespace VacationRental.Api.Tests
 {
-    [CollectionDefinition("Integration")]
-    public sealed class IntegrationFixture : IDisposable, ICollectionFixture<IntegrationFixture>
+    public sealed class IntegrationFixture : IClassFixture<WebApplicationFactory<Program>>
     {
-        private readonly TestServer _server;
+        private readonly WebApplicationFactory<Program> _factory;
 
         public HttpClient Client { get; }
 
-        public IntegrationFixture()
+        public IntegrationFixture(WebApplicationFactory<Program> factory)
         {
-            _server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            _factory = factory;
 
-            Client = _server.CreateClient();
+            Client = _factory.CreateClient();
         }
 
-        public void Dispose()
+
+        [Theory]
+        [InlineData("/")]
+        [InlineData("/Index")]
+        [InlineData("/About")]
+        [InlineData("/Privacy")]
+        [InlineData("/Contact")]
+        public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
         {
-            Client.Dispose();
-            _server.Dispose();
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync(url);
+
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.Equal("text/html; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
         }
     }
 }
