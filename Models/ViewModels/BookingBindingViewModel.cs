@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace VacationRental.Api.Models
+﻿namespace Models.ViewModels
 {
-    public class BookingBindingModel
+    public class BookingBindingViewModel
     {
         public int RentalId { get; set; }
 

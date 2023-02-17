@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using VacationRental.Api.Models;
+using Models.ViewModels;
 using Xunit;
 
 namespace VacationRental.Api.Tests
@@ -29,7 +29,7 @@ namespace VacationRental.Api.Tests
                 postRentalResult = await postRentalResponse.Content.ReadFromJsonAsync<ResourceIdViewModel?>();
             }
 
-            var postBookingRequest = new BookingBindingModel
+            var postBookingRequest = new BookingBindingViewModel
             {
                  RentalId = postRentalResult.Id,
                  Nights = 3,
@@ -69,7 +69,7 @@ namespace VacationRental.Api.Tests
                 postRentalResult = await postRentalResponse.Content.ReadFromJsonAsync<ResourceIdViewModel?>();
             }
 
-            var postBooking1Request = new BookingBindingModel
+            var postBooking1Request = new BookingBindingViewModel
             {
                 RentalId = postRentalResult.Id,
                 Nights = 3,
@@ -81,7 +81,7 @@ namespace VacationRental.Api.Tests
                 Assert.True(postBooking1Response.IsSuccessStatusCode);
             }
 
-            var postBooking2Request = new BookingBindingModel
+            var postBooking2Request = new BookingBindingViewModel
             {
                 RentalId = postRentalResult.Id,
                 Nights = 1,

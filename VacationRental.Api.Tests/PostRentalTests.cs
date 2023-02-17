@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using VacationRental.Api.Models;
+using Models.ViewModels;
 using Xunit;
 
 namespace VacationRental.Api.Tests

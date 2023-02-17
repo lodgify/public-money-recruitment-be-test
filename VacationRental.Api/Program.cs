@@ -1,5 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
-using VacationRental.Api.Models;
+using VacationRental.Api.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -9,8 +9,8 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(opts => opts.SwaggerDoc("v1", new OpenApiInfo { Title = "Vacation rental information", Version = "v1" }));
 
-services.AddSingleton<IDictionary<int, RentalViewModel>>(new Dictionary<int, RentalViewModel>());
-services.AddSingleton<IDictionary<int, BookingViewModel>>(new Dictionary<int, BookingViewModel>());
+services.AddRepositories();
+services.AddOperations();
 
 var app = builder.Build();
 
@@ -22,11 +22,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
 
 public partial class Program { }
