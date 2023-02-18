@@ -1,7 +1,6 @@
-﻿namespace Models.ViewModels
+﻿namespace Models.ViewModels;
+
+public class RentalBindingModel
 {
-    public class RentalBindingModel
-    {
-        public int Units { get; set; }
-    }
+    public int Units { get; set; }
 }

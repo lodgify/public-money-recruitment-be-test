@@ -2,25 +2,24 @@
 using Models.ViewModels;
 using VacationRental.Api.Operations.CalendarOperations;
 
-namespace VacationRental.Api.Controllers
+namespace VacationRental.Api.Controllers;
+
+[Route("api/v1/calendar")]
+[ApiController]
+public class CalendarController : ControllerBase
 {
-    [Route("api/v1/calendar")]
-    [ApiController]
-    public class CalendarController : ControllerBase
+    private readonly ICalendarGetOperation _calendarGetOperation;
+
+    public CalendarController(ICalendarGetOperation calendarGetOperation)
     {
-        private readonly ICalendarGetOperation _calendarGetOperation;
+        _calendarGetOperation = calendarGetOperation;
+    }
 
-        public CalendarController(ICalendarGetOperation calendarGetOperation)
-        {
-            _calendarGetOperation = calendarGetOperation;
-        }
+    [HttpGet]
+    public CalendarViewModel Get(int rentalId, DateTime start, int nights)
+    {
+        var result = _calendarGetOperation.ExecuteAsync(rentalId, start, nights);
 
-        [HttpGet]
-        public CalendarViewModel Get(int rentalId, DateTime start, int nights)
-        {
-            var result = _calendarGetOperation.ExecuteAsync(rentalId, start, nights);
-
-            return result;
-        }
+        return result;
     }
 }

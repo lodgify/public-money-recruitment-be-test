@@ -1,8 +1,7 @@
-﻿namespace Models.ViewModels
+﻿namespace Models.ViewModels;
+
+public class CalendarViewModel
 {
-    public class CalendarViewModel
-    {
-        public int RentalId { get; set; }
-        public List<CalendarDateViewModel> Dates { get; set; }
-    }
+    public int RentalId { get; set; }
+    public List<CalendarDateViewModel> Dates { get; set; }
 }

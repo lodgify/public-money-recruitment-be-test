@@ -1,27 +1,30 @@
 ﻿using Models.ViewModels;
+using VacationRental.Api.Repository;
 
-namespace VacationRental.Api.Operations.BookingOperations
+namespace VacationRental.Api.Operations.BookingOperations;
+
+public sealed class BookingGetOperation : IBookingGetOperation
 {
-    public sealed class BookingGetOperation : IBookingGetOperation
+    private readonly IBookingRepository _bookingRepository;
+
+    public BookingGetOperation(IBookingRepository bokingRepository)
     {
-        public BookingGetOperation()
-        {
-        }
+        _bookingRepository = bokingRepository;
+    }
 
-        public BookingViewModel ExecuteAsync(int bookingId)
-        {
-            if (bookingId <= 0)
-                throw new ApplicationException("Wrong Id");
+    public BookingViewModel ExecuteAsync(int bookingId)
+    {
+        if (bookingId <= 0)
+            throw new ApplicationException("Wrong Id");
 
-            return DoExecute(bookingId);
-        }
+        return DoExecute(bookingId);
+    }
 
-        private BookingViewModel DoExecute(int bookingId)
-        {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
+    private BookingViewModel DoExecute(int bookingId)
+    {
+        if (!_bookingRepository.IsExists(bookingId))
+            throw new ApplicationException("Booking not found");
 
-            return _bookings[bookingId];
-        }
+        return _bookingRepository.Get(bookingId);
     }
 }

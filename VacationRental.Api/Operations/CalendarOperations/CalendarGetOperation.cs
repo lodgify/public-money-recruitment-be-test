@@ -1,52 +1,62 @@
 ﻿using Models.ViewModels;
+using VacationRental.Api.Repository;
 
-namespace VacationRental.Api.Operations.CalendarOperations
+namespace VacationRental.Api.Operations.CalendarOperations;
+
+public sealed class CalendarGetOperation : ICalendarGetOperation
 {
-    public sealed class CalendarGetOperation : ICalendarGetOperation
+    private readonly IBookingRepository _bookingRepository;
+    private readonly IRentalRepository _rentalRepository;
+
+    public CalendarGetOperation(IBookingRepository bokingRepository, IRentalRepository rentalRepository)
     {
-        public CalendarGetOperation()
+        _bookingRepository = bokingRepository;
+        _rentalRepository = rentalRepository;
+    }
+
+    public CalendarViewModel ExecuteAsync(int rentalId, DateTime start, int nights)
+    {
+        if (rentalId <= 0)
+            throw new ApplicationException("Wrong Id"); 
+        if (nights <= 0)
+            throw new ApplicationException("Wrong nights");
+
+        return DoExecute(rentalId, start, nights);
+    }
+
+    private CalendarViewModel DoExecute(int rentalId, DateTime start, int nights)
+    {
+        if (!_rentalRepository.IsExists(rentalId))
+            throw new ApplicationException("Rental not found");
+
+        var result = new CalendarViewModel
         {
-        }
+            RentalId = rentalId,
+            Dates = new List<CalendarDateViewModel>()
+        };
 
-        public CalendarViewModel ExecuteAsync(int rentalId, DateTime start, int nights)
+        var bookings = _bookingRepository.GetAll();
+
+        for (var i = 0; i < nights; i++)
         {
-            if (rentalId <= 0)
-                throw new ApplicationException("Wrong Id"); 
-            if (nights <= 0)
-                throw new ApplicationException("Wrong nights");
-
-            return DoExecute(rentalId, start, nights);
-        }
-
-        private CalendarViewModel DoExecute(int rentalId, DateTime start, int nights)
-        {
-            if (!_rentals.ContainsKey(rentalId))
-                throw new ApplicationException("Rental not found");
-
-            var result = new CalendarViewModel
+            var date = new CalendarDateViewModel
             {
-                RentalId = rentalId,
-                Dates = new List<CalendarDateViewModel>()
+                Date = start.Date.AddDays(i),
+                Bookings = new List<CalendarBookingViewModel>()
             };
-            for (var i = 0; i < nights; i++)
+
+            foreach (var booking in bookings)
             {
-                var date = new CalendarDateViewModel
+                if (booking.RentalId == rentalId
+                    && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
                 {
-                    Date = start.Date.AddDays(i),
-                    Bookings = new List<CalendarBookingViewModel>()
-                };
-
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == rentalId
-                        && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
-                    {
-                        date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
-                    }
+                    date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
                 }
-
-                result.Dates.Add(date);
             }
+
+            result.Dates.Add(date);
         }
+
+        return result;
     }
 }

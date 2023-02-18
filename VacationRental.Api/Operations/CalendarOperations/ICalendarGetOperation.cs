@@ -1,9 +1,9 @@
 ﻿using Models.ViewModels;
 
-namespace VacationRental.Api.Operations.CalendarOperations
+namespace VacationRental.Api.Operations.CalendarOperations;
+
+public interface ICalendarGetOperation
 {
-    public interface ICalendarGetOperation
-    {
-        CalendarViewModel ExecuteAsync(int rentalId, DateTime start, int nights);
-    }
+    CalendarViewModel ExecuteAsync(int rentalId, DateTime start, int nights);
 }
+

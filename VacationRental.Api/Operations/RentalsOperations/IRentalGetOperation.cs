@@ -1,9 +1,9 @@
 ﻿using Models.ViewModels;
 
-namespace VacationRental.Api.Operations.RentalsOperations
+namespace VacationRental.Api.Operations.RentalsOperations;
+
+public interface IRentalGetOperation
 {
-    public interface IRentalGetOperation
-    {
-        RentalViewModel ExecuteAsync(int rentalId);
-    }
+    RentalViewModel ExecuteAsync(int rentalId);
 }
+

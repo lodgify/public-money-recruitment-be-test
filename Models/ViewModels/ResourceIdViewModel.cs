@@ -1,7 +1,6 @@
-﻿namespace Models.ViewModels
+﻿namespace Models.ViewModels;
+
+public class ResourceIdViewModel
 {
-    public class ResourceIdViewModel
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }

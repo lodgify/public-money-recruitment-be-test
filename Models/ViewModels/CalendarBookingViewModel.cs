@@ -1,7 +1,6 @@
-﻿namespace Models.ViewModels
+﻿namespace Models.ViewModels;
+
+public class CalendarBookingViewModel
 {
-    public class CalendarBookingViewModel
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }
