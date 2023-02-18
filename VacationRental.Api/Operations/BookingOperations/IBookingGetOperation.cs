@@ -4,5 +4,5 @@ namespace VacationRental.Api.Operations.BookingOperations;
 
 public interface IBookingGetOperation
 {
-    BookingViewModel ExecuteAsync(int bookingId);
+    Task<BookingViewModel> ExecuteAsync(int bookingId);
 }

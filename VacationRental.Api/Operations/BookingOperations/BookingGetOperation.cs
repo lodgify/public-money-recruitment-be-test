@@ -1,4 +1,7 @@
 ﻿using Models.ViewModels;
+using System.ComponentModel.DataAnnotations;
+using VacationRental.Api.Constants;
+using VacationRental.Api.Exceptions;
 using VacationRental.Api.Repository;
 
 namespace VacationRental.Api.Operations.BookingOperations;
@@ -12,19 +15,19 @@ public sealed class BookingGetOperation : IBookingGetOperation
         _bookingRepository = bokingRepository;
     }
 
-    public BookingViewModel ExecuteAsync(int bookingId)
+    public Task<BookingViewModel> ExecuteAsync(int bookingId)
     {
         if (bookingId <= 0)
-            throw new ApplicationException("Wrong Id");
+            throw new ValidationException(ExceptionMessageConstants.BookingBindingIdValidationError);
 
-        return DoExecute(bookingId);
+        return DoExecuteAsync(bookingId);
     }
 
-    private BookingViewModel DoExecute(int bookingId)
+    private async Task<BookingViewModel> DoExecuteAsync(int bookingId)
     {
-        if (!_bookingRepository.IsExists(bookingId))
-            throw new ApplicationException("Booking not found");
+        if (!await _bookingRepository.IsExists(bookingId))
+            throw new NotFoundException(ExceptionMessageConstants.BookingNotFound);
 
-        return _bookingRepository.Get(bookingId);
+        return await _bookingRepository.Get(bookingId);
     }
 }

@@ -4,11 +4,11 @@ namespace VacationRental.Api.Repository;
 
 public interface IRentalRepository
 {
-    bool IsExists(int id);
+    Task<bool> IsExists(int id);
 
-    RentalViewModel Get(int id);
+    Task<RentalViewModel> Get(int id);
 
-    IEnumerable<RentalViewModel> GetAll();
+    Task<IEnumerable<RentalViewModel>> GetAll();
 
-    RentalViewModel Create(int id, RentalViewModel model);
+    Task<RentalViewModel> Create(int id, RentalViewModel model);
 }

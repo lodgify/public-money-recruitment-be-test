@@ -11,25 +11,25 @@ public sealed class RentalRepository : IRentalRepository
         _dataSet = dataSet;
     }
 
-    public bool IsExists(int id)
+    public async Task<bool> IsExists(int id)
     {
-        return _dataSet.ContainsKey(id);
+        return await Task.Run(() => _dataSet.ContainsKey(id));
     }
 
-    public RentalViewModel Get(int id)
+    public async Task<RentalViewModel> Get(int id)
     {
-        return _dataSet[id];
+        return await Task.Run(() => _dataSet[id]);
     }
 
-    public IEnumerable<RentalViewModel> GetAll()
+    public async Task<IEnumerable<RentalViewModel>> GetAll()
     {
-        return _dataSet.Values;
+        return await Task.Run(() => _dataSet.Values);
     }
 
-    public RentalViewModel Create(int id, RentalViewModel model)
+    public async Task<RentalViewModel> Create(int id, RentalViewModel model)
     {
-        _dataSet.Add(id, model);
+        await Task.Run(() => _dataSet.Add(id, model));
 
-        return Get(id);
+        return await Get(id);
     }
 }

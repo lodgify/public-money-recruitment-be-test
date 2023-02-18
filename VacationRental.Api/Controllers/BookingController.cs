@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Models.Models;
 using Models.ViewModels;
+using VacationRental.Api.Constants;
 using VacationRental.Api.Operations.BookingOperations;
 
 namespace VacationRental.Api.Controllers;
 
-[Route("api/v1/bookings")]
+[Route(RouteConstants.DefaultRoute)]
 [ApiController]
 public class BookingController : ControllerBase
 {
@@ -19,20 +21,31 @@ public class BookingController : ControllerBase
         _bookingGetOperation = bookingGetOperation;
     }
 
+    /// <summary>
+    /// Retrieves a specific booking by unique id.
+    /// </summary>
     [HttpGet]
     [Route("{bookingId:int}")]
-    public BookingViewModel Get(int bookingId)
+    [ProducesResponseType(typeof(BookingViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SwaggerErrorMessageModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SwaggerErrorMessageModel), StatusCodes.Status404NotFound)]
+    public async Task<BookingViewModel> Get(int bookingId)
     {
-        var result = _bookingGetOperation.ExecuteAsync(bookingId);
+        var result = await _bookingGetOperation.ExecuteAsync(bookingId);
 
         return result;
     }
 
+    /// <summary>
+    /// Creates new booking.
+    /// </summary>
     [HttpPost]
-    [Route("/")]
-    public ResourceIdViewModel Post(BookingBindingViewModel model)
+    [Route("")]
+    [ProducesResponseType(typeof(ResourceIdViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SwaggerErrorMessageModel), StatusCodes.Status400BadRequest)]
+    public async Task<ResourceIdViewModel> Post(BookingBindingViewModel model)
     {
-        var result = _bookingCreateOperation.ExecuteAsync(model);
+        var result = await _bookingCreateOperation.ExecuteAsync(model);
 
         return result;
     }

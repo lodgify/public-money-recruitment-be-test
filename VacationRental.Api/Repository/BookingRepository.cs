@@ -11,25 +11,25 @@ public sealed class BookingRepository : IBookingRepository
         _dataSet = dataSet;
     }
 
-    public bool IsExists(int id)
+    public async Task<bool> IsExists(int id)
     {
-        return _dataSet.ContainsKey(id);
+        return await Task.Run(() => _dataSet.ContainsKey(id));
     }
 
-    public BookingViewModel Get(int id)
+    public async Task<BookingViewModel> Get(int id)
     {
-        return _dataSet[id];
+        return await Task.Run(() => _dataSet[id]);
     }
 
-    public IEnumerable<BookingViewModel> GetAll()
+    public async Task<IEnumerable<BookingViewModel>> GetAll()
     {
-        return _dataSet.Values;
+        return await Task.Run(() => _dataSet.Values);
     }
 
-    public BookingViewModel Create(int id, BookingViewModel model)
+    public async Task<BookingViewModel> Create(int id, BookingViewModel model)
     {
-        _dataSet.Add(id, model);
+        await Task.Run(() => _dataSet.Add(id, model));
 
-        return Get(id);
+        return await Get(id);
     }
 }

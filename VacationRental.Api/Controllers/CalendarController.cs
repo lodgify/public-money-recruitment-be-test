@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Models.Models;
 using Models.ViewModels;
+using VacationRental.Api.Constants;
 using VacationRental.Api.Operations.CalendarOperations;
 
 namespace VacationRental.Api.Controllers;
 
-[Route("api/v1/calendar")]
+[Route(RouteConstants.DefaultRoute)]
 [ApiController]
 public class CalendarController : ControllerBase
 {
@@ -16,9 +18,13 @@ public class CalendarController : ControllerBase
     }
 
     [HttpGet]
-    public CalendarViewModel Get(int rentalId, DateTime start, int nights)
+    [Route("")]
+    [ProducesResponseType(typeof(CalendarViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SwaggerErrorMessageModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SwaggerErrorMessageModel), StatusCodes.Status404NotFound)]
+    public async Task<CalendarViewModel> Get(int rentalId, DateTime start, int nights)
     {
-        var result = _calendarGetOperation.ExecuteAsync(rentalId, start, nights);
+        var result = await _calendarGetOperation.ExecuteAsync(rentalId, start, nights);
 
         return result;
     }

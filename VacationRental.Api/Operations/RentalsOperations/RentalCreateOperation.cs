@@ -12,14 +12,14 @@ public sealed class RentalCreateOperation : IRentalCreateOperation
         _rentalRepository = rentalRepository;
     }
 
-    public ResourceIdViewModel ExecuteAsync(RentalBindingModel model)
+    public Task<ResourceIdViewModel> ExecuteAsync(RentalBindingModel model)
     {
-        return DoExecute(model);
+        return DoExecuteAsync(model);
     }
 
-    private ResourceIdViewModel DoExecute(RentalBindingModel model)
+    private async Task<ResourceIdViewModel> DoExecuteAsync(RentalBindingModel model)
     {
-        var rentals = _rentalRepository.GetAll();
+        var rentals = await _rentalRepository.GetAll();
         var key = new ResourceIdViewModel { Id = rentals.Count() + 1 };
 
         _rentalRepository.Create(key.Id, new RentalViewModel

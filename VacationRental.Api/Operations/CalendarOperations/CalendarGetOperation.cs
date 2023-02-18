@@ -1,4 +1,7 @@
 ﻿using Models.ViewModels;
+using System.ComponentModel.DataAnnotations;
+using VacationRental.Api.Constants;
+using VacationRental.Api.Exceptions;
 using VacationRental.Api.Repository;
 
 namespace VacationRental.Api.Operations.CalendarOperations;
@@ -14,20 +17,20 @@ public sealed class CalendarGetOperation : ICalendarGetOperation
         _rentalRepository = rentalRepository;
     }
 
-    public CalendarViewModel ExecuteAsync(int rentalId, DateTime start, int nights)
+    public Task<CalendarViewModel> ExecuteAsync(int rentalId, DateTime start, int nights)
     {
         if (rentalId <= 0)
-            throw new ApplicationException("Wrong Id"); 
+            throw new ValidationException(ExceptionMessageConstants.RentalIdValidationError); 
         if (nights <= 0)
-            throw new ApplicationException("Wrong nights");
+            throw new ValidationException(ExceptionMessageConstants.NightsValidationError);
 
-        return DoExecute(rentalId, start, nights);
+        return DoExecuteAsync(rentalId, start, nights);
     }
 
-    private CalendarViewModel DoExecute(int rentalId, DateTime start, int nights)
+    private async Task<CalendarViewModel> DoExecuteAsync(int rentalId, DateTime start, int nights)
     {
-        if (!_rentalRepository.IsExists(rentalId))
-            throw new ApplicationException("Rental not found");
+        if (!await _rentalRepository.IsExists(rentalId))
+            throw new NotFoundException(ExceptionMessageConstants.RentalNotFound);
 
         var result = new CalendarViewModel
         {
@@ -35,7 +38,7 @@ public sealed class CalendarGetOperation : ICalendarGetOperation
             Dates = new List<CalendarDateViewModel>()
         };
 
-        var bookings = _bookingRepository.GetAll();
+        var bookings = await _bookingRepository.GetAll();
 
         for (var i = 0; i < nights; i++)
         {

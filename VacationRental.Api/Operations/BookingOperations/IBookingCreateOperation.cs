@@ -4,5 +4,5 @@ namespace VacationRental.Api.Operations.BookingOperations;
 
 public interface IBookingCreateOperation
 {
-    ResourceIdViewModel ExecuteAsync(BookingBindingViewModel model);
+    Task<ResourceIdViewModel> ExecuteAsync(BookingBindingViewModel model);
 }

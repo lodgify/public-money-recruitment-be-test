@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Models.Models;
 using Models.ViewModels;
+using VacationRental.Api.Constants;
 using VacationRental.Api.Operations.RentalsOperations;
 
 namespace VacationRental.Api.Controllers;
 
-[Route("api/v1/rentals")]
+[Route(RouteConstants.DefaultRoute)]
 [ApiController]
 public class RentalController : ControllerBase
 {
@@ -19,17 +21,23 @@ public class RentalController : ControllerBase
 
     [HttpGet]
     [Route("{rentalId:int}")]
-    public RentalViewModel Get(int rentalId)
+    [ProducesResponseType(typeof(RentalViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SwaggerErrorMessageModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SwaggerErrorMessageModel), StatusCodes.Status404NotFound)]
+    public async Task<RentalViewModel> Get(int rentalId)
     {
-        var result = _rentalGetOperation.ExecuteAsync(rentalId);
+        var result = await _rentalGetOperation.ExecuteAsync(rentalId);
 
         return result;
     }
 
     [HttpPost]
-    public ResourceIdViewModel Post(RentalBindingModel model)
+    [Route("")]
+    [ProducesResponseType(typeof(ResourceIdViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SwaggerErrorMessageModel), StatusCodes.Status400BadRequest)]
+    public async Task<ResourceIdViewModel> Post(RentalBindingModel model)
     {
-        var result = _rentalCreateOperation.ExecuteAsync(model);
+        var result = await _rentalCreateOperation.ExecuteAsync(model);
 
         return result;
     }

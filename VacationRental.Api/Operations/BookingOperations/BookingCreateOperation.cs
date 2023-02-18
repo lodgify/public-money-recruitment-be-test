@@ -1,4 +1,7 @@
 ﻿using Models.ViewModels;
+using System.ComponentModel.DataAnnotations;
+using VacationRental.Api.Constants;
+using VacationRental.Api.Exceptions;
 using VacationRental.Api.Repository;
 
 namespace VacationRental.Api.Operations.BookingOperations;
@@ -14,20 +17,20 @@ public sealed class BookingCreateOperation : IBookingCreateOperation
         _rentalRepository = rentalRepository;
     }
 
-    public ResourceIdViewModel ExecuteAsync(BookingBindingViewModel model)
+    public Task<ResourceIdViewModel> ExecuteAsync(BookingBindingViewModel model)
     {
         if (model.Nights <= 0)
-            throw new ApplicationException("Nigts must be positive");
+            throw new ValidationException(ExceptionMessageConstants.NightsValidationError);
 
-        return DoExecute(model);
+        return DoExecuteAsync(model);
     }
 
-    private ResourceIdViewModel DoExecute(BookingBindingViewModel model)
+    private async Task<ResourceIdViewModel> DoExecuteAsync(BookingBindingViewModel model)
     {
-        if (!_bookingRepository.IsExists(model.RentalId))
-            throw new ApplicationException("Rental not found");
+        if (!await _rentalRepository.IsExists(model.RentalId))
+            throw new NotFoundException(ExceptionMessageConstants.RentalNotFound);
 
-        var bookings = _bookingRepository.GetAll();
+        var bookings = await _bookingRepository.GetAll();
 
         for (var i = 0; i < model.Nights; i++)
         {
@@ -46,14 +49,14 @@ public sealed class BookingCreateOperation : IBookingCreateOperation
                 }
             }
 
-            if (count >= _rentalRepository.Get(model.RentalId).Units)
+            if (count >= (await _rentalRepository.Get(model.RentalId)).Units)
                 throw new ApplicationException("Not available");
         }
 
 
         var key = new ResourceIdViewModel { Id = bookings.Count() + 1 };
 
-        _bookingRepository.Create(key.Id, new BookingViewModel
+        await _bookingRepository.Create(key.Id, new BookingViewModel
         {
             Id = key.Id,
             Nights = model.Nights,
