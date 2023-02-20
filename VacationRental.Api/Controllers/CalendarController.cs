@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Models.Models;
-using Models.ViewModels;
+using Models.ViewModels.Calendar;
 using VacationRental.Api.Constants;
 using VacationRental.Api.Operations.CalendarOperations;
 
@@ -8,7 +8,7 @@ namespace VacationRental.Api.Controllers;
 
 [Route(RouteConstants.DefaultRoute)]
 [ApiController]
-public class CalendarController : ControllerBase
+public sealed class CalendarController : ControllerBase
 {
     private readonly ICalendarGetOperation _calendarGetOperation;
 
@@ -17,6 +17,9 @@ public class CalendarController : ControllerBase
         _calendarGetOperation = calendarGetOperation;
     }
 
+    /// <summary>
+    /// Retrieves a rental booking status.
+    /// </summary>
     [HttpGet]
     [Route("")]
     [ProducesResponseType(typeof(CalendarViewModel), StatusCodes.Status200OK)]

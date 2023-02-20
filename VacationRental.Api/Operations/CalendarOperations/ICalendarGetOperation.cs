@@ -1,4 +1,4 @@
-﻿using Models.ViewModels;
+﻿using Models.ViewModels.Calendar;
 
 namespace VacationRental.Api.Operations.CalendarOperations;
 

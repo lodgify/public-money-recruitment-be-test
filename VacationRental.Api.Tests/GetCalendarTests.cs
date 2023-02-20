@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Json;
-using Models.ViewModels;
+using Models.ViewModels.Booking;
+using Models.ViewModels.Calendar;
+using Models.ViewModels.Rental;
 using Xunit;
 
 namespace VacationRental.Api.Tests

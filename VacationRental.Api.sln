@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{25132235-FAFB-4595-B2BC-7CE85EFC2EA1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{97486F52-D24B-4085-A98E-13C4732CF166}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{25132235-FAFB-4595-B2BC-7CE85EFC2EA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25132235-FAFB-4595-B2BC-7CE85EFC2EA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25132235-FAFB-4595-B2BC-7CE85EFC2EA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97486F52-D24B-4085-A98E-13C4732CF166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97486F52-D24B-4085-A98E-13C4732CF166}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97486F52-D24B-4085-A98E-13C4732CF166}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97486F52-D24B-4085-A98E-13C4732CF166}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

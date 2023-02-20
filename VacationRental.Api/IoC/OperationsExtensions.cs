@@ -1,6 +1,7 @@
 ﻿using VacationRental.Api.Operations.BookingOperations;
 using VacationRental.Api.Operations.CalendarOperations;
 using VacationRental.Api.Operations.RentalsOperations;
+using VacationRental.Api.Operations.UnitOperations;
 
 namespace VacationRental.Api.IoC;
 
@@ -12,9 +13,13 @@ public static class OperationsExtensions
             .AddScoped<IBookingCreateOperation, BookingCreateOperation>()
             .AddScoped<IBookingGetOperation, BookingGetOperation>()
 
-            .AddScoped<ICalendarGetOperation, CalendarGetOperation>()
-
+            .AddScoped<IRentalCreateOperation, RentalCreateOperation>()
+            .AddScoped<IRentalUpdateOperation, RentalUpdateOperation>()
             .AddScoped<IRentalGetOperation, RentalGetOperation>()
-            .AddScoped<IRentalCreateOperation, RentalCreateOperation>();
+
+            .AddScoped<IUnitCreateOperation, UnitCreateOperation>()
+            .AddScoped<IUnitListGetOperation, UnitListGetOperation>()
+
+            .AddScoped<ICalendarGetOperation, CalendarGetOperation>();
     }
 }

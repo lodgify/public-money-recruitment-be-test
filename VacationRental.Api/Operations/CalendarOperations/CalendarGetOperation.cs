@@ -1,8 +1,10 @@
-﻿using Models.ViewModels;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Models.DataModels;
+using Repository.Repository;
 using VacationRental.Api.Constants;
 using VacationRental.Api.Exceptions;
-using VacationRental.Api.Repository;
+using Models.ViewModels.Calendar;
+using Mapster;
 
 namespace VacationRental.Api.Operations.CalendarOperations;
 
@@ -27,39 +29,52 @@ public sealed class CalendarGetOperation : ICalendarGetOperation
         return DoExecuteAsync(rentalId, start, nights);
     }
 
-    private async Task<CalendarViewModel> DoExecuteAsync(int rentalId, DateTime start, int nights)
+    /// <summary>
+    /// Returns Calendar for selected period (start date : start date + nigths)
+    /// </summary>
+    /// <param name="rentalId"></param>
+    /// <param name="calendarStartDate"></param>
+    /// <param name="nights"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
+    private async Task<CalendarViewModel> DoExecuteAsync(int rentalId, DateTime calendarStartDate, int nights)
     {
         if (!await _rentalRepository.IsExists(rentalId))
             throw new NotFoundException(ExceptionMessageConstants.RentalNotFound);
 
-        var result = new CalendarViewModel
-        {
-            RentalId = rentalId,
-            Dates = new List<CalendarDateViewModel>()
-        };
+        var result = new CalendarViewModel(rentalId, new List<CalendarDateViewModel>());
 
-        var bookings = await _bookingRepository.GetAll();
+        var bookingsForSelectedPeriod = await _bookingRepository.GetAll(rentalId, calendarStartDate, calendarStartDate.AddDays(nights));
 
         for (var i = 0; i < nights; i++)
         {
-            var date = new CalendarDateViewModel
-            {
-                Date = start.Date.AddDays(i),
-                Bookings = new List<CalendarBookingViewModel>()
-            };
+            var currentCalendarDate = calendarStartDate.AddDays(i);
+            var calendarDateViewModel = new CalendarDateViewModel(currentCalendarDate, new List<CalendarBookingViewModel>(), new List<CalendarUnitViewModel>());
 
-            foreach (var booking in bookings)
+            var listOfUsedUnits = bookingsForSelectedPeriod.Where(_ => CheckBookingTime(_, currentCalendarDate)).ToList();
+            var listOfBeingPreparedUnits = bookingsForSelectedPeriod.Where(_ => CheckBookingPreparationTime(_, currentCalendarDate)).ToList();
+
+            foreach (var unit in listOfUsedUnits)
             {
-                if (booking.RentalId == rentalId
-                    && booking.Start <= date.Date && booking.Start.AddDays(booking.Nights) > date.Date)
-                {
-                    date.Bookings.Add(new CalendarBookingViewModel { Id = booking.Id });
-                }
+                calendarDateViewModel.Bookings.Add(unit.Adapt<CalendarBookingViewModel>());
             }
 
-            result.Dates.Add(date);
+            foreach (var unit in listOfBeingPreparedUnits)
+            {
+                calendarDateViewModel.PreparationTimes.Add(unit.Adapt<CalendarUnitViewModel>());
+            }
+
+            result.Dates.Add(calendarDateViewModel);
         }
 
         return result;
     }
+
+    private bool CheckBookingTime(BookingDto entity, DateTime date) =>
+        entity.Start <= date
+        && entity.Start.AddDays(entity.Nights) > date;
+
+    private bool CheckBookingPreparationTime(BookingDto entity, DateTime date) =>
+        entity.Start.AddDays(entity.Nights) <= date
+        && entity.Start.AddDays(entity.Nights + entity.PreparationTimeInDays) > date;
 }

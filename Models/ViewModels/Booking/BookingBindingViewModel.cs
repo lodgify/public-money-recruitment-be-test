@@ -1,8 +1,12 @@
-﻿namespace Models.ViewModels;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class BookingBindingViewModel
+namespace Models.ViewModels.Booking;
+
+public sealed class BookingBindingViewModel
 {
     public int RentalId { get; set; }
+
+    public int Nights { get; set; }
 
     public DateTime Start
     {
@@ -11,5 +15,4 @@ public class BookingBindingViewModel
     }
 
     private DateTime _startIgnoreTime;
-    public int Nights { get; set; }
 }

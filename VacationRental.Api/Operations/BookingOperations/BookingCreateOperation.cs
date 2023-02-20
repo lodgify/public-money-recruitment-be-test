@@ -1,8 +1,11 @@
-﻿using Models.ViewModels;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Models.DataModels;
+using Repository.Repository;
 using VacationRental.Api.Constants;
 using VacationRental.Api.Exceptions;
-using VacationRental.Api.Repository;
+using Models.ViewModels.Booking;
+using Models.ViewModels.Rental;
+using Mapster;
 
 namespace VacationRental.Api.Operations.BookingOperations;
 
@@ -25,44 +28,43 @@ public sealed class BookingCreateOperation : IBookingCreateOperation
         return DoExecuteAsync(model);
     }
 
+    /// <summary>
+    /// Creates new booking.
+    /// 1. Checks all existing bookings for selected day and count of units for rental.
+    /// 2. If there is any avaliable unit - creates new booking for selected date and reserv unit's id, by saving it to BookingDto.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <exception cref="NotFoundException"></exception>
+    /// <exception cref="RentalNotAvailableExcepton"></exception>
     private async Task<ResourceIdViewModel> DoExecuteAsync(BookingBindingViewModel model)
     {
         if (!await _rentalRepository.IsExists(model.RentalId))
             throw new NotFoundException(ExceptionMessageConstants.RentalNotFound);
 
+        var rentalTask = _rentalRepository.Get(model.RentalId);
+        var bookingsTask = _bookingRepository.GetAll(model.RentalId, model.Start, model.Start.AddDays(model.Nights));
+
+        await Task.WhenAll(rentalTask, bookingsTask);
+
+        var rental = rentalTask.Result;
+        var bookingsForRequestedTime = bookingsTask.Result;
+
+        if (bookingsForRequestedTime.Count() >= rental.Units.Count)
+            throw new RentalNotAvailableExcepton(ExceptionMessageConstants.RentalNotAvailable);
+
         var bookings = await _bookingRepository.GetAll();
-
-        for (var i = 0; i < model.Nights; i++)
-        {
-            var count = 0;
-            foreach (var booking in bookings)
-            {
-                if (booking.RentalId == model.RentalId
-                    && (booking.Start <= model.Start.Date 
-                        && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                    || (booking.Start < model.Start.AddDays(model.Nights) &&
-                        booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                    || (booking.Start > model.Start &&
-                        booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                {
-                    count++;
-                }
-            }
-
-            if (count >= (await _rentalRepository.Get(model.RentalId)).Units)
-                throw new ApplicationException("Not available");
-        }
-
-
         var key = new ResourceIdViewModel { Id = bookings.Count() + 1 };
 
-        await _bookingRepository.Create(key.Id, new BookingViewModel
-        {
-            Id = key.Id,
-            Nights = model.Nights,
-            RentalId = model.RentalId,
-            Start = model.Start.Date
-        });
+        var bookedUnits = bookingsForRequestedTime.Select(x => x.Unit).ToList();
+        var avaliableUnitId = rental.Units.First(_ => !bookedUnits.Contains(_));
+
+        var bookingDto = model.Adapt<BookingDto>();
+
+        bookingDto.Id = key.Id;
+        bookingDto.PreparationTimeInDays = rental.PreparationTimeInDays;
+        bookingDto.Unit = avaliableUnitId;
+
+        await _bookingRepository.Create(key.Id, bookingDto);
 
         return key;
     }

@@ -31,10 +31,11 @@ public sealed class ErrorHandlerMiddleware
 
             switch (error)
             {
-                case NotFoundException e:
+                case NotFoundException:
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                     break;
-                case ValidationException e:
+                case RentalNotAvailableExcepton:
+                case ValidationException:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
                 default:

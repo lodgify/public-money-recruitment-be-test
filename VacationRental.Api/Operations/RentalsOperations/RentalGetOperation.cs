@@ -1,8 +1,10 @@
-﻿using Models.ViewModels;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Mapster;
+using Models.DataModels;
+using Repository.Repository;
 using VacationRental.Api.Constants;
 using VacationRental.Api.Exceptions;
-using VacationRental.Api.Repository;
+using Models.ViewModels.Rental;
 
 namespace VacationRental.Api.Operations.RentalsOperations;
 
@@ -28,7 +30,15 @@ public sealed class RentalGetOperation : IRentalGetOperation
         if (!await _rentalRepository.IsExists(rentalId))
             throw new NotFoundException(ExceptionMessageConstants.RentalNotFound);
 
-        return await Task.Run(() => _rentalRepository.Get(rentalId));
+        var result = await _rentalRepository.Get(rentalId);
+
+        return result.Adapt<RentalViewModel>(RentalUnitsAdapterConfig());
     }
+
+    private TypeAdapterConfig RentalUnitsAdapterConfig() => TypeAdapterConfig<RentalDto, RentalViewModel>
+           .NewConfig()
+           .Map(dest => dest.Units, src => src.Units.Count)
+           .Config;
+
 }
 

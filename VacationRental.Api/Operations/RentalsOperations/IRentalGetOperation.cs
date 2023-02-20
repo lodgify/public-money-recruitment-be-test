@@ -1,4 +1,4 @@
-﻿using Models.ViewModels;
+﻿using Models.ViewModels.Rental;
 
 namespace VacationRental.Api.Operations.RentalsOperations;
 

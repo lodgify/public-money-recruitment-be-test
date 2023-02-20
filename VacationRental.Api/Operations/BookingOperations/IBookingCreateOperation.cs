@@ -1,4 +1,5 @@
-﻿using Models.ViewModels;
+﻿using Models.ViewModels.Booking;
+using Models.ViewModels.Rental;
 
 namespace VacationRental.Api.Operations.BookingOperations;
 

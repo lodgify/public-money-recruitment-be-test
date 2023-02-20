@@ -1,8 +1,9 @@
-﻿using Models.ViewModels;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Mapster;
+using Repository.Repository;
 using VacationRental.Api.Constants;
 using VacationRental.Api.Exceptions;
-using VacationRental.Api.Repository;
+using Models.ViewModels.Booking;
 
 namespace VacationRental.Api.Operations.BookingOperations;
 
@@ -23,11 +24,19 @@ public sealed class BookingGetOperation : IBookingGetOperation
         return DoExecuteAsync(bookingId);
     }
 
+    /// <summary>
+    /// Returnes existing booking.
+    /// </summary>
+    /// <param name="bookingId"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
     private async Task<BookingViewModel> DoExecuteAsync(int bookingId)
     {
         if (!await _bookingRepository.IsExists(bookingId))
             throw new NotFoundException(ExceptionMessageConstants.BookingNotFound);
 
-        return await _bookingRepository.Get(bookingId);
+        var booking = await _bookingRepository.Get(bookingId);
+
+        return booking.Adapt<BookingViewModel>();
     }
 }

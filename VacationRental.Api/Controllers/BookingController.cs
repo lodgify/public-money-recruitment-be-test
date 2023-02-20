@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Models.Models;
-using Models.ViewModels;
+using Models.ViewModels.Booking;
+using Models.ViewModels.Rental;
 using VacationRental.Api.Constants;
 using VacationRental.Api.Operations.BookingOperations;
 
@@ -8,7 +9,7 @@ namespace VacationRental.Api.Controllers;
 
 [Route(RouteConstants.DefaultRoute)]
 [ApiController]
-public class BookingController : ControllerBase
+public sealed class BookingController : ControllerBase
 {
     private readonly IBookingCreateOperation _bookingCreateOperation;
     private readonly IBookingGetOperation _bookingGetOperation;
