@@ -34,4 +34,3 @@ public sealed class UnitListGetOperation : IUnitListGetOperation
         return result.Select(_ => _.Id);
     }
 }
-

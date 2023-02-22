@@ -41,4 +41,3 @@ public sealed class RentalGetOperation : IRentalGetOperation
            .Config;
 
 }
-

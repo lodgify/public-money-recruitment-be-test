@@ -3,7 +3,7 @@ using Models.ViewModels.Booking;
 using Models.ViewModels.Rental;
 using Xunit;
 
-namespace VacationRental.Api.Tests
+namespace VacationRental.Api.Tests.IntegrationTests
 {
     [Collection("Integration")]
     public class PostBookingTests
@@ -32,9 +32,9 @@ namespace VacationRental.Api.Tests
 
             var postBookingRequest = new BookingBindingViewModel
             {
-                 RentalId = postRentalResult.Id,
-                 Nights = 3,
-                 Start = new DateTime(2001, 01, 01)
+                RentalId = postRentalResult.Id,
+                Nights = 3,
+                Start = new DateTime(2001, 01, 01)
             };
 
             ResourceIdViewModel? postBookingResult;

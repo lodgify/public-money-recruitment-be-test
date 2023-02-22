@@ -2,7 +2,7 @@
 using Models.ViewModels.Rental;
 using Xunit;
 
-namespace VacationRental.Api.Tests
+namespace VacationRental.Api.Tests.IntegrationTests
 {
     [Collection("Integration")]
     public class PostRentalTests
