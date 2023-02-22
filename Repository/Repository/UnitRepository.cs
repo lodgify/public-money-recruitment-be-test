@@ -44,4 +44,9 @@ public sealed class UnitRepository : IUnitRepository
 
         return await Get(id);
     }
+
+    public async Task<bool> Delete(int unitId)
+    {
+        return await Task.Run(() => _dataSet.Remove(unitId));
+    }
 }

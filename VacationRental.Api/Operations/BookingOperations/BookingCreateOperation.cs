@@ -41,13 +41,11 @@ public sealed class BookingCreateOperation : IBookingCreateOperation
         if (!await _rentalRepository.IsExists(model.RentalId))
             throw new NotFoundException(ExceptionMessageConstants.RentalNotFound);
 
-        var rentalTask = _rentalRepository.Get(model.RentalId);
-        var bookingsTask = _bookingRepository.GetAll(model.RentalId, model.Start, model.Start.AddDays(model.Nights));
-
-        await Task.WhenAll(rentalTask, bookingsTask);
-
-        var rental = rentalTask.Result;
-        var bookingsForRequestedTime = bookingsTask.Result;
+        var rental = await _rentalRepository.Get(model.RentalId);
+        var bookingsForRequestedTime = await _bookingRepository.GetAll(
+            model.RentalId, 
+            model.Start, 
+            model.Start.AddDays(model.Nights + rental.PreparationTimeInDays));
 
         if (bookingsForRequestedTime.Count() >= rental.Units.Count)
             throw new RentalNotAvailableExcepton(ExceptionMessageConstants.RentalNotAvailable);

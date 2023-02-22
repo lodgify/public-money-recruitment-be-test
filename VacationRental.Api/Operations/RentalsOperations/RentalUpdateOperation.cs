@@ -5,6 +5,7 @@ using Repository.Repository;
 using VacationRental.Api.Constants;
 using VacationRental.Api.Exceptions;
 using Models.ViewModels.Rental;
+using VacationRental.Api.Operations.BookingOperations;
 using VacationRental.Api.Operations.UnitOperations;
 
 namespace VacationRental.Api.Operations.RentalsOperations;
@@ -12,12 +13,20 @@ namespace VacationRental.Api.Operations.RentalsOperations;
 public sealed class RentalUpdateOperation : IRentalUpdateOperation
 {
     private readonly IRentalRepository _rentalRepository;
-    private readonly IUnitCreateOperation _unitCreateOperation;
+    private readonly IBookingRepository _bookingRepository;
+    private readonly IUnitUpdateOperation _unitUpdateOperation;
+    private readonly IBookingPreparationCheckOperation _bookingPreparationCheckOperation;
 
-    public RentalUpdateOperation(IRentalRepository rentalRepository, IUnitCreateOperation unitCreateOperation)
+    public RentalUpdateOperation(
+        IRentalRepository rentalRepository, 
+        IBookingRepository bookingRepository,
+        IBookingPreparationCheckOperation bookingPreparationCheckOperation,
+        IUnitUpdateOperation unitUpdateOperation)
     {
         _rentalRepository = rentalRepository;
-        _unitCreateOperation = unitCreateOperation;
+        _bookingRepository = bookingRepository;
+        _unitUpdateOperation = unitUpdateOperation;
+        _bookingPreparationCheckOperation = bookingPreparationCheckOperation;
     }
 
     public Task<UpdateRentalViewModel> ExecuteAsync(int rentalId, UpdateRentalViewModel model)
@@ -29,7 +38,7 @@ public sealed class RentalUpdateOperation : IRentalUpdateOperation
     }
 
     /// <summary>
-    /// 
+    /// Checks if it possible to update rental unis and preparation time for existing bookings.
     /// </summary>
     /// <param name="rentalId"></param>
     /// <param name="model"></param>
@@ -43,46 +52,68 @@ public sealed class RentalUpdateOperation : IRentalUpdateOperation
 
         var oldRental = await _rentalRepository.Get(rentalId);
 
-        if (oldRental.Units?.Count > model.Units)
-            throw new ValidationException(ExceptionMessageConstants.RentalUnitValidationError);
+        if (oldRental.Units?.Count == model.Units && oldRental.PreparationTimeInDays == model.PreparationTimeInDays)
+            throw new ValidationException(ExceptionMessageConstants.ValidationUpdateError);
+
+        var bookings = await _bookingPreparationCheckOperation.ExecuteAsync(rentalId, model.PreparationTimeInDays, DateTime.Today);
 
         var updateRentalModel = model.Adapt<RentalDto>();
 
-        // TODO: logic if not possible to update rental PreparationTimeInDays throw badreq
-
-        updateRentalModel.Units = oldRental.Units ?? new List<int>();
+        updateRentalModel.Units = oldRental.Units;
+        updateRentalModel.Id = rentalId;
         if (oldRental.Units?.Count != model.Units)
-            await UpdateRentalUnitsList(rentalId, model, updateRentalModel, oldRental);
+        {
+            var newUnitsList = GetNewUnitsList(bookings, oldRental.Units, model.Units);
+            await _unitUpdateOperation.ExecuteAsync(updateRentalModel, newUnitsList);
+
+            updateRentalModel.Units = newUnitsList;
+        }
+
+        foreach (var booking in bookings)
+        {
+            booking.PreparationTimeInDays = model.PreparationTimeInDays;
+            await _bookingRepository.Update(booking.Id, booking);
+        }
 
         var result = await  _rentalRepository.Update(rentalId, updateRentalModel);
         
         return result.Adapt<UpdateRentalViewModel>(RentalUnitsAdapterConfig());
     }
 
-    /// <summary>
-    /// If the request is valid, changes the number of units (for now only increase)
-    /// TODO : add logic for decrease 
-    /// </summary>
-    /// <param name="rentalId"></param>
-    /// <param name="model"></param>
-    /// <param name="updateRentalModel"></param>
-    /// <param name="oldRental"></param>
-    /// <returns></returns>
-    private async Task UpdateRentalUnitsList(
-        int rentalId, 
-        UpdateRentalViewModel model, 
-        RentalDto updateRentalModel,
-        RentalDto oldRental)
+    private List<int> GetNewUnitsList(IEnumerable<BookingDto> bookings, IList<int> oldRentalUnitsIds, int newUnitsCount)
     {
-        var newUnitsCount = model.Units - oldRental.Units.Count;
-        var newRentalUnits = new RentalViewModel
+        var newRentalUnitsList = new List<int>();
+        if (oldRentalUnitsIds.Count < newUnitsCount)
         {
-            Id = rentalId,
-            Units = newUnitsCount,
-        };
+            var newAdditionalUnitsCount = newUnitsCount - oldRentalUnitsIds.Count;
+            newRentalUnitsList.AddRange(oldRentalUnitsIds);
+            
+            for (var i = 0; i < newAdditionalUnitsCount; i ++)
+                newRentalUnitsList.Add(-1);
+        }
 
-        var newUnitsList = await _unitCreateOperation.ExecuteAsync(newRentalUnits);
-        updateRentalModel.Units?.AddRange(newUnitsList);
+        if (oldRentalUnitsIds.Count > newUnitsCount)
+        {
+            var unitsToDeleteCount = oldRentalUnitsIds.Count - newUnitsCount;
+            var allBookingsList = bookings
+                        .Select(_ => _.Unit)
+                        .Distinct()
+                        .ToList();
+
+            var avaliableToDeleteUnitsCount = oldRentalUnitsIds.Count - allBookingsList.Count;
+            if (avaliableToDeleteUnitsCount < unitsToDeleteCount)
+                throw new ValidationException(ExceptionMessageConstants.CreateUnitsValidationError);
+
+            var avaliableToDeleteUnits = oldRentalUnitsIds.Except(allBookingsList).ToList();
+
+            newRentalUnitsList.AddRange(allBookingsList);
+            for (var i = 0; i < avaliableToDeleteUnitsCount - unitsToDeleteCount; i++)
+            {
+                newRentalUnitsList.Add(avaliableToDeleteUnits[i]);
+            }
+        }
+
+        return newRentalUnitsList;
     }
 
     private TypeAdapterConfig RentalUnitsAdapterConfig() => TypeAdapterConfig<RentalDto, UpdateRentalViewModel>

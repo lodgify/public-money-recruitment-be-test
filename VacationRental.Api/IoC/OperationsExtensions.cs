@@ -12,12 +12,14 @@ public static class OperationsExtensions
         return services
             .AddScoped<IBookingCreateOperation, BookingCreateOperation>()
             .AddScoped<IBookingGetOperation, BookingGetOperation>()
+            .AddScoped<IBookingPreparationCheckOperation, BookingPreparationCheckOperation>()
 
             .AddScoped<IRentalCreateOperation, RentalCreateOperation>()
             .AddScoped<IRentalUpdateOperation, RentalUpdateOperation>()
             .AddScoped<IRentalGetOperation, RentalGetOperation>()
 
             .AddScoped<IUnitCreateOperation, UnitCreateOperation>()
+            .AddScoped<IUnitUpdateOperation, UnitUpdateOperation>()
             .AddScoped<IUnitListGetOperation, UnitListGetOperation>()
 
             .AddScoped<ICalendarGetOperation, CalendarGetOperation>();

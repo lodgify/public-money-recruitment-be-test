@@ -15,4 +15,6 @@ public interface IUnitRepository
     Task<UnitDto> Create(int id, UnitDto model);
 
     Task<UnitDto> Update(int unitId, UnitDto model);
+
+    Task<bool> Delete(int unitId);
 }

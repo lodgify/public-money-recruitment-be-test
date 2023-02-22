@@ -12,9 +12,11 @@ public interface IBookingRepository
 
     Task<IEnumerable<BookingDto>> GetAll(int rentalId);
 
-    Task<IEnumerable<BookingDto>> GetAll(int rentalId, DateTime orderDate);
+    Task<IEnumerable<BookingDto>> GetAll(int rentalId, DateTime orderStartDate);
 
     Task<IEnumerable<BookingDto>> GetAll(int rentalId, DateTime starDate, DateTime endDate);
 
     Task<BookingDto> Create(int id, BookingDto model);
+
+    Task<BookingDto> Update(int id, BookingDto model);
 }

@@ -31,11 +31,11 @@ public sealed class BookingRepository : IBookingRepository
         return await Task.Run(() => _dataSet.Values.Where(_ => _.RentalId.Equals(rentalId)));
     }
 
-    public async Task<IEnumerable<BookingDto>> GetAll(int rentalId, DateTime orderDate)
+    public async Task<IEnumerable<BookingDto>> GetAll(int rentalId, DateTime orderStartDate)
     {
         return await Task.Run(() => _dataSet.Values.Where(_ =>
             _.RentalId.Equals(rentalId)
-            && CheckBookingCollisionTime(_, orderDate)));
+            && _.Start <= orderStartDate));
     }
 
     public async Task<IEnumerable<BookingDto>> GetAll(int rentalId, DateTime starDate, DateTime endDate)
@@ -51,6 +51,13 @@ public sealed class BookingRepository : IBookingRepository
     public async Task<BookingDto> Create(int id, BookingDto model)
     {
         await Task.Run(() => _dataSet.Add(id, model));
+
+        return await Get(id);
+    }
+
+    public async Task<BookingDto> Update(int id, BookingDto model)
+    {
+        await Task.Run(() => _dataSet[id] = model);
 
         return await Get(id);
     }

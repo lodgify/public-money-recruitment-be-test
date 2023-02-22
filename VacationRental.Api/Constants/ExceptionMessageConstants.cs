@@ -11,5 +11,8 @@
         public const string RentalNotFound = "Rental not found";
         public const string RentalNotAvailable = "Rental is not available";
         public const string BookingNotFound = "Booking not found";
+        public const string PreparationTimeUpdateError = "Coudnt update preparation time";
+        public const string ValidationUpdateError = DefaultValidationError + " nothing to update";
+        public const string CreateUnitsValidationError = DefaultValidationError + " no free units to delete";
     }
 }
