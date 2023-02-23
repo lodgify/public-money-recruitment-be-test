@@ -1,7 +1,9 @@
-﻿using Mapster;
+﻿using System.ComponentModel.DataAnnotations;
+using Mapster;
 using Models.DataModels;
 using Models.ViewModels.Rental;
 using Repository.Repository;
+using VacationRental.Api.Constants;
 using VacationRental.Api.Operations.UnitOperations;
 
 namespace VacationRental.Api.Operations.RentalsOperations;
@@ -19,6 +21,11 @@ public sealed class RentalCreateOperation : IRentalCreateOperation
 
     public Task<ResourceIdViewModel> ExecuteAsync(RentalBindingModel model)
     {
+        if (model.Units <= 0)
+            throw new ValidationException(ExceptionMessageConstants.RentalUnitValidationError);
+        if (model.PreparationTimeInDays <= 0)
+            throw new ValidationException(ExceptionMessageConstants.NightsValidationError);
+
         return DoExecuteAsync(model);
     }
 

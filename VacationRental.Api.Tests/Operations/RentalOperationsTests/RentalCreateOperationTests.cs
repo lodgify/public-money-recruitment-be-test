@@ -3,6 +3,7 @@ using Models.DataModels;
 using Models.ViewModels.Rental;
 using Moq;
 using Repository.Repository;
+using System.ComponentModel.DataAnnotations;
 using VacationRental.Api.Operations.RentalsOperations;
 using VacationRental.Api.Operations.UnitOperations;
 using Xunit;
@@ -22,6 +23,21 @@ public class RentalCreateOperationTests
 
     [Fact]
     public async Task ExecuteAsync_CreatesNewRentalAndRelatedUnits()
+    {
+        // Arrange
+        var rentalModelWrongUnits = new RentalBindingModel { Units = -1, PreparationTimeInDays = -3 };
+        var rentalModelWrongDays = new RentalBindingModel { Units = -1, PreparationTimeInDays = -3 };
+        
+        var underTest = new RentalCreateOperation(_mockRentalRepository.Object, _mockUnitCreateOperation.Object);
+
+        // Act
+        // Assert
+        await Assert.ThrowsAsync<ValidationException>(() => underTest.ExecuteAsync(rentalModelWrongUnits));
+        await Assert.ThrowsAsync<ValidationException>(() => underTest.ExecuteAsync(rentalModelWrongDays));
+    }
+
+    [Fact]
+    public async Task ReturnsExpectedWhenNewRentalAndRelatedUnitsValid()
     {
         // Arrange
         var rentalBindingModel = new RentalBindingModel { Units = 1, PreparationTimeInDays = 3 };
